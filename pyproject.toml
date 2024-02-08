@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "multiclips"
+version = "0.1.0"
+description = "Working with multiple CLIP models"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+encord = "^0.1.108"
+av = "^11.0.0"
+umap = "^0.1.1"
+umap-learn = "^0.5.5"
+pillow = "^10.2.0"
+pydantic = "^2.6.1"
+transformers = "^4.37.2"
+torch = "^2.2.0"
+torchvision = "^0.17.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
