@@ -35,29 +35,21 @@ class Embeddings(BaseModel):
     @staticmethod
     def from_file(path: Path):
         if not path.suffix == ".npz":
-            raise ValueError(
-                f"Embedding files should be `.npz` files not {path.suffix}"
-            )
+            raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
 
         loaded = np.load(path)
         if not NPZ_IMAGE_EMBEDDING_KEY in loaded:
-            raise ValueError(
-                f"At least {NPZ_IMAGE_EMBEDDING_KEY} should be present in {path}"
-            )
+            raise ValueError(f"At least {NPZ_IMAGE_EMBEDDING_KEY} should be present in {path}")
 
         image_embeddings: EmbeddingArray = loaded[NPZ_IMAGE_EMBEDDING_KEY]
         label_embeddings: EmbeddingArray | None = (
-            loaded[NPZ_CLASS_EMBEDDING_KEY]
-            if NPZ_CLASS_EMBEDDING_KEY in loaded
-            else None
+            loaded[NPZ_CLASS_EMBEDDING_KEY] if NPZ_CLASS_EMBEDDING_KEY in loaded else None
         )
         return Embeddings(images=image_embeddings, classes=label_embeddings)
 
     def to_file(self, path: Path) -> Path:
         if not path.suffix == ".npz":
-            raise ValueError(
-                f"Embedding files should be `.npz` files not {path.suffix}"
-            )
+            raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
         to_store: dict[str, EmbeddingArray] = {
             NPZ_IMAGE_EMBEDDING_KEY: self.images,
         }
@@ -78,15 +70,15 @@ class EmbeddingDefinition(BaseModel):
     model: SafeName
     dataset: SafeName
 
-    def _filename(self, suffix: str) -> str:
-        return f"{self.model}__{self.dataset}{suffix}"
+    def _get_embedding_path(self, suffix: str) -> Path:
+        return Path(self.dataset) / f"{self.model}{suffix}"
 
     @property
     def embedding_path(self) -> Path:
-        return CACHE_PATH / self._filename(".npz")
+        return CACHE_PATH / self._get_embedding_path(".npz")
 
     def get_reduction_path(self, reduction_name: str):
-        return CACHE_PATH / self._filename(f".{reduction_name}.2d.npy")
+        return CACHE_PATH / self._get_embedding_path(f".{reduction_name}.2d.npy")
 
     def load_embeddings(self) -> Embeddings | None:
         """
@@ -110,6 +102,7 @@ class EmbeddingDefinition(BaseModel):
                 f"Not saving embedding file {self.embedding_path} as overwrite is False and file exists already"
             )
             return False
+        self.embedding_path.parent.mkdir(exist_ok=True, parents=True)
         embeddings.to_file(self.embedding_path)
         return True
 
