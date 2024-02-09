@@ -16,3 +16,4 @@ class PROJECT_PATHS:
 class NPZ_KEYS:
     IMAGE_EMBEDDINGS = "image_embeddings"
     CLASS_EMBEDDINGS = "class_embeddings"
+    LABELS = "labels"
