@@ -17,6 +17,15 @@ transformers = "^4.37.2"
 torch = "^2.2.0"
 torchvision = "^0.17.0"
 python-dotenv = "^1.0.1"
+autofaiss = "^2.17.0"
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+include = '.*\/.*\.i?py(nb)?$'
+
+[tool.isort]
+profile = "black"
 
 
 [build-system]

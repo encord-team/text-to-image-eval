@@ -1,25 +1,141 @@
+import logging
 from pathlib import Path
 
-from pydantic import BaseModel
+import numpy as np
+from pydantic import BaseModel, model_validator
 from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
 
-from src.constants import CACHE_PATH
+from src.constants import CACHE_PATH, NPZ_CLASS_EMBEDDING_KEY, NPZ_IMAGE_EMBEDDING_KEY
+from src.types.numpy_types import EmbeddingArray
 from src.utils import safe_str
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
+logger = logging.getLogger("multiclips")
+
+
+class Embeddings(BaseModel):
+    images: EmbeddingArray
+    classes: EmbeddingArray | None = None
+
+    @model_validator(mode="after")
+    def validate_shapes(self) -> "Embeddings":
+        if self.classes is None:
+            return self
+
+        *_, d1 = self.images.shape
+        *_, d2 = self.classes.shape
+
+        if d1 != d2:
+            raise ValueError(
+                f"Image {self.images.shape} and classe {self.classes.shape} embeddings should have same dimensionality"
+            )
+        return self
+
+    @staticmethod
+    def from_file(path: Path):
+        if not path.suffix == ".npz":
+            raise ValueError(
+                f"Embedding files should be `.npz` files not {path.suffix}"
+            )
+
+        loaded = np.load(path)
+        if not NPZ_IMAGE_EMBEDDING_KEY in loaded:
+            raise ValueError(
+                f"At least {NPZ_IMAGE_EMBEDDING_KEY} should be present in {path}"
+            )
+
+        image_embeddings: EmbeddingArray = loaded[NPZ_IMAGE_EMBEDDING_KEY]
+        label_embeddings: EmbeddingArray | None = (
+            loaded[NPZ_CLASS_EMBEDDING_KEY]
+            if NPZ_CLASS_EMBEDDING_KEY in loaded
+            else None
+        )
+        return Embeddings(images=image_embeddings, classes=label_embeddings)
+
+    def to_file(self, path: Path) -> Path:
+        if not path.suffix == ".npz":
+            raise ValueError(
+                f"Embedding files should be `.npz` files not {path.suffix}"
+            )
+        to_store: dict[str, EmbeddingArray] = {
+            NPZ_IMAGE_EMBEDDING_KEY: self.images,
+        }
+        if self.classes is not None:
+            to_store[NPZ_CLASS_EMBEDDING_KEY] = self.classes
+
+        np.savez_compressed(
+            path,
+            **to_store,
+        )
+        return path
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class EmbeddingDefinition(BaseModel):
-    model_name: SafeName
-    dataset_name: SafeName
+    model: SafeName
+    dataset: SafeName
 
     def _filename(self, suffix: str) -> str:
-        return f"{self.model_name}__{self.dataset_name}{suffix}"
+        return f"{self.model}__{self.dataset}{suffix}"
 
     @property
     def embedding_path(self) -> Path:
-        return CACHE_PATH / self._filename(".npy")
+        return CACHE_PATH / self._filename(".npz")
 
     def get_reduction_path(self, reduction_name: str):
         return CACHE_PATH / self._filename(f".{reduction_name}.2d.npy")
+
+    def load_embeddings(self) -> Embeddings | None:
+        """
+        Load embeddings for embedding configuration or return None
+        """
+        return Embeddings.from_file(self.embedding_path)
+
+    def save_embeddings(self, embeddings: Embeddings, overwrite: bool = False) -> bool:
+        """
+        Save embeddings associated to the embedding definition.
+        Args:
+            embeddings: The embeddings to store
+            overwrite: If false, won't overwrite and will return False
+
+        Returns:
+            True iff file stored successfully
+
+        """
+        if self.embedding_path.is_file() and not overwrite:
+            logger.warning(
+                f"Not saving embedding file {self.embedding_path} as overwrite is False and file exists already"
+            )
+            return False
+        embeddings.to_file(self.embedding_path)
+        return True
+
+
+if __name__ == "__main__":
+    def_ = EmbeddingDefinition(
+        model="weird_this  with  / stuff \\whatever",
+        dataset="hello there dataset",
+    )
+    print(def_.embedding_path)
+    def_.embedding_path.parent.mkdir(exist_ok=True)
+
+    emb = Embeddings(images=np.random.randn(100, 20).astype(np.float32), classes=None)
+    emb.to_file(def_.embedding_path)
+    new_emb = def_.load_embeddings()
+
+    assert new_emb is not None
+    print(np.allclose(new_emb.images, emb.images))
+
+    from pydantic import ValidationError
+
+    try:
+        Embeddings(
+            images=np.random.randn(100, 20).astype(np.float32),
+            classes=np.random.randn(10, 30).astype(np.float32),
+        )
+        assert False
+    except ValidationError:
+        assert True

@@ -1,2 +1,2 @@
-from .data_models import EmbeddingDefinition
-from .numpy_types import EmbeddingArray, ReductionArray
+from .data_models import EmbeddingDefinition, Embeddings
+from .numpy_types import ClassArray, EmbeddingArray, ProbabilityArray, ReductionArray
