@@ -8,7 +8,8 @@ from typing_extensions import Annotated
 
 from src.constants import NPZ_KEYS, PROJECT_PATHS
 from src.types.numpy_types import EmbeddingArray
-from src.utils import safe_str
+
+from .string_utils import safe_str
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")
