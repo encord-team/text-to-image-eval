@@ -15,6 +15,7 @@ class LinearProbeClassifier(ClassificationModel):
         self,
         embeddings: EmbeddingArray,
         labels: ClassArray,
+        class_embeddings: EmbeddingArray,
         num_classes: int | None = None,
         log_reg_params: dict[str, Any] | None = None,
         use_cross_validation: bool = False,
@@ -27,7 +28,7 @@ class LinearProbeClassifier(ClassificationModel):
             labels: The labels associated to the embeddings
             num_classes: If not specified will be inferred from the labels.
         """
-        super().__init__("zero_shot")
+        super().__init__("linear-probe")
         self.num_classes = num_classes or labels.max() + 1
 
         embeddings = self.normalize(embeddings)
@@ -54,9 +55,12 @@ if __name__ == "__main__":
     model = LinearProbeClassifier(
         np.random.randn(100, 10).astype(np.float32),
         np.random.randint(0, 10, size=(100,)),
-        num_classes=10,
+        np.random.randn(20, 10).astype(np.float32),
+        num_classes=20,
     )
-    embeddings = Embeddings(images=np.random.randn(2, 10).astype(np.float32))
+    embeddings = Embeddings(
+        images=np.random.randn(2, 10).astype(np.float32), labels=np.random.randint(0, 20, size=(2,)).astype(np.float32)
+    )
     probs, cls = model.predict(embeddings)
     print(probs)
     print(cls)

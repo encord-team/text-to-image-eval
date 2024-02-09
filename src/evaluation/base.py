@@ -1,17 +1,22 @@
 from abc import abstractmethod, abstractproperty
-from typing import TypeVar
+from typing import Any
 
 import numpy as np
 import numpy.typing as npt
 
 from src.types import ClassArray, Embeddings, ProbabilityArray
-from src.types.numpy_types import DType, NDArray
+from src.types.numpy_types import DType
 
 
 class ClassificationModel:
     def __init__(self, title: str) -> None:
         self._title = title
 
+    @staticmethod
+    def get_default_params() -> dict[str, Any]:
+        return {}
+
+    @property
     def title(self) -> str:
         return self._title
 

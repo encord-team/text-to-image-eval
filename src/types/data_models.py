@@ -123,7 +123,8 @@ if __name__ == "__main__":
 
     images = np.random.randn(100, 20).astype(np.float32)
     labels = np.random.randint(0, 10, size=(100,))
-    emb = Embeddings(images=images, labels=labels, classes=None)
+    classes = np.random.randn(10, 20).astype(np.float32)
+    emb = Embeddings(images=images, labels=labels, classes=classes)
     emb.to_file(def_.embedding_path)
     new_emb = def_.load_embeddings()
 
