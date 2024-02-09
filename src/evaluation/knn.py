@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 import numpy as np
 from autofaiss import build_index
@@ -14,8 +15,9 @@ class WeightedKNNClassifier(ClassificationModel):
         self,
         embeddings: EmbeddingArray,
         labels: ClassArray,
-        k: int = 11,
+        class_embeddings: EmbeddingArray,
         num_classes: int | None = None,
+        k: int = 11,
     ) -> None:
         """
         Weighted KNN classifier based on embeddings and labels given to the constructor.
@@ -32,7 +34,7 @@ class WeightedKNNClassifier(ClassificationModel):
         Raises:
             ValueError: If the faiss index fails to build.
         """
-        super().__init__("zero_shot")
+        super().__init__("wKNN")
         self._labels = labels
         self.k = k
 
@@ -46,6 +48,10 @@ class WeightedKNNClassifier(ClassificationModel):
         self._index = index
 
         logger.info(f"knn classifier index_infos", extra=self.index_infos)
+
+    @staticmethod
+    def get_default_params() -> dict[str, Any]:
+        return {"k": 11}
 
     @property
     def dim(self) -> int:

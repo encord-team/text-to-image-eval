@@ -1,5 +1,4 @@
-from abc import abstractmethod, abstractproperty
-from typing import Callable
+from abc import abstractmethod
 
 import numpy as np
 import umap
@@ -18,7 +17,6 @@ class Reducer:
         return self._title
 
     @abstractmethod
-    @classmethod
     def reduce(cls, embeddings: EmbeddingArray, **kwargs) -> ReductionArray:
         ...
 
@@ -34,9 +32,7 @@ class Reducer:
             return reduction
 
         elif not embedding_def.embedding_path.is_file():
-            raise ValueError(
-                f"{embedding_def} does not have embeddings stored ({embedding_def.embedding_path})"
-            )
+            raise ValueError(f"{embedding_def} does not have embeddings stored ({embedding_def.embedding_path})")
 
         embeddings: EmbeddingArray = np.load(embedding_def.embedding_path)
         return self.reduce(embeddings)
@@ -47,9 +43,7 @@ class UMAPReducer(Reducer):
         super().__init__("umap")
 
     @classmethod
-    def reduce(
-        cls, embeddings: EmbeddingArray, umap_seed: int | None = None, **kwargs
-    ) -> ReductionArray:
+    def reduce(cls, embeddings: EmbeddingArray, umap_seed: int | None = None, **kwargs) -> ReductionArray:
         reducer = umap.UMAP()
         return reducer.fit_transform(embeddings)
 
@@ -72,3 +66,12 @@ class PCAReducer(Reducer):
     def reduce(cls, embeddings: EmbeddingArray, **kwargs) -> ReductionArray:
         reducer = PCA(n_components=2)
         return reducer.fit_transform(embeddings)
+
+
+if __name__ == "__main__":
+    import numpy as np
+
+    embeddings = np.random.randn(100, 20)
+
+    for cls in [UMAPReducer, TSNEReducer, PCAReducer]:
+        print(cls().reduce(embeddings).shape)

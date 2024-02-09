@@ -5,7 +5,13 @@ from src.types import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
 
 
 class ZeroShotClassifier(ClassificationModel):
-    def __init__(self, class_embeddings: EmbeddingArray) -> None:
+    def __init__(
+        self,
+        embeddings: EmbeddingArray,
+        labels: ClassArray,
+        class_embeddings: EmbeddingArray,
+        num_classes: int | None = None,
+    ) -> None:
         super().__init__("zero_shot")
         self._class_embeddings: EmbeddingArray = self.normalize(class_embeddings)
 
@@ -23,9 +29,16 @@ class ZeroShotClassifier(ClassificationModel):
 
 if __name__ == "__main__":
     zeroshot = ZeroShotClassifier(
-        np.random.randn(10, 10).astype(np.float32),
+        np.random.randn(100, 10).astype(np.float32),
+        np.random.randint(0, 10, size=(100,)),
+        np.random.randn(20, 10).astype(np.float32),
+        num_classes=20,
     )
-    embeddings = Embeddings(images=np.random.randn(2, 10).astype(np.float32))
+    embeddings = Embeddings(
+        images=np.random.randn(2, 10).astype(np.float32),
+        labels=np.random.randint(0, 10, size=(2,)),
+    )
     probs, cls = zeroshot.predict(embeddings)
+
     print(probs)
     print(cls)
