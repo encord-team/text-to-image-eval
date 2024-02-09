@@ -6,7 +6,7 @@ from pydantic import BaseModel, model_validator
 from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
 
-from src.constants import CACHE_PATH, NPZ_CLASS_EMBEDDING_KEY, NPZ_IMAGE_EMBEDDING_KEY
+from src.constants import NPZ_KEYS, PROJECT_PATHS
 from src.types.numpy_types import EmbeddingArray
 from src.utils import safe_str
 
@@ -38,12 +38,12 @@ class Embeddings(BaseModel):
             raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
 
         loaded = np.load(path)
-        if not NPZ_IMAGE_EMBEDDING_KEY in loaded:
-            raise ValueError(f"At least {NPZ_IMAGE_EMBEDDING_KEY} should be present in {path}")
+        if not NPZ_KEYS.IMAGE_EMBEDDINGS in loaded:
+            raise ValueError(f"At least {NPZ_KEYS.IMAGE_EMBEDDINGS} should be present in {path}")
 
-        image_embeddings: EmbeddingArray = loaded[NPZ_IMAGE_EMBEDDING_KEY]
+        image_embeddings: EmbeddingArray = loaded[NPZ_KEYS.IMAGE_EMBEDDINGS]
         label_embeddings: EmbeddingArray | None = (
-            loaded[NPZ_CLASS_EMBEDDING_KEY] if NPZ_CLASS_EMBEDDING_KEY in loaded else None
+            loaded[NPZ_KEYS.CLASS_EMBEDDINGS] if NPZ_KEYS.CLASS_EMBEDDINGS in loaded else None
         )
         return Embeddings(images=image_embeddings, classes=label_embeddings)
 
@@ -51,10 +51,10 @@ class Embeddings(BaseModel):
         if not path.suffix == ".npz":
             raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
         to_store: dict[str, EmbeddingArray] = {
-            NPZ_IMAGE_EMBEDDING_KEY: self.images,
+            NPZ_KEYS.IMAGE_EMBEDDINGS: self.images,
         }
         if self.classes is not None:
-            to_store[NPZ_CLASS_EMBEDDING_KEY] = self.classes
+            to_store[NPZ_KEYS.CLASS_EMBEDDINGS] = self.classes
 
         np.savez_compressed(
             path,
@@ -75,10 +75,10 @@ class EmbeddingDefinition(BaseModel):
 
     @property
     def embedding_path(self) -> Path:
-        return CACHE_PATH / self._get_embedding_path(".npz")
+        return PROJECT_PATHS.EMBEDDINGS / self._get_embedding_path(".npz")
 
     def get_reduction_path(self, reduction_name: str):
-        return CACHE_PATH / self._get_embedding_path(f".{reduction_name}.2d.npy")
+        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(f".{reduction_name}.2d.npy")
 
     def load_embeddings(self) -> Embeddings | None:
         """
