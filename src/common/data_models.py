@@ -2,84 +2,18 @@ import logging
 from pathlib import Path
 
 import numpy as np
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
 
-from src.constants import NPZ_KEYS, PROJECT_PATHS
-from src.datasets import HFDataset
-from src.models import CLIPModel
-from src.types.numpy_types import ClassArray, EmbeddingArray
-from src.types.string_utils import safe_str
+from common.base import Embeddings
+from common.string_utils import safe_str
+from constants import PROJECT_PATHS
+from dataset import HFDataset
+from models import CLIPModel
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")
-
-
-class Embeddings(BaseModel):
-    images: EmbeddingArray
-    classes: EmbeddingArray | None = None
-    labels: ClassArray
-
-    @model_validator(mode="after")
-    def validate_shapes(self) -> "Embeddings":
-        if self.classes is None:
-            return self
-
-        *_, d1 = self.images.shape
-        *_, d2 = self.classes.shape
-
-        if d1 != d2:
-            raise ValueError(
-                f"Image {self.images.shape} and classe {self.classes.shape} embeddings should have same dimensionality"
-            )
-        return self
-
-    @staticmethod
-    def from_file(path: Path) -> "Embeddings":
-        if not path.suffix == ".npz":
-            raise ValueError(
-                f"Embedding files should be `.npz` files not {path.suffix}"
-            )
-
-        loaded = np.load(path)
-        if NPZ_KEYS.IMAGE_EMBEDDINGS not in loaded and NPZ_KEYS.LABELS not in loaded:
-            raise ValueError(
-                f"Require both {NPZ_KEYS.IMAGE_EMBEDDINGS}, {NPZ_KEYS.LABELS} should be present in {path}"
-            )
-
-        image_embeddings: EmbeddingArray = loaded[NPZ_KEYS.IMAGE_EMBEDDINGS]
-        labels: ClassArray = loaded[NPZ_KEYS.LABELS]
-        label_embeddings: EmbeddingArray | None = (
-            loaded[NPZ_KEYS.CLASS_EMBEDDINGS]
-            if NPZ_KEYS.CLASS_EMBEDDINGS in loaded
-            else None
-        )
-        return Embeddings(
-            images=image_embeddings, labels=labels, classes=label_embeddings
-        )
-
-    def to_file(self, path: Path) -> Path:
-        if not path.suffix == ".npz":
-            raise ValueError(
-                f"Embedding files should be `.npz` files not {path.suffix}"
-            )
-        to_store: dict[str, EmbeddingArray] = {
-            NPZ_KEYS.IMAGE_EMBEDDINGS: self.images,
-            NPZ_KEYS.LABELS: self.labels,
-        }
-
-        if self.classes is not None:
-            to_store[NPZ_KEYS.CLASS_EMBEDDINGS] = self.classes
-
-        np.savez_compressed(
-            path,
-            **to_store,
-        )
-        return path
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class EmbeddingDefinition(BaseModel):
@@ -94,9 +28,7 @@ class EmbeddingDefinition(BaseModel):
         return PROJECT_PATHS.EMBEDDINGS / self._get_embedding_path(".npz")
 
     def get_reduction_path(self, reduction_name: str):
-        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(
-            f".{reduction_name}.2d.npy"
-        )
+        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(f".{reduction_name}.2d.npy")
 
     def load_embeddings(self) -> Embeddings | None:
         """

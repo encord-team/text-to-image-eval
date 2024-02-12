@@ -1,1 +1,1 @@
-from CLIP_model import CLIPModel
+from .CLIP_model import CLIPModel
