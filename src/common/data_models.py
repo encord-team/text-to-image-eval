@@ -7,7 +7,7 @@ from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
 
 from constants import NPZ_KEYS, PROJECT_PATHS
-from datasets import HFDataset
+from dataset import HFDataset
 from models import CLIPModel
 from common.numpy_types import ClassArray, EmbeddingArray
 from common.string_utils import safe_str
@@ -38,32 +38,22 @@ class Embeddings(BaseModel):
     @staticmethod
     def from_file(path: Path) -> "Embeddings":
         if not path.suffix == ".npz":
-            raise ValueError(
-                f"Embedding files should be `.npz` files not {path.suffix}"
-            )
+            raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
 
         loaded = np.load(path)
         if NPZ_KEYS.IMAGE_EMBEDDINGS not in loaded and NPZ_KEYS.LABELS not in loaded:
-            raise ValueError(
-                f"Require both {NPZ_KEYS.IMAGE_EMBEDDINGS}, {NPZ_KEYS.LABELS} should be present in {path}"
-            )
+            raise ValueError(f"Require both {NPZ_KEYS.IMAGE_EMBEDDINGS}, {NPZ_KEYS.LABELS} should be present in {path}")
 
         image_embeddings: EmbeddingArray = loaded[NPZ_KEYS.IMAGE_EMBEDDINGS]
         labels: ClassArray = loaded[NPZ_KEYS.LABELS]
         label_embeddings: EmbeddingArray | None = (
-            loaded[NPZ_KEYS.CLASS_EMBEDDINGS]
-            if NPZ_KEYS.CLASS_EMBEDDINGS in loaded
-            else None
+            loaded[NPZ_KEYS.CLASS_EMBEDDINGS] if NPZ_KEYS.CLASS_EMBEDDINGS in loaded else None
         )
-        return Embeddings(
-            images=image_embeddings, labels=labels, classes=label_embeddings
-        )
+        return Embeddings(images=image_embeddings, labels=labels, classes=label_embeddings)
 
     def to_file(self, path: Path) -> Path:
         if not path.suffix == ".npz":
-            raise ValueError(
-                f"Embedding files should be `.npz` files not {path.suffix}"
-            )
+            raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
         to_store: dict[str, EmbeddingArray] = {
             NPZ_KEYS.IMAGE_EMBEDDINGS: self.images,
             NPZ_KEYS.LABELS: self.labels,
@@ -94,9 +84,7 @@ class EmbeddingDefinition(BaseModel):
         return PROJECT_PATHS.EMBEDDINGS / self._get_embedding_path(".npz")
 
     def get_reduction_path(self, reduction_name: str):
-        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(
-            f".{reduction_name}.2d.npy"
-        )
+        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(f".{reduction_name}.2d.npy")
 
     def load_embeddings(self) -> Embeddings | None:
         """

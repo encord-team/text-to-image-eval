@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 from transformers import CLIPModel as HF_ClipModel
 from transformers import CLIPProcessor
 
-from datasets import HFDataset
+from dataset import HFDataset
 from common import ClassArray, EmbeddingArray, Embeddings
 
 options = {
@@ -23,9 +23,7 @@ model_name = options[short_name]
 
 
 class CLIPModel:
-    def __init__(
-        self, model_name: str, device: torch.Device = torch.device("cuda")
-    ) -> None:
+    def __init__(self, model_name: str, device: torch.Device = torch.device("cuda")) -> None:
         self.model = HF_ClipModel.from_pretrained(model_name).to(device)
         self.title = model_name
 
@@ -47,9 +45,7 @@ class CLIPModel:
         with torch.inference_mode():
             for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
                 tmp_labels.append(batch["label"])
-                features = self.model.get_image_features(
-                    pixel_values=batch["pixel_values"]
-                )
+                features = self.model.get_image_features(pixel_values=batch["pixel_values"])
                 emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
                 tmp_embeddings.append(emb)
         embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
