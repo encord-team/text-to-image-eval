@@ -1,5 +1,3 @@
-from typing import Dict
-
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -32,7 +30,7 @@ class CLIPModel:
         self.title = model_name
 
     def embed(self, dataset: HFDataset, batch_size: int = 50) -> Embeddings:
-        def _collate_fn(examples) -> Dict[str, torch.tensor]:
+        def _collate_fn(examples) -> dict[str, torch.tensor]:
             images = []
             labels = []
             for example in examples:

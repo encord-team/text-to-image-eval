@@ -131,11 +131,11 @@ class EmbeddingDefinition(BaseModel):
         if self.embedding_path.is_file() and not overwrite:
             return False
         try:
-            self._load_model()
+            self.model = self._load_model()
         except Exception:
             raise Exception
         try:
-            self._load_dataset()
+            self.dataset = self._load_dataset()
         except Exception:
             raise Exception
 
@@ -143,19 +143,15 @@ class EmbeddingDefinition(BaseModel):
         return self.save_embeddings(embeddings)
 
     # Possible that the below methods should return objects rather than modifying state
-    def _load_model(self) -> bool:
-        self.model = None
+    def _load_model(self) -> CLIPModel:
         try:
-            self.model = CLIPModel.load_model(model_name=self.model)
-            return True
+            return CLIPModel.load_model(model_name=self.model)
         except Exception as e:
             raise e
 
-    def _load_dataset(self) -> bool:
-        self.dataset = None
+    def _load_dataset(self) -> HFDataset:
         try:
-            self.dataset = HFDataset(dataset_name=self.dataset)
-            return True
+            return HFDataset(dataset_name=self.dataset)
         except Exception as e:
             raise e
 

@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 
@@ -17,8 +17,8 @@ def run_evaluation(
     embedding_definitions: list[EmbeddingDefinition],
     seed: int = 42,
     train_split: float = 0.7,  # TODO: This is very much out of the blue
-) -> Dict[EmbeddingDefinition, Dict[str, float]]:
-    embeddings_performance: Dict[EmbeddingDefinition, Dict[str, float]] = {}
+) -> dict[EmbeddingDefinition, dict[str, float]]:
+    embeddings_performance: dict[EmbeddingDefinition, dict[str, float]] = {}
     for def_ in embedding_definitions:
         embeddings = def_.load_embeddings()
 
