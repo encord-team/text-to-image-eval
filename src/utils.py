@@ -1,5 +1,5 @@
 from constants import PROJECT_PATHS
-from types.data_models import EmbeddingDefinition
+from common.data_models import EmbeddingDefinition
 
 
 

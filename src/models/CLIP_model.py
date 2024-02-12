@@ -6,7 +6,7 @@ from transformers import CLIPModel as HF_ClipModel
 from transformers import CLIPProcessor
 
 from datasets import HFDataset
-from types import ClassArray, EmbeddingArray, Embeddings
+from common import ClassArray, EmbeddingArray, Embeddings
 
 options = {
     "clip": "openai/clip-vit-large-patch14-336",

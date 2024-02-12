@@ -5,7 +5,7 @@ import umap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
-from types import EmbeddingArray, EmbeddingDefinition, ReductionArray
+from common import EmbeddingArray, EmbeddingDefinition, ReductionArray
 
 
 class Reducer:

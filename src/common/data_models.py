@@ -9,8 +9,8 @@ from typing_extensions import Annotated
 from constants import NPZ_KEYS, PROJECT_PATHS
 from datasets import HFDataset
 from models import CLIPModel
-from types.numpy_types import ClassArray, EmbeddingArray
-from types.string_utils import safe_str
+from common.numpy_types import ClassArray, EmbeddingArray
+from common.string_utils import safe_str
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")

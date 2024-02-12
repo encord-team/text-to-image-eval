@@ -5,7 +5,7 @@ import numpy as np
 from autofaiss import build_index
 
 from evaluation.base import ClassificationModel
-from types import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
+from common import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
 
 logger = logging.getLogger("multiclips")
 

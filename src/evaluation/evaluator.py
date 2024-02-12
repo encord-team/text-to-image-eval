@@ -8,7 +8,7 @@ from evaluation import (
     WeightedKNNClassifier,
     ZeroShotClassifier,
 )
-from types.data_models import EmbeddingDefinition, Embeddings
+from common.data_models import EmbeddingDefinition, Embeddings
 from utils import read_all_cached_embeddings
 
 
