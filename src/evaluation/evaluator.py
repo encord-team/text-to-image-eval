@@ -3,6 +3,7 @@ from typing import Any
 import numpy as np
 
 from src.evaluation import (
+    ClassificationModel,
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
@@ -12,11 +13,12 @@ from src.utils import read_all_cached_embeddings
 
 
 def run_evaluation(
-    models: Any,
+    classifiers: ClassificationModel,
     embedding_definitions: list[EmbeddingDefinition],
     seed: int = 42,
     train_split: float = 0.7,  # TODO: This is very much out of the blue
-):
+) -> dict[EmbeddingDefinition, dict[str, float]]:
+    embeddings_performance: dict[EmbeddingDefinition, dict[str, float]] = {}
     for def_ in embedding_definitions:
         embeddings = def_.load_embeddings()
 
@@ -41,13 +43,20 @@ def run_evaluation(
             "labels": train_labels,
             "class_embeddings": embeddings.classes,
         }
-        for model in models:
-            m = model(**model_args)
-            probs, y_hat = m.predict(Embeddings(images=validation_embeddings, labels=validation_labels))
+        classifier_performance = {}
+        for classifier_type in classifiers:
+            classifier = classifier_type(**model_args)
+            probs, y_hat = classifier.predict(
+                Embeddings(images=validation_embeddings, labels=validation_labels)
+            )
             acc = (y_hat == validation_labels).astype(float).mean()
-            print(def_, m.title, acc)
+            print(def_, classifier.title, acc)
+            classifier_performance[classifier.title] = acc
             # FIXME: Store the results
+        print(classifier_performance)
+        embeddings_performance[def_] = classifier_performance
     # FIXME: Report the results
+    return embeddings_performance
 
 
 if __name__ == "__main__":

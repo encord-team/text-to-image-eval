@@ -15,7 +15,7 @@ class WeightedKNNClassifier(ClassificationModel):
         self,
         embeddings: EmbeddingArray,
         labels: ClassArray,
-        class_embeddings: EmbeddingArray,
+        class_embeddings: EmbeddingArray | None = None,
         num_classes: int | None = None,
         k: int = 11,
     ) -> None:
@@ -41,7 +41,9 @@ class WeightedKNNClassifier(ClassificationModel):
         self.num_classes = num_classes or labels.max() + 1
 
         embeddings = self.normalize(embeddings)
-        index, self.index_infos = build_index(embeddings, save_on_disk=False, verbose=logging.ERROR)
+        index, self.index_infos = build_index(
+            embeddings, save_on_disk=False, verbose=logging.ERROR
+        )
 
         if index is None:
             raise ValueError("Failed to build an index for knn search")
@@ -69,7 +71,9 @@ class WeightedKNNClassifier(ClassificationModel):
         # We can shape of a factor self.k if we count differently here.
         weighted_count = np.zeros((n, self.num_classes, self.k), dtype=np.float32)
         weighted_count[
-            np.tile(np.arange(n), (self.k,)).reshape(-1),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
+            np.tile(np.arange(n), (self.k,)).reshape(
+                -1
+            ),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
             nearest_classes.reshape(-1),  # [class numbers]
             np.tile(np.arange(self.k), (n,)),  # [0, 1, .., k-1, 0, 1, .., k-1, ..]
         ] = 1 / dists.reshape(-1)
@@ -83,7 +87,10 @@ if __name__ == "__main__":
         np.random.randint(0, 10, size=(100,)),
         num_classes=10,
     )
-    embeddings = Embeddings(images=np.random.randn(2, 10).astype(np.float32))
+    embeddings = Embeddings(
+        images=np.random.randn(2, 10).astype(np.float32),
+        labels=np.random.randint(0, 10, size=(2,)),
+    )
     probs, cls = knn.predict(embeddings)
     print(probs)
     print(cls)
