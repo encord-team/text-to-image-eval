@@ -7,6 +7,8 @@ from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
 
 from src.constants import NPZ_KEYS, PROJECT_PATHS
+from src.datasets import HFDataset
+from src.models import CLIPModel
 from src.types.numpy_types import ClassArray, EmbeddingArray
 from src.types.string_utils import safe_str
 
@@ -41,9 +43,9 @@ class Embeddings(BaseModel):
             )
 
         loaded = np.load(path)
-        if NPZ_KEYS.IMAGE_EMBEDDINGS not in loaded:
+        if NPZ_KEYS.IMAGE_EMBEDDINGS not in loaded and NPZ_KEYS.LABELS not in loaded:
             raise ValueError(
-                f"At least {NPZ_KEYS.IMAGE_EMBEDDINGS} should be present in {path}"
+                f"Require both {NPZ_KEYS.IMAGE_EMBEDDINGS}, {NPZ_KEYS.LABELS} should be present in {path}"
             )
 
         image_embeddings: EmbeddingArray = loaded[NPZ_KEYS.IMAGE_EMBEDDINGS]
@@ -125,6 +127,38 @@ class EmbeddingDefinition(BaseModel):
         embeddings.to_file(self.embedding_path)
         return True
 
+    def build_embedding(self, overwrite=False) -> bool:
+        if self.embedding_path.is_file() and not overwrite:
+            return False
+        try:
+            self._load_model()
+        except Exception:
+            raise Exception
+        try:
+            self._load_dataset()
+        except Exception:
+            raise Exception
+
+        embeddings: Embeddings = self.model.embed(self.dataset)
+        return self.save_embeddings(embeddings)
+
+    # Possible that the below methods should return objects rather than modifying state
+    def _load_model(self) -> bool:
+        self.model = None
+        try:
+            self.model = CLIPModel.load_model(model_name=self.model)
+            return True
+        except Exception as e:
+            raise e
+
+    def _load_dataset(self) -> bool:
+        self.dataset = None
+        try:
+            self.dataset = HFDataset(dataset_name=self.dataset)
+            return True
+        except Exception as e:
+            raise e
+
 
 if __name__ == "__main__":
     def_ = EmbeddingDefinition(
@@ -137,7 +171,8 @@ if __name__ == "__main__":
     labels = np.random.randint(0, 10, size=(100,))
     classes = np.random.randn(10, 20).astype(np.float32)
     emb = Embeddings(images=images, labels=labels, classes=classes)
-    emb.to_file(def_.embedding_path)
+    # emb.to_file(def_.embedding_path)
+    def_.save_embeddings(emb, overwrite=True)
     new_emb = def_.load_embeddings()
 
     assert new_emb is not None
