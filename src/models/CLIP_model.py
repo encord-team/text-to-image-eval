@@ -5,8 +5,8 @@ from tqdm.auto import tqdm
 from transformers import CLIPModel as HF_ClipModel
 from transformers import CLIPProcessor
 
-from src.datasets import HFDataset
-from src.types import ClassArray, EmbeddingArray, Embeddings
+from datasets import HFDataset
+from types import ClassArray, EmbeddingArray, Embeddings
 
 options = {
     "clip": "openai/clip-vit-large-patch14-336",

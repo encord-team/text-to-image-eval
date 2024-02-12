@@ -6,11 +6,11 @@ from pydantic import BaseModel, model_validator
 from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
 
-from src.constants import NPZ_KEYS, PROJECT_PATHS
-from src.datasets import HFDataset
-from src.models import CLIPModel
-from src.types.numpy_types import ClassArray, EmbeddingArray
-from src.types.string_utils import safe_str
+from constants import NPZ_KEYS, PROJECT_PATHS
+from datasets import HFDataset
+from models import CLIPModel
+from types.numpy_types import ClassArray, EmbeddingArray
+from types.string_utils import safe_str
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")

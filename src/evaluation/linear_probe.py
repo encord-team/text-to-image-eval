@@ -4,8 +4,8 @@ from typing import Any
 import numpy as np
 from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
 
-from src.evaluation.base import ClassificationModel
-from src.types import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
+from evaluation.base import ClassificationModel
+from types import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
 
 logger = logging.getLogger("multiclips")
 
