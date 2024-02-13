@@ -21,7 +21,6 @@ def run_evaluation(
         embeddings = def_.load_embeddings()
 
         if embeddings is None:
-            # FIXME: Store empty result
             print(f"No embedding found for {def_}")
             embeddings_performance.append({})
             continue
@@ -52,9 +51,7 @@ def run_evaluation(
             acc = (y_hat == validation_labels).astype(float).mean()
             print(def_, classifier.title, acc)
             classifier_performance[classifier.title] = acc
-            # FIXME: Store the results
         embeddings_performance.append(classifier_performance)
-    # FIXME: Report the results
     return embeddings_performance
 
 
