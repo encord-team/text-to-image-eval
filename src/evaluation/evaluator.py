@@ -21,8 +21,9 @@ def run_evaluation(
         embeddings = def_.load_embeddings()
 
         if embeddings is None:
-            # FIXME: Store empty result
-            return None
+            print(f"No embedding found for {def_}")
+            embeddings_performance.append({})
+            continue
 
         n, d = embeddings.images.shape
 
@@ -43,20 +44,20 @@ def run_evaluation(
         }
         classifier_performance = {}
         for classifier_type in classifiers:
+            if classifier_type == ZeroShotClassifier and embeddings.classes is None:
+                continue
             classifier = classifier_type(**model_args)
             probs, y_hat = classifier.predict(Embeddings(images=validation_embeddings, labels=validation_labels))
             acc = (y_hat == validation_labels).astype(float).mean()
             print(def_, classifier.title, acc)
             classifier_performance[classifier.title] = acc
-            # FIXME: Store the results
-        print(classifier_performance)
         embeddings_performance.append(classifier_performance)
-    # FIXME: Report the results
     return embeddings_performance
 
 
 if __name__ == "__main__":
     models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier]
     defs = [d for k, v in read_all_cached_embeddings().items() for d in v]
-    print(len(defs))
-    run_evaluation(models, defs)
+    print(defs)
+    performances = run_evaluation(models, defs)
+    print(performances)
