@@ -1,14 +1,13 @@
-from typing import Any
 
 import numpy as np
 
+from src.common.data_models import EmbeddingDefinition, Embeddings
 from src.evaluation import (
     ClassificationModel,
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
 )
-from src.common.data_models import EmbeddingDefinition, Embeddings
 from src.utils import read_all_cached_embeddings
 
 

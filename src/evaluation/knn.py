@@ -4,8 +4,8 @@ from typing import Any
 import numpy as np
 from autofaiss import build_index
 
-from src.evaluation.base import ClassificationModel
 from src.common import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
+from src.evaluation.base import ClassificationModel
 
 logger = logging.getLogger("multiclips")
 
@@ -49,7 +49,7 @@ class WeightedKNNClassifier(ClassificationModel):
             raise ValueError("Failed to build an index for knn search")
         self._index = index
 
-        logger.info(f"knn classifier index_infos", extra=self.index_infos)
+        logger.info("knn classifier index_infos", extra=self.index_infos)
 
     @staticmethod
     def get_default_params() -> dict[str, Any]:

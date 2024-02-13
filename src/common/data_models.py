@@ -1,14 +1,14 @@
 import logging
 from pathlib import Path
+from typing import Annotated
 
 import numpy as np
-from src.constants import PROJECT_PATHS
 from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
-from typing_extensions import Annotated
 
 from src.common.base import Embeddings
 from src.common.string_utils import safe_str
+from src.constants import PROJECT_PATHS
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")
@@ -36,7 +36,7 @@ class EmbeddingDefinition(BaseModel):
         """
         try:
             return Embeddings.from_file(self.embedding_path)
-        except ValueError as e:
+        except ValueError:
             return None
 
     def save_embeddings(self, embeddings: Embeddings, overwrite: bool = False) -> bool:

@@ -2,14 +2,14 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from src.constants import NPZ_KEYS
-from src.dataset import HFDataset
-from src.models import CLIPModel
 from pydantic import BaseModel, model_validator
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
 from src.common.numpy_types import ClassArray, EmbeddingArray
+from src.constants import NPZ_KEYS
+from src.dataset import HFDataset
+from src.models import CLIPModel
 
 
 class Embeddings(BaseModel):
