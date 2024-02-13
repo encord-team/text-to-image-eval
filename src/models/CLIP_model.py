@@ -36,7 +36,3 @@ class CLIPModel:
             return batch
 
         return process_fn
-
-    @classmethod
-    def load_model(cls, model_name: str):
-        return CLIPModel(model_name=model_name)
