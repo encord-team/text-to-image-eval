@@ -26,9 +26,7 @@ class EmbeddingDefinition(BaseModel):
         return PROJECT_PATHS.EMBEDDINGS / self._get_embedding_path(".npz")
 
     def get_reduction_path(self, reduction_name: str):
-        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(
-            f".{reduction_name}.2d.npy"
-        )
+        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(f".{reduction_name}.2d.npy")
 
     def load_embeddings(self) -> Embeddings | None:
         """
@@ -95,8 +93,8 @@ if __name__ == "__main__":
         pass
 
     def_ = EmbeddingDefinition(
-        model="openai/clip-vit-large-patch14-336",
-        dataset="Kabil007/LungCancer4Types",
+        model="clip",
+        dataset="plants",
     )
     embeddings = def_.build_embeddings()
     def_.save_embeddings(embeddings)
