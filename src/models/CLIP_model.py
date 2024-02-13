@@ -16,8 +16,12 @@ OPTIONS = {
 
 
 class CLIPModel:
-    def __init__(self, model_title: str, device: str = "cpu") -> None:
-        self.device = device
+    def __init__(self, model_title: str, device: str | None = None) -> None:
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        self._check_device(device)
+
+        self.device = torch.device(device)
         self.title = model_title
         if model_title not in OPTIONS:
             raise ValueError("Unsupported model name")
@@ -26,6 +30,14 @@ class CLIPModel:
 
         self.processor = CLIPProcessor.from_pretrained(model_title)
         self.process_fn = self.define_process_fn()
+
+    @staticmethod
+    def _check_device(device: str):
+        # Check if the input device exists and is available
+        if device not in {"cuda", "cpu"}:
+            raise ValueError(f"Unrecognized device: {device}")
+        if not getattr(torch, device).is_available():
+            raise ValueError(f"Unavailable device: {device}")
 
     def define_process_fn(self):
         def process_fn(batch):
