@@ -19,6 +19,11 @@ class Embeddings(BaseModel):
 
     @model_validator(mode="after")
     def validate_shapes(self) -> "Embeddings":
+        N_images = self.images.shape[0]
+        N_labels = self.labels.shape[0]
+        if N_images != N_labels:
+            raise ValueError(f"Differing number of images: {N_images} and labels: {N_labels}")
+
         if self.classes is None:
             return self
 
@@ -34,32 +39,22 @@ class Embeddings(BaseModel):
     @staticmethod
     def from_file(path: Path) -> "Embeddings":
         if not path.suffix == ".npz":
-            raise ValueError(
-                f"Embedding files should be `.npz` files not {path.suffix}"
-            )
+            raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
 
         loaded = np.load(path)
         if NPZ_KEYS.IMAGE_EMBEDDINGS not in loaded and NPZ_KEYS.LABELS not in loaded:
-            raise ValueError(
-                f"Require both {NPZ_KEYS.IMAGE_EMBEDDINGS}, {NPZ_KEYS.LABELS} should be present in {path}"
-            )
+            raise ValueError(f"Require both {NPZ_KEYS.IMAGE_EMBEDDINGS}, {NPZ_KEYS.LABELS} should be present in {path}")
 
         image_embeddings: EmbeddingArray = loaded[NPZ_KEYS.IMAGE_EMBEDDINGS]
         labels: ClassArray = loaded[NPZ_KEYS.LABELS]
         label_embeddings: EmbeddingArray | None = (
-            loaded[NPZ_KEYS.CLASS_EMBEDDINGS]
-            if NPZ_KEYS.CLASS_EMBEDDINGS in loaded
-            else None
+            loaded[NPZ_KEYS.CLASS_EMBEDDINGS] if NPZ_KEYS.CLASS_EMBEDDINGS in loaded else None
         )
-        return Embeddings(
-            images=image_embeddings, labels=labels, classes=label_embeddings
-        )
+        return Embeddings(images=image_embeddings, labels=labels, classes=label_embeddings)
 
     def to_file(self, path: Path) -> Path:
         if not path.suffix == ".npz":
-            raise ValueError(
-                f"Embedding files should be `.npz` files not {path.suffix}"
-            )
+            raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
         to_store: dict[str, EmbeddingArray] = {
             NPZ_KEYS.IMAGE_EMBEDDINGS: self.images,
             NPZ_KEYS.LABELS: self.labels,
@@ -82,9 +77,7 @@ class Embeddings(BaseModel):
         return embeddings
 
     @staticmethod
-    def build_embedding(
-        model: CLIPModel, dataset: HFDataset, batch_size: int = 50
-    ) -> "Embeddings":
+    def build_embedding(model: CLIPModel, dataset: HFDataset, batch_size: int = 50) -> "Embeddings":
         def _collate_fn(examples) -> dict[str, torch.tensor]:
             images = []
             labels = []
@@ -97,9 +90,7 @@ class Embeddings(BaseModel):
             return {"pixel_values": pixel_values, "labels": labels}
 
         transformed_dataset = dataset.dataset.with_transform(model.process_fn)
-        dataloader = DataLoader(
-            transformed_dataset, collate_fn=_collate_fn, batch_size=batch_size
-        )
+        dataloader = DataLoader(transformed_dataset, collate_fn=_collate_fn, batch_size=batch_size)
         tmp_embeddings = []
         tmp_labels = []
         with torch.inference_mode():
@@ -109,7 +100,8 @@ class Embeddings(BaseModel):
                 emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
                 tmp_embeddings.append(emb)
         image_embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
-        labels: ClassArray = np.array(tmp_labels)
+        tmp_labels = torch.concatenate(tmp_labels)
+        labels: ClassArray = tmp_labels.numpy()
         embeddings = Embeddings(images=image_embeddings, labels=labels)
         return embeddings
 
