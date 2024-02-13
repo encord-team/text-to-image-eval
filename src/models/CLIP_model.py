@@ -18,10 +18,11 @@ model_name = options[short_name]
 
 
 class CLIPModel:
-    def __init__(self, model_name: str, device: str = torch.device("cpu")) -> None:
-        self.model = HF_ClipModel.from_pretrained(model_name).to(device)
-        self.title = model_name
-        self.processor = CLIPProcessor.from_pretrained(model_name)
+    def __init__(self, model_title: str, device: str = "cpu") -> None:
+        self.device = device
+        self.model = HF_ClipModel.from_pretrained(model_title).to(self.device)
+        self.title = model_title
+        self.processor = CLIPProcessor.from_pretrained(model_title)
         self.process_fn = self.define_process_fn()
 
     def define_process_fn(self):
@@ -29,14 +30,10 @@ class CLIPModel:
             images = [i.convert("RGB") for i in batch["image"]]
             batch["image"] = [
                 self.processor(images=[i], return_tensors="pt")
-                .to("cuda")
+                .to(self.device)
                 .pixel_values.squeeze()
                 for i in images
             ]
             return batch
 
         return process_fn
-
-    @classmethod
-    def load_model(cls, model_name: str):
-        return CLIPModel(model_name=model_name)

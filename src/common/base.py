@@ -76,7 +76,7 @@ class Embeddings(BaseModel):
 
     @staticmethod
     def from_embedding_definition(model_name: str, dataset_name: str) -> "Embeddings":
-        model = CLIPModel.load_model(model_name)
+        model = CLIPModel(model_name)
         dataset = HFDataset(dataset_name)
         embeddings = Embeddings.build_embedding(model, dataset)
         return embeddings
@@ -90,13 +90,13 @@ class Embeddings(BaseModel):
             labels = []
             for example in examples:
                 images.append(example["image"])
-                labels.append(examples["label"])
+                labels.append(example["label"])
 
             pixel_values = torch.stack(images)
             labels = torch.tensor(labels)
             return {"pixel_values": pixel_values, "labels": labels}
 
-        transformed_dataset = dataset.dataset.set_transform(model.process_fn)
+        transformed_dataset = dataset.dataset.with_transform(model.process_fn)
         dataloader = DataLoader(
             transformed_dataset, collate_fn=_collate_fn, batch_size=batch_size
         )
@@ -104,13 +104,13 @@ class Embeddings(BaseModel):
         tmp_labels = []
         with torch.inference_mode():
             for batch in tqdm(dataloader, desc=f"Embedding dataset with {model.title}"):
-                tmp_labels.append(batch["label"])
-                features = model.get_image_features(pixel_values=batch["pixel_values"])
+                tmp_labels.append(batch["labels"])
+                features = model.model.get_image_features(pixel_values=batch["pixel_values"])
                 emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
                 tmp_embeddings.append(emb)
-        embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
+        image_embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
         labels: ClassArray = np.array(tmp_labels)
-        embeddings = Embeddings(images=embeddings, labels=labels)
+        embeddings = Embeddings(images=image_embeddings, labels=labels)
         return embeddings
 
     class Config:
