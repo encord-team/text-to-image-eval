@@ -2,14 +2,14 @@ from typing import Any
 
 import numpy as np
 
-from evaluation import (
+from src.evaluation import (
     ClassificationModel,
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
 )
-from common.data_models import EmbeddingDefinition, Embeddings
-from utils import read_all_cached_embeddings
+from src.common.data_models import EmbeddingDefinition, Embeddings
+from src.utils import read_all_cached_embeddings
 
 
 def run_evaluation(

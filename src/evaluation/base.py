@@ -4,8 +4,8 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from common import ClassArray, Embeddings, ProbabilityArray
-from common.numpy_types import DType
+from src.common import ClassArray, Embeddings, ProbabilityArray
+from src.common.numpy_types import DType
 
 
 class ClassificationModel:

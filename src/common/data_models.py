@@ -2,13 +2,13 @@ import logging
 from pathlib import Path
 
 import numpy as np
-from constants import PROJECT_PATHS
+from src.constants import PROJECT_PATHS
 from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
 
-from common.base import Embeddings
-from common.string_utils import safe_str
+from src.common.base import Embeddings
+from src.common.string_utils import safe_str
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")
