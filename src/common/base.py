@@ -89,7 +89,7 @@ class Embeddings(BaseModel):
 
     @staticmethod
     def build_embedding(
-        self, model: CLIPModel, dataset: HFDataset, batch_size: int = 50
+        model: CLIPModel, dataset: HFDataset, batch_size: int = 50
     ) -> "Embeddings":
         def _collate_fn(examples) -> dict[str, torch.tensor]:
             images = []
@@ -102,14 +102,14 @@ class Embeddings(BaseModel):
             labels = torch.tensor(labels)
             return {"pixel_values": pixel_values, "labels": labels}
 
-        transformed_dataset = dataset.dataset.set_transform(self.process_fn)
+        transformed_dataset = dataset.dataset.set_transform(model.process_fn)
         dataloader = DataLoader(
             transformed_dataset, collate_fn=_collate_fn, batch_size=batch_size
         )
         tmp_embeddings = []
         tmp_labels = []
         with torch.inference_mode():
-            for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
+            for batch in tqdm(dataloader, desc=f"Embedding dataset with {model.title}"):
                 tmp_labels.append(batch["label"])
                 features = model.get_image_features(pixel_values=batch["pixel_values"])
                 emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()

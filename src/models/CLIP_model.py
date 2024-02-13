@@ -18,7 +18,7 @@ model_name = options[short_name]
 
 
 class CLIPModel:
-    def __init__(self, model_name: str, device: str = torch.device("cuda")) -> None:
+    def __init__(self, model_name: str, device: str = torch.device("cpu")) -> None:
         self.model = HF_ClipModel.from_pretrained(model_name).to(device)
         self.title = model_name
         self.processor = CLIPProcessor.from_pretrained(model_name)

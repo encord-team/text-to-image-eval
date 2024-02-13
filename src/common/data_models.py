@@ -59,8 +59,8 @@ class EmbeddingDefinition(BaseModel):
         embeddings.to_file(self.embedding_path)
         return True
 
-    def build_embedding(self) -> Embeddings:
-        return EmbeddingDefinition.from_embedding_definition(self.model, self.dataset)
+    def build_embeddings(self) -> Embeddings:
+        return Embeddings.from_embedding_definition(self.model, self.dataset)
 
 
 if __name__ == "__main__":
@@ -93,3 +93,10 @@ if __name__ == "__main__":
         assert False
     except ValidationError:
         assert True
+
+    def_ = EmbeddingDefinition(
+        model="openai/clip-vit-large-patch14-336",
+        dataset="Kabil007/LungCancer4Types",
+    )
+    embeddings = def_.build_embeddings()
+    def_.save_embeddings(embeddings)
