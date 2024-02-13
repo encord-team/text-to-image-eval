@@ -90,9 +90,9 @@ if __name__ == "__main__":
             labels=np.random.randint(0, 10, size=(100,)),
             classes=np.random.randn(10, 30).astype(np.float32),
         )
-        assert False
+        raise AssertionError()
     except ValidationError:
-        assert True
+        pass
 
     def_ = EmbeddingDefinition(
         model="openai/clip-vit-large-patch14-336",

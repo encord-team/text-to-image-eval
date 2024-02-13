@@ -26,7 +26,7 @@ class ClassificationModel:
         """
         if embeddings.images.shape[-1] != self.dim:
             raise ValueError(
-                f"Image embeddings ({embeddings.images.shape}) should have same dimensionality as the classifier expects ({self.dim})"
+                f"Expected image embeddings with dimensions `{self.dim}`, but got `{embeddings.images.shape[-1]}`"
             )
 
     @abstractproperty

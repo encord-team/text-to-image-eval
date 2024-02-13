@@ -76,14 +76,8 @@ class Embeddings(BaseModel):
 
     @staticmethod
     def from_embedding_definition(model_name: str, dataset_name: str) -> "Embeddings":
-        try:
-            model = CLIPModel.load_model(model_name)
-        except Exception:
-            raise Exception
-        try:
-            dataset = HFDataset(dataset_name)
-        except Exception:
-            raise Exception
+        model = CLIPModel.load_model(model_name)
+        dataset = HFDataset(dataset_name)
         embeddings = Embeddings.build_embedding(model, dataset)
         return embeddings
 
