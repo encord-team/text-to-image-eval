@@ -8,9 +8,9 @@ class HFDataset:
     def _load_dataset(self, dataset_name) -> Dataset:
         try:
             dataset = load_dataset(dataset_name)
-        except Exception:
+        except Exception as e:
             self.dataset = None
-            raise ValueError(f"Failed to load dataset from HF {dataset_name}")
+            raise ValueError(f"Failed to load dataset from HF {dataset_name}") from e
         if isinstance(dataset, DatasetDict):
             dataset = dataset["train"]
         return dataset

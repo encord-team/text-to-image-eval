@@ -1,14 +1,14 @@
 import logging
 from pathlib import Path
+from typing import Annotated
 
 import numpy as np
-from constants import PROJECT_PATHS
 from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
-from typing_extensions import Annotated
 
-from common.base import Embeddings
-from common.string_utils import safe_str
+from src.common.base import Embeddings
+from src.common.string_utils import safe_str
+from src.constants import PROJECT_PATHS
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")
@@ -36,7 +36,7 @@ class EmbeddingDefinition(BaseModel):
         """
         try:
             return Embeddings.from_file(self.embedding_path)
-        except ValueError as e:
+        except ValueError:
             return None
 
     def save_embeddings(self, embeddings: Embeddings, overwrite: bool = False) -> bool:
@@ -90,9 +90,9 @@ if __name__ == "__main__":
             labels=np.random.randint(0, 10, size=(100,)),
             classes=np.random.randn(10, 30).astype(np.float32),
         )
-        assert False
+        raise AssertionError()
     except ValidationError:
-        assert True
+        pass
 
     def_ = EmbeddingDefinition(
         model="openai/clip-vit-large-patch14-336",

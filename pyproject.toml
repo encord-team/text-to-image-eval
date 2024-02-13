@@ -35,12 +35,15 @@ line-length = 120
 select = ["I001"]
 target-version = "py311"
 
+[tool.ruff.isort]
+known-first-party = ["src"]
+
 [tool.ruff.lint]
-ignore = [
-#  "B007",  # Loop control variable {name} not used within loop body
-#  "E501",  # Checks for lines that exceed the specified maximum character length
-#  "E741"  # Ambiguous variable name: {name} (e.g. allow short names in one-line list comprehensions)
-]
+# ignore = [
+# "B007",  # Loop control variable {name} not used within loop body
+# "E501",  # Checks for lines that exceed the specified maximum character length
+# "E741"  # Ambiguous variable name: {name} (e.g. allow short names in one-line list comprehensions)
+# ]
 select = ["B", "E", "F", "I", "UP"]
 
 [tool.ruff.per-file-ignores]

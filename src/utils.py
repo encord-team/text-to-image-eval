@@ -1,6 +1,5 @@
-from constants import PROJECT_PATHS
-from common.data_models import EmbeddingDefinition
-
+from src.common.data_models import EmbeddingDefinition
+from src.constants import PROJECT_PATHS
 
 
 def read_all_cached_embeddings() -> dict[str, list[EmbeddingDefinition]]:

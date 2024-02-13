@@ -4,8 +4,8 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-from common import ClassArray, Embeddings, ProbabilityArray
-from common.numpy_types import DType
+from src.common import ClassArray, Embeddings, ProbabilityArray
+from src.common.numpy_types import DType
 
 
 class ClassificationModel:
@@ -26,7 +26,7 @@ class ClassificationModel:
         """
         if embeddings.images.shape[-1] != self.dim:
             raise ValueError(
-                f"Image embeddings ({embeddings.images.shape}) should have same dimensionality as the classifier expects ({self.dim})"
+                f"Expected image embeddings with dimensions `{self.dim}`, but got `{embeddings.images.shape[-1]}`"
             )
 
     @abstractproperty
