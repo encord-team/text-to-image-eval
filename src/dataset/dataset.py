@@ -1,6 +1,6 @@
 from datasets import Dataset, DatasetDict, load_dataset
 
-DATASETS = {"LungCancer4Types": "Kabil007/LungCancer4Types"}
+DATASETS = {"LungCancer4Types": "Kabil007/LungCancer4Types", "plants": "sampath017/plants"}
 
 
 class HFDataset:

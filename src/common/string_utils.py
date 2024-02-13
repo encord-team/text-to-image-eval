@@ -1,10 +1,4 @@
-KEEP_CHARACTERS = set(
-    [
-        ".",
-        "_",
-        " ",
-    ]
-)
+KEEP_CHARACTERS = {".", "_", " "}
 REPLACE_CHARACTERS = {" ": "_"}
 
 
