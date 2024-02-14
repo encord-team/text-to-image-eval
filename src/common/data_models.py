@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     def_ = EmbeddingDefinition(
         model="clip",
-        dataset="plants",
+        dataset="LungCancer4Types",
     )
     embeddings = def_.build_embeddings()
-    def_.save_embeddings(embeddings)
+    def_.save_embeddings(embeddings, overwrite=True)
