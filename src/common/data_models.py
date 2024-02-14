@@ -60,6 +60,9 @@ class EmbeddingDefinition(BaseModel):
     def build_embeddings(self) -> Embeddings:
         return Embeddings.from_embedding_definition(self.model, self.dataset)
 
+    def __str__(self):
+        return self.model + "_" + self.dataset
+
 
 if __name__ == "__main__":
     def_ = EmbeddingDefinition(

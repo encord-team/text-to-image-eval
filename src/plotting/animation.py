@@ -1,11 +1,12 @@
-import pathlib
+from datetime import datetime
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
-from reduction import PCAReducer, UMAPReducer
+from reduction import UMAPReducer
 
-from src.common import EmbeddingArray, EmbeddingDefinition, Embeddings
+from src.common import EmbeddingDefinition
+from src.constants import OUTPUT_PATH
 
 
 def update_plot(t):
@@ -29,10 +30,8 @@ if __name__ == "__main__":
     # plt.scatter(reduced_2[:, 0], reduced_2[:, 1], c=embd_2.labels, facecolors="none")
     plt.legend(*scat.legend_elements(), loc="upper right")
     anim = animation.FuncAnimation(fig, update_plot, frames=np.arange(0, 1, 0.05))
-    defn_str = lambda x: f"{x.model}_{x.dataset}"
-    filename = f"Transition_{defn_str(defn_1)}_{defn_str(defn_2)}.gif"
-    OUTPUT_DIR = pathlib.Path("./output/animations/")
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH = OUTPUT_DIR / filename
-    anim.save(OUTPUT_PATH)
+    ts = datetime.now()
+    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{defn_1}-{defn_2}_{ts.isoformat()}.gif"
+    animation_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
+    anim.save(animation_file)
     plt.show()
