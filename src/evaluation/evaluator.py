@@ -15,7 +15,7 @@ from src.utils import read_all_cached_embeddings
 
 
 def run_evaluation(
-    classifiers: ClassificationModel,
+    classifiers: list[type[ClassificationModel]],
     embedding_definitions: list[EmbeddingDefinition],
     seed: int = 42,
     train_split: float = 0.7,  # TODO: This is very much out of the blue
