@@ -98,7 +98,7 @@ class Embeddings(BaseModel):
                 tmp_labels.append(batch["labels"])
                 features = model.model.get_image_features(pixel_values=batch["pixel_values"])
                 emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
-                tmp_embeddings.append(emb)
+                tmp_embeddings.append(emb.to("cpu"))
         image_embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
         tmp_labels = torch.concatenate(tmp_labels)
         labels: ClassArray = tmp_labels.numpy()
