@@ -1,6 +1,13 @@
 from datasets import Dataset, DatasetDict, load_dataset
 
-DATASETS = {"LungCancer4Types": "Kabil007/LungCancer4Types", "plants": "sampath017/plants"}
+DATASETS = {
+    "LungCancer4Types": "Kabil007/LungCancer4Types",
+    "plants": "sampath017/plants",
+    "NIH-Chest-X-ray": "alkzar90/NIH-Chest-X-ray-dataset",
+    "Alzheimer_MRI": "Falah/Alzheimer_MRI",
+    "Skin_cancer": "marmal88/skin_cancer",
+    "chest-xray-classification": "tpakov/chest-xray-classification",
+}
 
 
 class HFDataset:
