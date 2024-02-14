@@ -1,6 +1,10 @@
+import csv
+from datetime import datetime
+
 import numpy as np
 
 from src.common.data_models import EmbeddingDefinition, Embeddings
+from src.constants import OUTPUT_PATH
 from src.evaluation import (
     ClassificationModel,
     LinearProbeClassifier,
@@ -11,7 +15,7 @@ from src.utils import read_all_cached_embeddings
 
 
 def run_evaluation(
-    classifiers: ClassificationModel,
+    classifiers: list[type[ClassificationModel]],
     embedding_definitions: list[EmbeddingDefinition],
     seed: int = 42,
     train_split: float = 0.7,  # TODO: This is very much out of the blue
@@ -55,9 +59,29 @@ def run_evaluation(
     return embeddings_performance
 
 
+def export_evaluation_to_csv(
+    embedding_definitions: list[EmbeddingDefinition],
+    embeddings_performance: list[dict[str, float]],
+) -> None:
+    ts = datetime.now()
+    results_file = OUTPUT_PATH.EVALUATIONS / f"eval_{ts.isoformat()}.csv"
+    results_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
+
+    headers = ["Model", "Dataset", "Classifier", "Accuracy"]
+    with open(results_file.as_posix(), "w", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(headers)
+
+        for def_, perf in zip(embedding_definitions, embeddings_performance, strict=True):
+            def_: EmbeddingDefinition
+            for classifier_title, accuracy in perf.items():
+                writer.writerow([def_.model, def_.dataset, classifier_title, accuracy])
+
+
 if __name__ == "__main__":
     models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier]
     defs = [d for k, v in read_all_cached_embeddings().items() for d in v]
     print(defs)
     performances = run_evaluation(models, defs)
+    export_evaluation_to_csv(defs, performances)
     print(performances)
