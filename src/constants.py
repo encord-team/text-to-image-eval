@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 _CACHE_PATH = Path(os.environ.get("CLIP_CACHE_PATH", ".cache"))
+_OUTPUT_PATH = Path(os.environ.get("OUTPUT_PATH", "output"))
 
 
 class PROJECT_PATHS:
@@ -17,3 +18,8 @@ class NPZ_KEYS:
     IMAGE_EMBEDDINGS = "image_embeddings"
     CLASS_EMBEDDINGS = "class_embeddings"
     LABELS = "labels"
+
+
+class OUTPUT_PATH:
+    ANIMATIONS = _OUTPUT_PATH / "animations"
+    EVALUATIONS = _OUTPUT_PATH / "evaluations"
