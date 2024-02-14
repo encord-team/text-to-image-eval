@@ -17,18 +17,16 @@ OPTIONS = {
 
 class CLIPModel:
     def __init__(self, model_title: str, device: str | None = None) -> None:
+        if model_title not in OPTIONS:
+            raise ValueError(f"Unrecognized model: {model_title}")
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
         self._check_device(device)
 
         self.device = torch.device(device)
-        self.title = model_title
-        if model_title not in OPTIONS:
-            raise ValueError("Unsupported model name")
-        model_title = OPTIONS.get(model_title, None)
-        self.model = HF_ClipModel.from_pretrained(model_title).to(self.device)
-
-        self.processor = CLIPProcessor.from_pretrained(model_title)
+        self.title = OPTIONS[model_title]
+        self.model = HF_ClipModel.from_pretrained(self.title).to(self.device)
+        self.processor = CLIPProcessor.from_pretrained(self.title)
         self.process_fn = self.define_process_fn()
 
     @staticmethod
