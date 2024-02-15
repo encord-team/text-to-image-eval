@@ -41,9 +41,7 @@ class WeightedKNNClassifier(ClassificationModel):
         self.num_classes = num_classes or labels.max() + 1
 
         embeddings = self.normalize(embeddings)
-        index, self.index_infos = build_index(
-            embeddings, save_on_disk=False, verbose=logging.ERROR
-        )
+        index, self.index_infos = build_index(embeddings, save_on_disk=False, verbose=logging.ERROR)
 
         if index is None:
             raise ValueError("Failed to build an index for knn search")
@@ -71,9 +69,7 @@ class WeightedKNNClassifier(ClassificationModel):
         # We can shape of a factor self.k if we count differently here.
         weighted_count = np.zeros((n, self.num_classes, self.k), dtype=np.float32)
         weighted_count[
-            np.tile(np.arange(n), (self.k,)).reshape(
-                -1
-            ),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
+            np.tile(np.arange(n), (self.k,)).reshape(-1),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
             nearest_classes.reshape(-1),  # [class numbers]
             np.tile(np.arange(self.k), (n,)),  # [0, 1, .., k-1, 0, 1, .., k-1, ..]
         ] = 1 / dists.reshape(-1)

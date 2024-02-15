@@ -29,6 +29,7 @@ matplotlib = "^3.8.2"
 mypy = "^1.8.0"
 ruff = "^0.2.1"
 toml-sort = "^0.23.1"
+pre-commit = "^3.6.1"
 
 [tool.ruff]
 ignore = []

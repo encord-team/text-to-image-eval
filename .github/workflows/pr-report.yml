@@ -1,0 +1,23 @@
+name: PR Report
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: 3.11
+
+jobs:
+  pre-commit:
+    name: Linting and type checking
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup poetry environment
+        uses: ./.github/actions/setup-poetry-environment
+      - name: Run linting, type checking and testing
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: "--all-files --hook-stage=push"
