@@ -1,0 +1,34 @@
+default_language_version:
+  python: python3.11
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: f71fa2c1f9cf5cb705f73dffe4b21f7c61470ba9 # 4.4.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/pappasam/toml-sort
+    rev: b9b6210da457c38122995e434b314f4c4a4a923e # 0.23.1
+    hooks:
+      - id: toml-sort-fix
+        files: ^.+.toml$
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.2.1
+    hooks:
+      - id: ruff
+        args:
+          - --fix
+          - --exit-non-zero-on-fix
+#          - --ignore=E501 # line-too-long
+#          - --ignore=F631 # assert-tuple
+#          - --ignore=E741 # ambiguous-variable-name
+      - id: ruff-format
+        files: ^src\/.+\.py$
+#  - repo: https://github.com/pre-commit/mirrors-mypy
+#    rev: v1.8.0
+#    hooks:
+#      - id: mypy
+default_stages: [push]
