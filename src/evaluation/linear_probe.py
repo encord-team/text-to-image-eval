@@ -40,9 +40,7 @@ class LinearProbeClassifier(ClassificationModel):
                 Cs=[1e-3, 1e-2, 1e-1, 1e0, 1e1, 1e2, 1e3], random_state=0, **params
             ).fit(embeddings, labels)  # type: ignore
         else:
-            self.classifier = LogisticRegression(random_state=0, **params).fit(
-                embeddings, labels
-            )
+            self.classifier = LogisticRegression(random_state=0, **params).fit(embeddings, labels)
 
     @property
     def dim(self) -> int:
