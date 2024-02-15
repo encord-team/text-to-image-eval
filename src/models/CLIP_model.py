@@ -10,8 +10,14 @@ OPTIONS = {
     "street": "geolocal/StreetCLIP",
     # doesn't work - needs "open clop style loading" https://huggingface.co/microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224/blob/main/biomed_clip_example.ipynb
     # "biomed": "microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224",
+    # "sigLIP": "timm/ViT-SO400M-14-SigLIP-384" doesn't worj needs more open_clip style loading
     "apple": "apple/DFN5B-CLIP-ViT-H-14",  #  this is huge
     # "pmc": "ryanyip7777/pmc_vit_l_14",  # pmc open access dataset also open-clip
+    "eva-clip": "BAAI/EVA-CLIP-8B-448",  # This is ginormous
+    "fashion": "patrickjohncyh/fashion-clip",
+    "rscid": "flax-community/clip-rsicd",
+    "bioclip": "imageomics/bioclip",
+    "tinyclip": "wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M",
 }
 
 
