@@ -35,9 +35,10 @@ class Reducer:
         elif not embedding_def.embedding_path.is_file():
             raise ValueError(f"{embedding_def} does not have embeddings stored ({embedding_def.embedding_path})")
 
-        embeddings: EmbeddingArray = np.load(embedding_def.embedding_path)
-        reduction = cls.reduce(embeddings)
+        image_embeddings: EmbeddingArray = np.load(embedding_def.embedding_path)["image_embeddings"]
+        reduction = cls.reduce(image_embeddings)
         if save:
+            reduction_file.parent.mkdir(parents=True, exist_ok=True)
             np.save(reduction_file, reduction)
         return reduction
 
