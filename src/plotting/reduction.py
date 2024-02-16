@@ -9,25 +9,25 @@ from src.common import EmbeddingArray, EmbeddingDefinition, ReductionArray
 
 
 class Reducer:
-    def __init__(self, title: str) -> None:
-        self._title = title
+    @classmethod
+    @abstractmethod
+    def title(cls) -> str:
+        raise NotImplementedError("This abstract method returns the title of the reducer implemented in this class.")
 
-    @property
-    def title(self) -> str:
-        return self._title
-
+    @classmethod
     @abstractmethod
     def reduce(cls, embeddings: EmbeddingArray, **kwargs) -> ReductionArray:
-        ...
+        raise NotImplementedError("This abstract method contains the implementation for reducing embeddings.")
 
+    @classmethod
     def get_reduction(
-        self,
+        cls,
         embedding_def: EmbeddingDefinition,
         force_recompute: bool = False,
         save: bool = True,
         **kwargs,
     ) -> ReductionArray:
-        reduction_file = embedding_def.get_reduction_path(self.title)
+        reduction_file = embedding_def.get_reduction_path(cls.title())
         if reduction_file.is_file() and not force_recompute:
             reduction: ReductionArray = np.load(reduction_file)
             return reduction
@@ -36,15 +36,16 @@ class Reducer:
             raise ValueError(f"{embedding_def} does not have embeddings stored ({embedding_def.embedding_path})")
 
         embeddings: EmbeddingArray = np.load(embedding_def.embedding_path)
-        reduction = self.reduce(embeddings)
+        reduction = cls.reduce(embeddings)
         if save:
             np.save(reduction_file, reduction)
         return reduction
 
 
 class UMAPReducer(Reducer):
-    def __init__(self) -> None:
-        super().__init__("umap")
+    @classmethod
+    def title(cls) -> str:
+        return "umap"
 
     @classmethod
     def reduce(cls, embeddings: EmbeddingArray, umap_seed: int | None = None, **kwargs) -> ReductionArray:
@@ -53,8 +54,9 @@ class UMAPReducer(Reducer):
 
 
 class TSNEReducer(Reducer):
-    def __init__(self) -> None:
-        super().__init__("tsne")
+    @classmethod
+    def title(cls) -> str:
+        return "tsne"
 
     @classmethod
     def reduce(cls, embeddings: EmbeddingArray, **kwargs) -> ReductionArray:
@@ -63,8 +65,9 @@ class TSNEReducer(Reducer):
 
 
 class PCAReducer(Reducer):
-    def __init__(self) -> None:
-        super().__init__("pca")
+    @classmethod
+    def title(cls) -> str:
+        return "pca"
 
     @classmethod
     def reduce(cls, embeddings: EmbeddingArray, **kwargs) -> ReductionArray:
@@ -73,8 +76,6 @@ class PCAReducer(Reducer):
 
 
 if __name__ == "__main__":
-    import numpy as np
-
     embeddings = np.random.randn(100, 20)
 
     for cls in [UMAPReducer, TSNEReducer, PCAReducer]:
