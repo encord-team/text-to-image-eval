@@ -80,4 +80,4 @@ if __name__ == "__main__":
     embeddings = np.random.randn(100, 20)
 
     for cls in [UMAPReducer, TSNEReducer, PCAReducer]:
-        print(cls().reduce(embeddings).shape)
+        print(cls.reduce(embeddings).shape)
