@@ -7,6 +7,8 @@ DATASETS = {
     "Alzheimer_MRI": "Falah/Alzheimer_MRI",
     "Skin_cancer": "marmal88/skin_cancer",
     "chest-xray-classification": "tpakov/chest-xray-classification",
+    "sports-classification": "HES-XPLAIN/SportsImageClassification",
+    "geo-landmarks": "Qdrant/google-landmark-geo",
 }
 
 
