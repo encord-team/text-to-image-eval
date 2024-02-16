@@ -9,6 +9,18 @@
 
 - Repeat for geospatial and sports analytics
 
+### Set up the development environment
+
+1. Create the virtual environment, add dev dependencies and set up pre-commit hooks.
+   ```
+   ./dev-setup.sh
+   ```
+2. Add environment variables:
+   ```
+   export CLIP_CACHE_PATH=$PWD/.cache
+   export OUTPUT_PATH=$PWD/output
+   ```
+
 ### Commands I used to run different bits of the code
 
 0. data models: `PYTHONPATH=$PWD python src/common/data_models.py`
