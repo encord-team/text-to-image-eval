@@ -24,18 +24,22 @@ class Reducer:
         self,
         embedding_def: EmbeddingDefinition,
         force_recompute: bool = False,
+        save: bool = True,
         **kwargs,
     ) -> ReductionArray:
-        embedding_file = embedding_def.get_reduction_path(self.title)
-        if embedding_file.is_file() and not force_recompute:
-            reduction: ReductionArray = np.load(embedding_file)
+        reduction_file = embedding_def.get_reduction_path(self.title)
+        if reduction_file.is_file() and not force_recompute:
+            reduction: ReductionArray = np.load(reduction_file)
             return reduction
 
         elif not embedding_def.embedding_path.is_file():
             raise ValueError(f"{embedding_def} does not have embeddings stored ({embedding_def.embedding_path})")
 
         embeddings: EmbeddingArray = np.load(embedding_def.embedding_path)
-        return self.reduce(embeddings)
+        reduction = self.reduce(embeddings)
+        if save:
+            np.save(reduction_file, reduction)
+        return reduction
 
 
 class UMAPReducer(Reducer):
