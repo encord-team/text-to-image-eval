@@ -3,10 +3,10 @@ from datetime import datetime
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
-from reduction import UMAPReducer
 
 from src.common import EmbeddingDefinition
 from src.constants import OUTPUT_PATH
+from src.plotting.reduction import UMAPReducer
 
 
 def update_plot(t):
@@ -18,11 +18,10 @@ def update_plot(t):
 if __name__ == "__main__":
     defn_1 = EmbeddingDefinition(model="clip", dataset="LungCancer4Types")
     defn_2 = EmbeddingDefinition(model="pubmed", dataset="LungCancer4Types")
-    embd_1 = defn_1.load_embeddings()
-    embd_2 = defn_2.load_embeddings()
-    print("Embeddings loaded")
-    reduced_1 = UMAPReducer.reduce(embd_1.images)
-    reduced_2 = UMAPReducer.reduce(embd_2.images)
+
+    embd_1 = defn_1.load_embeddings()  # Needed for obtaining the labels for the plot
+    reduced_1 = UMAPReducer.get_reduction(defn_1)
+    reduced_2 = UMAPReducer.get_reduction(defn_2)
     print("Reductions made")
     fig = plt.gcf()
 
