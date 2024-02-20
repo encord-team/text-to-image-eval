@@ -3,12 +3,12 @@ from datasets import Dataset, Split, load_dataset
 DATASETS = {
     "LungCancer4Types": "Kabil007/LungCancer4Types",
     "plants": "sampath017/plants",
-    "NIH-Chest-X-ray": "alkzar90/NIH-Chest-X-ray-dataset",
+    "NIH_Chest_X_ray": "alkzar90/NIH-Chest-X-ray-dataset",
     "Alzheimer_MRI": "Falah/Alzheimer_MRI",
     "Skin_cancer": "marmal88/skin_cancer",
-    "chest-xray-classification": "tpakov/chest-xray-classification",
-    "sports-classification": "HES-XPLAIN/SportsImageClassification",
-    "geo-landmarks": "Qdrant/google-landmark-geo",
+    "chest_xray_classification": "tpakov/chest-xray-classification",
+    "sports_classification": "HES-XPLAIN/SportsImageClassification",
+    "geo_landmarks": "Qdrant/google-landmark-geo",
 }
 
 
