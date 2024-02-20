@@ -21,6 +21,12 @@
    export OUTPUT_PATH=$PWD/output
    ```
 
+### CLI Interface
+
+Basic CLI interface available with:
+`PYTHONPATH=$PWD python src/cli.py`
+
+
 ### Commands I used to run different bits of the code
 
 0. data models: `PYTHONPATH=$PWD python src/common/data_models.py`
