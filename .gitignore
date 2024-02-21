@@ -200,3 +200,6 @@ tags
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,python
 output
+
+# Mac's specifics
+.DS_Store
