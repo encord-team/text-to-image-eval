@@ -14,7 +14,7 @@ class DatasetProvider:
         source, kwargs = self._datasets[title]
         return source(title, **kwargs)
 
-    def get_datasets(self) -> list[str]:
+    def list_dataset_names(self) -> list[str]:
         return list(self._datasets.keys())
 
 

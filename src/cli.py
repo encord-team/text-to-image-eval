@@ -19,7 +19,7 @@ def build_command(args):
     build_embedding(args.model_dataset)
 
 
-def build_embedding(model_dataset: str | None = None):
+def build_embedding(model_dataset: str):
     if model_dataset.count("/") != 1:
         raise ValueError("model dataset must contain only 1 /")
     model, dataset = model_dataset.split("/")
@@ -78,7 +78,7 @@ def list_command(args):
 
 def list_models_datasets(all: bool = False):
     if all:
-        datasets = dataset_provider.get_datasets()
+        datasets = dataset_provider.list_dataset_names()
         models = CLIPModel.list_models()
         print(f"Available datasets are: {', '.join(datasets)}")
         print(f"Available models are: {', '.join(models)}")
