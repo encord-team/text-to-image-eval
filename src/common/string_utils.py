@@ -1,4 +1,4 @@
-KEEP_CHARACTERS = {".", "_", " "}
+KEEP_CHARACTERS = {".", "_", " ", "-"}
 REPLACE_CHARACTERS = {" ": "_"}
 
 
