@@ -8,7 +8,7 @@ from tqdm.auto import tqdm
 
 from src.common.numpy_types import ClassArray, EmbeddingArray
 from src.constants import NPZ_KEYS
-from src.dataset import HFDataset
+from src.dataset import Dataset, dataset_provider
 from src.models import CLIPModel
 
 
@@ -72,12 +72,12 @@ class Embeddings(BaseModel):
     @staticmethod
     def from_embedding_definition(model_name: str, dataset_name: str) -> "Embeddings":
         model = CLIPModel(model_name)
-        dataset = HFDataset(dataset_name)
+        dataset = dataset_provider.get_dataset(dataset_name)
         embeddings = Embeddings.build_embedding(model, dataset)
         return embeddings
 
     @staticmethod
-    def build_embedding(model: CLIPModel, dataset: HFDataset, batch_size: int = 50) -> "Embeddings":
+    def build_embedding(model: CLIPModel, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
         def _collate_fn(examples) -> dict[str, torch.tensor]:
             images = []
             labels = []
@@ -89,8 +89,8 @@ class Embeddings(BaseModel):
             labels = torch.tensor(labels)
             return {"pixel_values": pixel_values, "labels": labels}
 
-        transformed_dataset = dataset.dataset.with_transform(model.process_fn)
-        dataloader = DataLoader(transformed_dataset, collate_fn=_collate_fn, batch_size=batch_size)
+        dataset.set_transform(model.process_fn)
+        dataloader = DataLoader(dataset, collate_fn=_collate_fn, batch_size=batch_size)
         tmp_embeddings = []
         tmp_labels = []
         with torch.inference_mode():
