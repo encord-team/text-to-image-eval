@@ -9,6 +9,7 @@ from matplotlib.collections import PathCollection
 from src.common import EmbeddingDefinition
 from src.common.numpy_types import N2Array
 from src.constants import OUTPUT_PATH
+from src.dataset import HFDataset
 from src.plotting.reduction import UMAPReducer
 
 
@@ -22,17 +23,22 @@ def build_update_plot(scat: PathCollection, reduced_1, reduced_2: N2Array) -> Ca
 
 
 def build_animation(defn_1: EmbeddingDefinition, defn_2: EmbeddingDefinition) -> animation.FuncAnimation:
+    dataset_1 = HFDataset(defn_1.dataset)
+    label_names: list[str] = dataset_1.dataset.info.features["label"].names  # label is hardcoded here
+
     embd_1 = defn_1.load_embeddings()  # Needed for obtaining the labels for the plot
     reduced_1 = UMAPReducer.get_reduction(defn_1)
     reduced_2 = UMAPReducer.get_reduction(defn_2)
     print("Reductions made")
-    fig = plt.gcf()
+    fig = plt.figure(figsize=(10, 10))
 
     scat: PathCollection = plt.scatter(reduced_1[:, 0], reduced_1[:, 1], c=embd_1.labels)
     update_plot = build_update_plot(scat, reduced_1, reduced_2)
-    # plt.scatter(reduced_2[:, 0], reduced_2[:, 1], c=embd_2.labels, facecolors="none")
-    plt.legend(*scat.legend_elements(), loc="upper right")
+    handles, labels = scat.legend_elements()
+    labels = label_names
+    plt.legend(handles, labels, loc="upper right")
     anim = animation.FuncAnimation(fig, update_plot, frames=np.arange(0, 1, 0.05))
+    plt.title(f"Transition: {defn_1} to {defn_2}")
     return anim
 
 
