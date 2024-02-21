@@ -3,21 +3,29 @@ import argparse
 import matplotlib.pyplot as plt
 
 from src.common.data_models import EmbeddingDefinition
+from src.dataset.provider import dataset_provider
 from src.evaluation import (
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
 )
 from src.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
+from src.models.CLIP_model import CLIPModel
 from src.plotting.animation import build_animation, save_animation_to_file
 from src.utils import read_all_cached_embeddings
 
 
 def build_command(args):
-    build_embedding(args.model_dataset)
+    build_embedding(args.model_dataset, args.list)
 
 
-def build_embedding(model_dataset: str):
+def build_embedding(model_dataset: str | None = None, list: bool = False):
+    if list:
+        datasets = dataset_provider.get_datasets()
+        models = CLIPModel.list_models()
+        print(f"Available datasets are: {', '.join(datasets)}")
+        print(f"Available models are: {', '.join(models)}")
+        return
     if model_dataset.count("/") != 1:
         raise ValueError("model dataset must contain only 1 /")
     model, dataset = model_dataset.split("/")
@@ -75,7 +83,10 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers()
 
     parser_build = subparsers.add_parser("build", help="build embeddings")
-    parser_build.add_argument("model_dataset", type=str, help="model, dataset pair delimited by model/dataset")
+    parser_build.add_argument("--list", action="store_true", help="List all available models and dataset")
+    parser_build.add_argument(
+        "model_dataset", type=str, help="model, dataset pair delimited by model/dataset", default=None
+    )
     parser_build.set_defaults(func=build_command)
 
     parser_evaluate = subparsers.add_parser("evaluate", help="evaluate embeddings")
