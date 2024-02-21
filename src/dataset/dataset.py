@@ -49,11 +49,11 @@ class HFDataset(Dataset):
         super().set_transform(transform)
         self._dataset.set_transform(transform)
 
-    def _setup(self, **kwargs):
+    def _setup(self, split: str | Split | None = None, **kwargs):
         try:
             # Retrieve the train data if no split has been explicitly specified
-            if "split" not in kwargs.keys():
-                kwargs["split"] = Split.TRAIN
-            self._dataset = load_dataset(self.title_in_source, **kwargs)
+            if split is None:
+                split = Split.TRAIN
+            self._dataset = load_dataset(self.title_in_source, split=split, **kwargs)
         except Exception as e:
             raise ValueError(f"Failed to load dataset from Hugging Face: {self.title_in_source}") from e

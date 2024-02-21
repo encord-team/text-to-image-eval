@@ -24,7 +24,7 @@ def build_update_plot(scat: PathCollection, reduced_1, reduced_2: N2Array) -> Ca
 
 def build_animation(defn_1: EmbeddingDefinition, defn_2: EmbeddingDefinition) -> animation.FuncAnimation:
     dataset_1 = dataset_provider.get_dataset(defn_1.dataset)
-    label_names: list[str] = dataset_1.dataset.info.features["label"].names  # label is hardcoded here
+    label_names: list[str] = dataset_1._dataset.info.features["label"].names  # label is hardcoded here
 
     embd_1 = defn_1.load_embeddings()  # Needed for obtaining the labels for the plot
     reduced_1 = UMAPReducer.get_reduction(defn_1)
