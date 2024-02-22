@@ -1,39 +1,27 @@
 from abc import ABC, abstractmethod
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 import torch
+from common.numpy_types import ClassArray, EmbeddingArray
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import CLIPModel as HF_ClipModel
 from transformers import CLIPProcessor as HF_ClipProcessor
 
-# from src.common import ClassArray, EmbeddingArray
-
-OPTIONS = {
-    "clip": "openai/clip-vit-large-patch14-336",
-    "pubmed": "flaviagiammarino/pubmed-clip-vit-base-patch32",
-    "plip": "vinid/plip",
-    "flax": "flax-community/clip-rsicd-v4",
-    "street": "geolocal/StreetCLIP",
-    # doesn't work - needs "open clop style loading" https://huggingface.co/microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224/blob/main/biomed_clip_example.ipynb
-    # "biomed": "microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224",
-    # "sigLIP": "timm/ViT-SO400M-14-SigLIP-384" doesn't worj needs more open_clip style loading
-    "apple": "apple/DFN5B-CLIP-ViT-H-14",  #  this is huge
-    # "pmc": "ryanyip7777/pmc_vit_l_14",  # pmc open access dataset also open-clip
-    "eva-clip": "BAAI/EVA-CLIP-8B-448",  # This is ginormous
-    "fashion": "patrickjohncyh/fashion-clip",
-    "rscid": "flax-community/clip-rsicd",
-    "bioclip": "imageomics/bioclip",
-    "tinyclip": "wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M",
-}
-
 
 class CLIPModel(ABC):
-    def __init__(self, title: str, title_in_source: str | None = None, device: str | None = None, **kwargs) -> None:
+    def __init__(
+        self,
+        title: str,
+        title_in_source: str | None = None,
+        device: str | None = None,
+        **kwargs,
+    ) -> None:
         self.__title = title
-        self.__title_in_source = title if title_in_source is None else title_in_source
-        if device is None:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.__title_in_source = title_in_source or title
+        device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._check_device(device)
         self.__device = torch.device(device)
 
@@ -54,9 +42,12 @@ class CLIPModel(ABC):
         pass
 
     @abstractmethod
-    # Would like to have this return tuple[ImageEmbeddings, ClassArray]
-    def build_embedding(self, dataloader: DataLoader):
-        pass
+    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
+        ...
+
+    @abstractmethod
+    def get_transform(self) -> Callable[[Any], Any]:
+        ...
 
     @staticmethod
     def _check_device(device: str):
@@ -73,7 +64,7 @@ class closed_CLIPModel(CLIPModel):
         self._setup()
 
     def define_process_fn(self):
-        def process_fn(batch):
+        def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
             batch["image"] = [
                 self.processor(images=[i], return_tensors="pt").to(self.device).pixel_values.squeeze() for i in images
@@ -83,11 +74,12 @@ class closed_CLIPModel(CLIPModel):
         return process_fn
 
     def _setup(self):
-        self.model = HF_ClipModel.from_pretrained(self.title_in_source).to(self.device)
-        self.processor = HF_ClipProcessor.from_pretrained(self.title_in_source)
+        self.model = HF_ClipModel.from_pretrained(self.title_in_source).to(self.device)  # type: ignore
+        load_result = HF_ClipProcessor.from_pretrained(self.title_in_source)
+        self.processor = load_result[0] if isinstance(load_result, tuple) else load_result
         self.process_fn = self.define_process_fn()
 
-    def build_embedding(self, dataloader: DataLoader):
+    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
         tmp_embeddings = []
         tmp_labels = []
         with torch.inference_mode():
@@ -96,14 +88,23 @@ class closed_CLIPModel(CLIPModel):
                 features = self.model.get_image_features(pixel_values=batch["pixel_values"])
                 emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
                 tmp_embeddings.append(emb.to("cpu"))
-        image_embeddings = np.concatenate(tmp_embeddings, 0)
-        tmp_labels = torch.concatenate(tmp_labels)
-        labels = tmp_labels.numpy()
+        image_embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
+        class_array = torch.concatenate(tmp_labels)
+        labels = class_array.numpy()
         return image_embeddings, labels
+
+    def get_transform(self) -> Callable[[Any], Any]:
+        return self.process_fn
 
 
 class open_CLIPModel(CLIPModel):
-    def __init__(self, title: str, title_in_source: str | None = None, device: str | None = None, **kwargs) -> None:
+    def __init__(
+        self,
+        title: str,
+        title_in_source: str | None = None,
+        device: str | None = None,
+        **kwargs,
+    ) -> None:
         super().__init__(title, title_in_source, device, **kwargs)
         self._setup()
 
@@ -111,4 +112,7 @@ class open_CLIPModel(CLIPModel):
         raise NotImplementedError("open Clip not implemented")
 
     def build_embedding(self, dataloader: DataLoader):
+        raise NotImplementedError("open Clip not implemented")
+
+    def get_transform(self) -> Callable[[Any], Any]:
         raise NotImplementedError("open Clip not implemented")

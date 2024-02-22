@@ -32,13 +32,8 @@ toml-sort = "^0.23.1"
 pre-commit = "^3.6.1"
 
 [tool.ruff]
-ignore = []
 line-length = 120
-select = ["I001"]
 target-version = "py311"
-
-[tool.ruff.isort]
-known-first-party = ["src"]
 
 [tool.ruff.lint]
 # ignore = [
@@ -48,5 +43,8 @@ known-first-party = ["src"]
 # ]
 select = ["B", "E", "F", "I", "UP"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]

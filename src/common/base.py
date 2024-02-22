@@ -54,7 +54,7 @@ class Embeddings(BaseModel):
     def to_file(self, path: Path) -> Path:
         if not path.suffix == ".npz":
             raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
-        to_store: dict[str, EmbeddingArray] = {
+        to_store: dict[str, np.ndarray] = {
             NPZ_KEYS.IMAGE_EMBEDDINGS: self.images,
             NPZ_KEYS.LABELS: self.labels,
         }
@@ -77,7 +77,7 @@ class Embeddings(BaseModel):
 
     @staticmethod
     def build_embedding(model: CLIPModel, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
-        def _collate_fn(examples) -> dict[str, torch.tensor]:
+        def _collate_fn(examples) -> dict[str, torch.Tensor]:
             images = []
             labels = []
             for example in examples:
@@ -88,7 +88,7 @@ class Embeddings(BaseModel):
             labels = torch.tensor(labels)
             return {"pixel_values": pixel_values, "labels": labels}
 
-        dataset.set_transform(model.process_fn)
+        dataset.set_transform(model.get_transform())
         dataloader = DataLoader(dataset, collate_fn=_collate_fn, batch_size=batch_size)
 
         image_embeddings, labels = model.build_embedding(dataloader)
