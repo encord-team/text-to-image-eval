@@ -6,9 +6,10 @@ import numpy as np
 from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
 
-from src.common.base import Embeddings
-from src.common.string_utils import safe_str
-from src.constants import PROJECT_PATHS
+from clip_eval.constants import PROJECT_PATHS
+
+from .base import Embeddings
+from .string_utils import safe_str
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")

@@ -4,11 +4,12 @@ from typing import Any
 
 import numpy as np
 import torch
-from common.numpy_types import ClassArray, EmbeddingArray
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import CLIPModel as HF_ClipModel
 from transformers import CLIPProcessor as HF_ClipProcessor
+
+from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
 
 
 class CLIPModel(ABC):

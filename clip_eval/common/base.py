@@ -5,10 +5,11 @@ import torch
 from pydantic import BaseModel, model_validator
 from torch.utils.data import DataLoader
 
-from src.common.numpy_types import ClassArray, EmbeddingArray
-from src.constants import NPZ_KEYS
-from src.dataset import Dataset, dataset_provider
-from src.models import CLIPModel, model_provider
+from clip_eval.constants import NPZ_KEYS
+from clip_eval.dataset import Dataset, dataset_provider
+from clip_eval.models import CLIPModel, model_provider
+
+from .numpy_types import ClassArray, EmbeddingArray
 
 
 class Embeddings(BaseModel):
