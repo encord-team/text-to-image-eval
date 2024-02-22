@@ -80,7 +80,7 @@ def export_evaluation_to_csv(
 
 if __name__ == "__main__":
     models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier]
-    defs = [d for k, v in read_all_cached_embeddings().items() for d in v]
+    defs = read_all_cached_embeddings(as_list=True)
     print(defs)
     performances = run_evaluation(models, defs)
     export_evaluation_to_csv(defs, performances)
