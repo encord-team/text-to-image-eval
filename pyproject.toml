@@ -4,7 +4,7 @@ requires = ["poetry-core"]
 
 
 [tool.poetry.scripts]
-clip-eval = "clip_eval.cli:main"
+clip-eval = "clip_eval.cli:cli"
 
 
 [tool.poetry]
@@ -31,6 +31,7 @@ torchvision = "^0.17.0"
 transformers = "^4.37.2"
 umap-learn = "^0.5.5"
 matplotlib = "^3.8.2"
+typer = "^0.9.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.8.0"
