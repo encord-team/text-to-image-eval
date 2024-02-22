@@ -19,39 +19,55 @@ def _do_embedding_definition_selection(
     return definitions
 
 
+def _by_dataset(
+    defs: list[EmbeddingDefinition] | dict[str, list[EmbeddingDefinition]]
+) -> list[EmbeddingDefinition]:
+    if isinstance(defs, list):
+        defs_list = defs
+        defs = {}
+        for d in defs_list:
+            defs.setdefault(d.dataset, []).append(d)
+
+    choices = sorted(
+        [
+            Choice(v, f"D: {k[:15]:18s} M: {', '.join([d.model for d in v])}")
+            for k, v in defs.items()
+            if len(v)
+        ],
+        key=lambda c: len(c.value),
+    )
+    message = f"Please select dataset"
+    definitions: list[EmbeddingDefinition] = inq.fuzzy(message, choices=choices, multiselect=False, vi_mode=True).execute()  # type: ignore
+    return definitions
+
+
 def select_existing_embedding_definitions(
     by_dataset: bool = False,
 ) -> list[EmbeddingDefinition]:
-    edefs_by_dataset = read_all_cached_embeddings()
+    defs = read_all_cached_embeddings(as_list=True)
 
-    if by_dataset or click.confirm("Choose by dataset?"):
+    if by_dataset:
         # Subset definitions to specific dataset
-        choices = [
-            Choice(v, f"D: {k[:15]:18s} M: {', '.join([d.model for d in v])}")
-            for k, v in edefs_by_dataset.items()
-            if len(v)
-        ]
-        message = f"Please select dataset"
-        definitions: list[EmbeddingDefinition] = inq.fuzzy(message, choices=choices, multiselect=False, vi_mode=True).execute()  # type: ignore
-    else:
-        definitions = list(chain(*edefs_by_dataset.values()))
+        defs = _by_dataset(defs)
 
-    return _do_embedding_definition_selection(definitions)
+    return _do_embedding_definition_selection(defs)
 
 
 def select_from_all_embedding_definitions(
-    include_existing: bool = False,
+    include_existing: bool = False, by_dataset: bool = False
 ) -> list[EmbeddingDefinition]:
-    existing = set(chain(*read_all_cached_embeddings().values()))
+    existing = set(read_all_cached_embeddings(as_list=True))
 
     models = model_provider.list_model_names()
     datasets = dataset_provider.list_dataset_names()
 
-    all_defs = [
+    defs = [
         EmbeddingDefinition(dataset=d, model=m) for d, m in product(datasets, models)
     ]
     if not include_existing:
-        print("excluding")
-        all_defs = list(filter(lambda x: x not in existing, all_defs))
+        defs = [d for d in defs if d not in existing]
 
-    return _do_embedding_definition_selection(all_defs)
+    if by_dataset:
+        defs = _by_dataset(defs)
+
+    return _do_embedding_definition_selection(defs)
