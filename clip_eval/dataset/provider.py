@@ -21,7 +21,12 @@ class DatasetProvider:
 dataset_provider = DatasetProvider()
 dataset_provider.register_dataset("LungCancer4Types", HFDataset, title_in_source="Kabil007/LungCancer4Types")
 dataset_provider.register_dataset("plants", HFDataset, title_in_source="sampath017/plants")
-dataset_provider.register_dataset("NIH-Chest-X-ray", HFDataset, title_in_source="alkzar90/NIH-Chest-X-ray-dataset")
+dataset_provider.register_dataset(
+    "NIH-Chest-X-ray",
+    HFDataset,
+    title_in_source="alkzar90/NIH-Chest-X-ray-dataset",
+    trust_remote_code=True,
+)
 dataset_provider.register_dataset("Alzheimer-MRI", HFDataset, title_in_source="Falah/Alzheimer_MRI")
 dataset_provider.register_dataset("Skin-cancer", HFDataset, title_in_source="marmal88/skin_cancer", label="dx")
 dataset_provider.register_dataset(

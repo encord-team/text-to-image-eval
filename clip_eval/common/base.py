@@ -78,12 +78,15 @@ class Embeddings(BaseModel):
 
     @staticmethod
     def build_embedding(model: CLIPModel, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
+        features = list(set(dataset._dataset[dataset.label]))
+        feature_map = {feature: i for i, feature in enumerate(features)}
+
         def _collate_fn(examples) -> dict[str, torch.Tensor]:
             images = []
             labels = []
             for example in examples:
                 images.append(example["image"])
-                labels.append(example[dataset.label])
+                labels.append(feature_map[example[dataset.label]])
 
             pixel_values = torch.stack(images)
             labels = torch.tensor(labels)
