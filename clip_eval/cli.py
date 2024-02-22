@@ -2,17 +2,17 @@ import argparse
 
 import matplotlib.pyplot as plt
 
-from src.common.data_models import EmbeddingDefinition
-from src.dataset.provider import dataset_provider
-from src.evaluation import (
+from clip_eval.common.data_models import EmbeddingDefinition
+from clip_eval.dataset.provider import dataset_provider
+from clip_eval.evaluation import (
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
 )
-from src.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
-from src.models import model_provider
-from src.plotting.animation import build_animation, save_animation_to_file
-from src.utils import read_all_cached_embeddings
+from clip_eval.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
+from clip_eval.models import model_provider
+from clip_eval.plotting.animation import build_animation, save_animation_to_file
+from clip_eval.utils import read_all_cached_embeddings
 
 
 def build_command(args):
@@ -88,14 +88,17 @@ def list_models_datasets(all: bool = False):
         print(f"Available model_dataset pairs: {', '.join([str(defn) for defn in defns])}")
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Multiclip builder and Benchmarker")
     subparsers = parser.add_subparsers()
 
     parser_build = subparsers.add_parser("build", help="build embeddings")
 
     parser_build.add_argument(
-        "model_dataset", type=str, help="model, dataset pair delimited by model/dataset", default=None
+        "model_dataset",
+        type=str,
+        help="model, dataset pair delimited by model/dataset",
+        default=None,
     )
     parser_build.set_defaults(func=build_command)
 
@@ -125,3 +128,7 @@ if __name__ == "__main__":
     parser_list.set_defaults(func=list_command)
     args = parser.parse_args()
     args.func(args)
+
+
+if __name__ == "__main__":
+    main()

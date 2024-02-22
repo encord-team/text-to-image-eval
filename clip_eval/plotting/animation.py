@@ -6,11 +6,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import PathCollection
 
-from src.common import EmbeddingDefinition
-from src.common.numpy_types import N2Array
-from src.constants import OUTPUT_PATH
-from src.dataset import dataset_provider
-from src.plotting.reduction import UMAPReducer
+from clip_eval.common import EmbeddingDefinition
+from clip_eval.common.numpy_types import N2Array
+from clip_eval.constants import OUTPUT_PATH
+from clip_eval.dataset import dataset_provider
+
+from .reduction import UMAPReducer
 
 
 def build_update_plot(scat: PathCollection, reduced_1, reduced_2: N2Array) -> Callable[[float], PathCollection]:

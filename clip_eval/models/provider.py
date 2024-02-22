@@ -1,4 +1,4 @@
-from src.models.CLIP_model import CLIPModel, closed_CLIPModel, open_CLIPModel
+from .CLIP_model import CLIPModel, closed_CLIPModel, open_CLIPModel
 
 
 class ModelProvider:
@@ -22,11 +22,15 @@ model_provider = ModelProvider()
 model_provider.register_model("clip", closed_CLIPModel, title_in_source="openai/clip-vit-large-patch14-336")
 model_provider.register_model("plip", closed_CLIPModel, title_in_source="vinid/plip")
 model_provider.register_model(
-    "pubmed", closed_CLIPModel, title_in_source="flaviagiammarino/pubmed-clip-vit-base-patch32"
+    "pubmed",
+    closed_CLIPModel,
+    title_in_source="flaviagiammarino/pubmed-clip-vit-base-patch32",
 )
 model_provider.register_model("bioclip", closed_CLIPModel, title_in_source="imageomics/bioclip")
 model_provider.register_model(
-    "tinyclip", closed_CLIPModel, title_in_source="wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M"
+    "tinyclip",
+    closed_CLIPModel,
+    title_in_source="wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M",
 )
 model_provider.register_model("fashion", closed_CLIPModel, title_in_source="patrickjohncyh/fashion-clip")
 model_provider.register_model("rscid", closed_CLIPModel, title_in_source="flax-community/clip-rsicd")

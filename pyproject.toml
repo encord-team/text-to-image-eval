@@ -2,12 +2,19 @@
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core"]
 
+
+[tool.poetry.scripts]
+clip-eval = "clip_eval.cli:main"
+
+
 [tool.poetry]
 authors = ["Cord Technologies Limited <hello@encord.com>"]
 description = "Working with multiple CLIP models"
-name = "multiclips"
+name = "clip-eval"
 readme = "README.md"
 version = "0.1.0"
+
+packages = [{ include = "clip_eval", from = "." }]
 
 [tool.poetry.dependencies]
 autofaiss = "^2.17.0"

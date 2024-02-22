@@ -4,8 +4,9 @@ from typing import Any
 import numpy as np
 from autofaiss import build_index
 
-from src.common import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
-from src.evaluation.base import ClassificationModel
+from clip_eval.common.data_models import Embeddings
+from clip_eval.common.numpy_types import ClassArray, EmbeddingArray, ProbabilityArray
+from clip_eval.evaluation.base import ClassificationModel
 
 logger = logging.getLogger("multiclips")
 
