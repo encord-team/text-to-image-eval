@@ -10,7 +10,7 @@ from src.evaluation import (
     ZeroShotClassifier,
 )
 from src.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
-from src.models.CLIP_model import CLIPModel
+from src.models import model_provider
 from src.plotting.animation import build_animation, save_animation_to_file
 from src.utils import read_all_cached_embeddings
 
@@ -79,7 +79,7 @@ def list_command(args):
 def list_models_datasets(all: bool = False):
     if all:
         datasets = dataset_provider.list_dataset_names()
-        models = CLIPModel.list_models()
+        models = model_provider.list_model_names()
         print(f"Available datasets are: {', '.join(datasets)}")
         print(f"Available models are: {', '.join(models)}")
         return
