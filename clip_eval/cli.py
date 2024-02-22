@@ -1,6 +1,7 @@
+from typing import Annotated
+
 import matplotlib.pyplot as plt
 from typer import Argument, Option, Typer
-from typing_extensions import Annotated
 
 from clip_eval.common.data_models import EmbeddingDefinition
 from clip_eval.utils import read_all_cached_embeddings
@@ -27,8 +28,9 @@ def build_command(
 @cli.command("evaluate", help="Evaluate embedding performance")
 def evaluate_embeddings(
     model_datasets: Annotated[
-        list[str], Option(help="Specify specific combinations of models and datasets")
-    ] = [],
+        list[str] | None,
+        Option(help="Specify specific combinations of models and datasets"),
+    ] = None,
     is_all: Annotated[bool, Option(help="Evaluate all models.")] = False,
     save: Annotated[bool, Option(help="")] = False,
 ):
@@ -39,6 +41,7 @@ def evaluate_embeddings(
     )
     from clip_eval.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
 
+    model_datasets = model_datasets or []
     if is_all:
         defns: list[EmbeddingDefinition] = [
             d for k, v in read_all_cached_embeddings().items() for d in v

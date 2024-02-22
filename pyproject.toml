@@ -2,19 +2,13 @@
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core"]
 
-
-[tool.poetry.scripts]
-clip-eval = "clip_eval.cli:cli"
-
-
 [tool.poetry]
 authors = ["Cord Technologies Limited <hello@encord.com>"]
 description = "Working with multiple CLIP models"
 name = "clip-eval"
 readme = "README.md"
 version = "0.1.0"
-
-packages = [{ include = "clip_eval", from = "." }]
+packages = [{include = "clip_eval", from = "."}]
 
 [tool.poetry.dependencies]
 autofaiss = "^2.17.0"
@@ -38,6 +32,9 @@ mypy = "^1.8.0"
 ruff = "^0.2.1"
 toml-sort = "^0.23.1"
 pre-commit = "^3.6.1"
+
+[tool.poetry.scripts]
+clip-eval = "clip_eval.cli:cli"
 
 [tool.ruff]
 line-length = 120
