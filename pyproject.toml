@@ -8,7 +8,7 @@ description = "Working with multiple CLIP models"
 name = "clip-eval"
 readme = "README.md"
 version = "0.1.0"
-packages = [{ include = "clip_eval", from = "." }]
+packages = [{include = "clip_eval", from = "."}]
 
 [tool.poetry.dependencies]
 autofaiss = "^2.17.0"

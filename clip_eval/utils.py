@@ -6,13 +6,15 @@ from clip_eval.constants import PROJECT_PATHS
 
 
 @overload
-def read_all_cached_embeddings(as_list: Literal[True]) -> list[EmbeddingDefinition]: ...
+def read_all_cached_embeddings(as_list: Literal[True]) -> list[EmbeddingDefinition]:
+    ...
 
 
 @overload
 def read_all_cached_embeddings(
     as_list: Literal[False] = False,
-) -> dict[str, list[EmbeddingDefinition]]: ...
+) -> dict[str, list[EmbeddingDefinition]]:
+    ...
 
 
 def read_all_cached_embeddings(
@@ -24,9 +26,7 @@ def read_all_cached_embeddings(
     """
     defs_dict = {
         d.name: [
-            EmbeddingDefinition(dataset=d.name, model=m.stem)
-            for m in d.iterdir()
-            if m.is_file() and m.suffix == ".npz"
+            EmbeddingDefinition(dataset=d.name, model=m.stem) for m in d.iterdir() if m.is_file() and m.suffix == ".npz"
         ]
         for d in PROJECT_PATHS.EMBEDDINGS.iterdir()
         if d.is_dir()

@@ -27,9 +27,7 @@ class EmbeddingDefinition(BaseModel):
         return PROJECT_PATHS.EMBEDDINGS / self._get_embedding_path(".npz")
 
     def get_reduction_path(self, reduction_name: str):
-        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(
-            f".{reduction_name}.2d.npy"
-        )
+        return PROJECT_PATHS.REDUCTIONS / self._get_embedding_path(f".{reduction_name}.2d.npy")
 
     def load_embeddings(self) -> Embeddings | None:
         """
@@ -67,11 +65,7 @@ class EmbeddingDefinition(BaseModel):
         return self.model + "_" + self.dataset
 
     def __eq__(self, other: Any) -> bool:
-        return (
-            isinstance(other, EmbeddingDefinition)
-            and self.model == other.model
-            and self.dataset == other.dataset
-        )
+        return isinstance(other, EmbeddingDefinition) and self.model == other.model and self.dataset == other.dataset
 
     def __hash__(self):
         return hash((self.model, self.dataset))

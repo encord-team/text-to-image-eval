@@ -1,8 +1,7 @@
-from itertools import chain
-from typing import Annotated, Optional
+from typing import Annotated
 
 import matplotlib.pyplot as plt
-from typer import Argument, Option, Typer
+from typer import Option, Typer
 
 from clip_eval.common.data_models import EmbeddingDefinition
 from clip_eval.utils import read_all_cached_embeddings
@@ -23,20 +22,14 @@ You can use [TAB] to select multiple combinations and execute them sequentially.
  """,
 )
 def build_command(
-    model_dataset: Annotated[
-        str, Option(help="model, dataset pair delimited by model/dataset")
-    ] = "",
+    model_dataset: Annotated[str, Option(help="model, dataset pair delimited by model/dataset")] = "",
     include_existing: Annotated[
         bool,
-        Option(
-            help="Show also options for which the embeddings have been computed already"
-        ),
+        Option(help="Show also options for which the embeddings have been computed already"),
     ] = False,
     by_dataset: Annotated[
         bool,
-        Option(
-            help="Select dataset first, then model. Will only work if `model_dataset` not specified."
-        ),
+        Option(help="Select dataset first, then model. Will only work if `model_dataset` not specified."),
     ] = False,
 ):
     if len(model_dataset) > 0:
@@ -56,8 +49,12 @@ def build_command(
             print("Made embedding successfully")
             embd_defn.save_embeddings(embeddings=embeddings)
             print("Saved embedding to file successfully at", embd_defn.embedding_path)
-        except:
+        except Exception as e:
             print(f"Failed to build embeddings for this bastard: {embd_defn}")
+            print(e)
+            import traceback
+
+            traceback.print_exc()
 
 
 @cli.command(
@@ -68,7 +65,7 @@ For this two work, you should have already run the `build` command for the model
 )
 def evaluate_embeddings(
     model_datasets: Annotated[
-        Optional[list[str]],
+        list[str] | None,
         Option(help="Specify specific combinations of models and datasets"),
     ] = None,
     is_all: Annotated[bool, Option(help="Evaluate all models.")] = False,
@@ -88,12 +85,8 @@ def evaluate_embeddings(
     elif len(model_datasets) > 0:
         # Error could be localised better
         if not all([model_dataset.count("/") == 1 for model_dataset in model_datasets]):
-            raise ValueError(
-                "All model,dataset pairs must be presented as MODEL/DATASET"
-            )
-        model_dataset_pairs = [
-            model_dataset.split("/") for model_dataset in model_datasets
-        ]
+            raise ValueError("All model,dataset pairs must be presented as MODEL/DATASET")
+        model_dataset_pairs = [model_dataset.split("/") for model_dataset in model_datasets]
         defns = [
             EmbeddingDefinition(model=model_dataset[0], dataset=model_dataset[1])
             for model_dataset in model_dataset_pairs
@@ -110,27 +103,27 @@ def evaluate_embeddings(
 
 @cli.command(
     "animate",
-    help="Animate 2D embeddings from two different models on the same dataset. The interface will prompt you to choose which embeddings you want to use.",
+    help="""Animate 2D embeddings from two different models on the same dataset.
+The interface will prompt you to choose which embeddings you want to use.
+""",
 )
 def animate_embeddings():
     from clip_eval.plotting.animation import build_animation, save_animation_to_file
 
     # Error could be localised better
     defns = select_existing_embedding_definitions(by_dataset=True)
-    assert len(defns) == 2, f"Please select exactly two models to make animation"
+    assert len(defns) == 2, "Please select exactly two models to make animation"
     anim = build_animation(*defns)
     save_animation_to_file(anim, *defns)
     plt.show()
 
 
-@cli.command(
-    "list", help="List models and datasets. By default, only cached pairs are listed."
-)
+@cli.command("list", help="List models and datasets. By default, only cached pairs are listed.")
 def list_models_datasets(
     all: Annotated[
         bool,
         Option(help="List all models and dataset that are available via the tool."),
-    ] = False
+    ] = False,
 ):
     from clip_eval.dataset.provider import dataset_provider
     from clip_eval.models import model_provider
