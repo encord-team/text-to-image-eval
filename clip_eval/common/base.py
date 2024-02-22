@@ -4,12 +4,12 @@ import numpy as np
 import torch
 from pydantic import BaseModel, model_validator
 from torch.utils.data import DataLoader
-from tqdm.auto import tqdm
 
-from src.common.numpy_types import ClassArray, EmbeddingArray
-from src.constants import NPZ_KEYS
-from src.dataset import Dataset, dataset_provider
-from src.models import CLIPModel
+from clip_eval.constants import NPZ_KEYS
+from clip_eval.dataset import Dataset, dataset_provider
+from clip_eval.models import CLIPModel, model_provider
+
+from .numpy_types import ClassArray, EmbeddingArray
 
 
 class Embeddings(BaseModel):
@@ -55,7 +55,7 @@ class Embeddings(BaseModel):
     def to_file(self, path: Path) -> Path:
         if not path.suffix == ".npz":
             raise ValueError(f"Embedding files should be `.npz` files not {path.suffix}")
-        to_store: dict[str, EmbeddingArray] = {
+        to_store: dict[str, np.ndarray] = {
             NPZ_KEYS.IMAGE_EMBEDDINGS: self.images,
             NPZ_KEYS.LABELS: self.labels,
         }
@@ -71,14 +71,14 @@ class Embeddings(BaseModel):
 
     @staticmethod
     def from_embedding_definition(model_name: str, dataset_name: str) -> "Embeddings":
-        model = CLIPModel(model_name)
+        model = model_provider.get_model(model_name)
         dataset = dataset_provider.get_dataset(dataset_name)
         embeddings = Embeddings.build_embedding(model, dataset)
         return embeddings
 
     @staticmethod
     def build_embedding(model: CLIPModel, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
-        def _collate_fn(examples) -> dict[str, torch.tensor]:
+        def _collate_fn(examples) -> dict[str, torch.Tensor]:
             images = []
             labels = []
             for example in examples:
@@ -89,19 +89,10 @@ class Embeddings(BaseModel):
             labels = torch.tensor(labels)
             return {"pixel_values": pixel_values, "labels": labels}
 
-        dataset.set_transform(model.process_fn)
+        dataset.set_transform(model.get_transform())
         dataloader = DataLoader(dataset, collate_fn=_collate_fn, batch_size=batch_size)
-        tmp_embeddings = []
-        tmp_labels = []
-        with torch.inference_mode():
-            for batch in tqdm(dataloader, desc=f"Embedding dataset with {model.title}"):
-                tmp_labels.append(batch["labels"])
-                features = model.model.get_image_features(pixel_values=batch["pixel_values"])
-                emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
-                tmp_embeddings.append(emb.to("cpu"))
-        image_embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
-        tmp_labels = torch.concatenate(tmp_labels)
-        labels: ClassArray = tmp_labels.numpy()
+
+        image_embeddings, labels = model.build_embedding(dataloader)
         embeddings = Embeddings(images=image_embeddings, labels=labels)
         return embeddings
 

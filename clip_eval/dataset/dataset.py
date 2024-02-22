@@ -5,7 +5,14 @@ from torch.utils.data import Dataset as TorchDataset
 
 
 class Dataset(TorchDataset, ABC):
-    def __init__(self, title: str, title_in_source: str | None = None, *, transform=None, **kwargs):
+    def __init__(
+        self,
+        title: str,
+        title_in_source: str | None = None,
+        *,
+        transform=None,
+        **kwargs,
+    ):
         self.transform = transform
         self.__title = title
         self.__title_in_source = title if title_in_source is None else title_in_source
@@ -35,7 +42,14 @@ class Dataset(TorchDataset, ABC):
 
 
 class HFDataset(Dataset):
-    def __init__(self, title: str, title_in_source: str | None = None, *, transform=None, **kwargs):
+    def __init__(
+        self,
+        title: str,
+        title_in_source: str | None = None,
+        *,
+        transform=None,
+        **kwargs,
+    ):
         super().__init__(title, title_in_source, transform=transform)
         self._setup(**kwargs)
 
