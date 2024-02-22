@@ -28,9 +28,9 @@ def build_command(
 @cli.command("evaluate", help="Evaluate embedding performance")
 def evaluate_embeddings(
     model_datasets: Annotated[
-        list[str] | None,
-        Option(help="Specify specific combinations of models and datasets"),
-    ] = None,
+        list[str],
+        Argument(help="Specify specific combinations of models and datasets"),
+    ],
     is_all: Annotated[bool, Option(help="Evaluate all models.")] = False,
     save: Annotated[bool, Option(help="")] = False,
 ):
@@ -41,7 +41,6 @@ def evaluate_embeddings(
     )
     from clip_eval.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
 
-    model_datasets = model_datasets or []
     if is_all:
         defns: list[EmbeddingDefinition] = [
             d for k, v in read_all_cached_embeddings().items() for d in v
