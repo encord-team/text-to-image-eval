@@ -22,20 +22,14 @@ You can use [TAB] to select multiple combinations and execute them sequentially.
  """,
 )
 def build_command(
-    model_dataset: Annotated[
-        str, Option(help="model, dataset pair delimited by model/dataset")
-    ] = "",
+    model_dataset: Annotated[str, Option(help="model, dataset pair delimited by model/dataset")] = "",
     include_existing: Annotated[
         bool,
-        Option(
-            help="Show also options for which the embeddings have been computed already"
-        ),
+        Option(help="Show also options for which the embeddings have been computed already"),
     ] = False,
     by_dataset: Annotated[
         bool,
-        Option(
-            help="Select dataset first, then model. Will only work if `model_dataset` not specified."
-        ),
+        Option(help="Select dataset first, then model. Will only work if `model_dataset` not specified."),
     ] = False,
 ):
     if len(model_dataset) > 0:
@@ -91,12 +85,8 @@ def evaluate_embeddings(
     elif len(model_datasets) > 0:
         # Error could be localised better
         if not all([model_dataset.count("/") == 1 for model_dataset in model_datasets]):
-            raise ValueError(
-                "All model,dataset pairs must be presented as MODEL/DATASET"
-            )
-        model_dataset_pairs = [
-            model_dataset.split("/") for model_dataset in model_datasets
-        ]
+            raise ValueError("All model,dataset pairs must be presented as MODEL/DATASET")
+        model_dataset_pairs = [model_dataset.split("/") for model_dataset in model_datasets]
         defns = [
             EmbeddingDefinition(model=model_dataset[0], dataset=model_dataset[1])
             for model_dataset in model_dataset_pairs
@@ -130,9 +120,7 @@ def animate_embeddings():
     plt.show()
 
 
-@cli.command(
-    "list", help="List models and datasets. By default, only cached pairs are listed."
-)
+@cli.command("list", help="List models and datasets. By default, only cached pairs are listed.")
 def list_models_datasets(
     all: Annotated[
         bool,
