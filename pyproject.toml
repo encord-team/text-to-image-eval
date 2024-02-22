@@ -51,6 +51,7 @@ target-version = "py311"
 # "E741"  # Ambiguous variable name: {name} (e.g. allow short names in one-line list comprehensions)
 # ]
 select = ["B", "E", "F", "I", "UP"]
+ignore = ["UP007"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
