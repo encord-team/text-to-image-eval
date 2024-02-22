@@ -52,3 +52,7 @@ class CLIPModel:
             return batch
 
         return process_fn
+
+    @classmethod
+    def list_models(self) -> list[str]:
+        return list(OPTIONS.keys())

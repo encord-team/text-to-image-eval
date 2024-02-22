@@ -3,12 +3,14 @@ import argparse
 import matplotlib.pyplot as plt
 
 from src.common.data_models import EmbeddingDefinition
+from src.dataset.provider import dataset_provider
 from src.evaluation import (
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
 )
 from src.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
+from src.models.CLIP_model import CLIPModel
 from src.plotting.animation import build_animation, save_animation_to_file
 from src.utils import read_all_cached_embeddings
 
@@ -70,12 +72,31 @@ def animate_embeddings(model_datasets: list[str]):
     plt.show()
 
 
+def list_command(args):
+    list_models_datasets(args.all)
+
+
+def list_models_datasets(all: bool = False):
+    if all:
+        datasets = dataset_provider.list_dataset_names()
+        models = CLIPModel.list_models()
+        print(f"Available datasets are: {', '.join(datasets)}")
+        print(f"Available models are: {', '.join(models)}")
+        return
+    else:
+        defns: list[EmbeddingDefinition] = [d for k, v in read_all_cached_embeddings().items() for d in v]
+        print(f"Available model_dataset pairs: {', '.join([str(defn) for defn in defns])}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multiclip builder and Benchmarker")
     subparsers = parser.add_subparsers()
 
     parser_build = subparsers.add_parser("build", help="build embeddings")
-    parser_build.add_argument("model_dataset", type=str, help="model, dataset pair delimited by model/dataset")
+
+    parser_build.add_argument(
+        "model_dataset", type=str, help="model, dataset pair delimited by model/dataset", default=None
+    )
     parser_build.set_defaults(func=build_command)
 
     parser_evaluate = subparsers.add_parser("evaluate", help="evaluate embeddings")
@@ -99,5 +120,8 @@ if __name__ == "__main__":
 
     parser_animation.set_defaults(func=animate_command)
 
+    parser_list = subparsers.add_parser("list", help="List available dataset, model pairs")
+    parser_list.add_argument("--all", action="store_true", help="List all available models and dataset")
+    parser_list.set_defaults(func=list_command)
     args = parser.parse_args()
     args.func(args)
