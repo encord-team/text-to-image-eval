@@ -9,6 +9,7 @@ class Dataset(TorchDataset, ABC):
         self,
         title: str,
         title_in_source: str | None = None,
+        label: str | None = None,
         *,
         transform=None,
         **kwargs,
@@ -16,6 +17,7 @@ class Dataset(TorchDataset, ABC):
         self.transform = transform
         self.__title = title
         self.__title_in_source = title if title_in_source is None else title_in_source
+        self.__label = label
 
     @abstractmethod
     def __getitem__(self, idx):
@@ -24,6 +26,10 @@ class Dataset(TorchDataset, ABC):
     @abstractmethod
     def __len__(self):
         pass
+
+    @property
+    def label(self) -> str:
+        return self.__label
 
     @property
     def title(self) -> str:
@@ -46,11 +52,12 @@ class HFDataset(Dataset):
         self,
         title: str,
         title_in_source: str | None = None,
+        label: str = "label",
         *,
         transform=None,
         **kwargs,
     ):
-        super().__init__(title, title_in_source, transform=transform)
+        super().__init__(title, title_in_source, label, transform=transform)
         self._setup(**kwargs)
 
     def __getitem__(self, idx):
@@ -68,6 +75,6 @@ class HFDataset(Dataset):
             # Retrieve the train data if no split has been explicitly specified
             if split is None:
                 split = Split.TRAIN
-            self._dataset = load_dataset(self.title_in_source, split=split, **kwargs)
+            self._dataset = load_dataset(path=self.title_in_source, split=split, **kwargs)
         except Exception as e:
             raise ValueError(f"Failed to load dataset from Hugging Face: {self.title_in_source}") from e

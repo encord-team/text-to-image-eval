@@ -23,7 +23,7 @@ dataset_provider.register_dataset("LungCancer4Types", HFDataset, title_in_source
 dataset_provider.register_dataset("plants", HFDataset, title_in_source="sampath017/plants")
 dataset_provider.register_dataset("NIH-Chest-X-ray", HFDataset, title_in_source="alkzar90/NIH-Chest-X-ray-dataset")
 dataset_provider.register_dataset("Alzheimer-MRI", HFDataset, title_in_source="Falah/Alzheimer_MRI")
-dataset_provider.register_dataset("Skin-cancer", HFDataset, title_in_source="marmal88/skin_cancer")
+dataset_provider.register_dataset("Skin-cancer", HFDataset, title_in_source="marmal88/skin_cancer", label="dx")
 dataset_provider.register_dataset(
     "chest-xray-classification",
     HFDataset,

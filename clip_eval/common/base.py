@@ -83,7 +83,7 @@ class Embeddings(BaseModel):
             labels = []
             for example in examples:
                 images.append(example["image"])
-                labels.append(example["label"])
+                labels.append(example[dataset.label])
 
             pixel_values = torch.stack(images)
             labels = torch.tensor(labels)
