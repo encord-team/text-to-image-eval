@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Optional
 
 import matplotlib.pyplot as plt
 from typer import Option, Typer
@@ -65,7 +65,7 @@ For this two work, you should have already run the `build` command for the model
 )
 def evaluate_embeddings(
     model_datasets: Annotated[
-        list[str] | None,
+        Optional[list[str]],
         Option(help="Specify specific combinations of models and datasets"),
     ] = None,
     is_all: Annotated[bool, Option(help="Evaluate all models.")] = False,
