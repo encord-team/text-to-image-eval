@@ -37,7 +37,6 @@ def rotate_to_target(source: N2Array, destination: N2Array):
 
     rot, *_ = R.align_vectors(source, destination, return_sensitivity=True)
     out = source @ rot.as_matrix()
-    print(out[:, 2].std())
     return out[:, :2]
 
 

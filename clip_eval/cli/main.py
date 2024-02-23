@@ -111,7 +111,7 @@ def animate_embeddings():
     from clip_eval.plotting.animation import build_animation, save_animation_to_file
 
     # Error could be localised better
-    defns = select_existing_embedding_definitions(by_dataset=True)
+    defns = select_existing_embedding_definitions(by_dataset=True, select_pair=True)
     assert len(defns) == 2, "Please select exactly two models to make animation"
     def1 = max(defns, key=lambda d: int(d.model == "clip"))
     def2 = defns[0] if defns[0] != def1 else defns[1]

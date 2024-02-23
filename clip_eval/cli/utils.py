@@ -40,14 +40,17 @@ def _by_dataset(defs: list[EmbeddingDefinition] | dict[str, list[EmbeddingDefini
 
 def select_existing_embedding_definitions(
     by_dataset: bool = False,
+    select_pair: bool = False,
 ) -> list[EmbeddingDefinition]:
     defs = read_all_cached_embeddings(as_list=True)
 
     if by_dataset:
         # Subset definitions to specific dataset
         defs = _by_dataset(defs)
-
-    return _do_embedding_definition_selection(defs)
+    if select_pair:
+        return _do_embedding_definition_selection(defs) + _do_embedding_definition_selection(defs)
+    else:
+        return _do_embedding_definition_selection(defs)
 
 
 def select_from_all_embedding_definitions(
