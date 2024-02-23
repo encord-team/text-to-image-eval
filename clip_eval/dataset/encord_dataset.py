@@ -65,10 +65,10 @@ class EncordDataset(Dataset):
         self._classification = self._project.ontology_structure.get_child_by_hash(
             classification_hash, type_=Classification
         )
-        radio_attributes = [a for a in self._classification.attributes if a.get_property_type() == PropertyType.RADIO]
-        if len(radio_attributes) == 0:
+        radio_attribute = self._classification.attributes[0]
+        if radio_attribute.get_property_type() != PropertyType.RADIO:
             raise ValueError("Expected a classification hash with an attribute of type `Radio`")
-        self._attribute = radio_attributes[0]
+        self._attribute = radio_attribute
         self.class_names = [o.title for o in self._attribute.options]  # TODO Expose class names as a property
 
         cache_dir = cache_dir or os.getenv("ENCORD_CACHE_DIR")
