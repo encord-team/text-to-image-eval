@@ -6,7 +6,7 @@ from encord.orm.dataset import DataType, Image, Video
 from encord.project import LabelRowV2
 from tqdm.auto import tqdm
 
-from src.dataset.utils import collect_async, download_file
+from .utils import collect_async, download_file
 
 
 def download_image(image_data: Image | Video, destination_dir: Path) -> Path:

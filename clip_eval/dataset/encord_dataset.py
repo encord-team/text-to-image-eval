@@ -7,8 +7,8 @@ from encord.objects import Classification
 from encord.objects.common import PropertyType
 from PIL import Image
 
-from src.dataset.dataset import Dataset
-from src.dataset.encord_utils import download_data_from_project
+from .dataset import Dataset
+from .encord_utils import download_data_from_project
 
 
 class EncordDataset(Dataset):

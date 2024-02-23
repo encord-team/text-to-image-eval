@@ -1,5 +1,5 @@
-from src.dataset.dataset import Dataset, HFDataset
-from src.dataset.encord_dataset import EncordDataset
+from .dataset import Dataset, HFDataset
+from .encord_dataset import EncordDataset
 
 
 class DatasetProvider:
@@ -26,10 +26,14 @@ dataset_provider.register_dataset("NIH-Chest-X-ray", HFDataset, title_in_source=
 dataset_provider.register_dataset("Alzheimer-MRI", HFDataset, title_in_source="Falah/Alzheimer_MRI")
 dataset_provider.register_dataset("Skin-cancer", HFDataset, title_in_source="marmal88/skin_cancer")
 dataset_provider.register_dataset(
-    "chest-xray-classification", HFDataset, title_in_source="trpakov/chest-xray-classification"
+    "chest-xray-classification",
+    HFDataset,
+    title_in_source="trpakov/chest-xray-classification",
 )
 dataset_provider.register_dataset(
-    "sports-classification", HFDataset, title_in_source="HES-XPLAIN/SportsImageClassification"
+    "sports-classification",
+    HFDataset,
+    title_in_source="HES-XPLAIN/SportsImageClassification",
 )
 dataset_provider.register_dataset("geo-landmarks", HFDataset, title_in_source="Qdrant/google-landmark-geo")
 

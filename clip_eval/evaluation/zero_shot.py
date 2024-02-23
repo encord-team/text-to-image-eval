@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.common import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
-from src.evaluation.base import ClassificationModel
+from clip_eval.common import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
+from clip_eval.evaluation.base import ClassificationModel
 
 
 class ZeroShotClassifier(ClassificationModel):

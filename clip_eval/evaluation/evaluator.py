@@ -3,15 +3,15 @@ from datetime import datetime
 
 import numpy as np
 
-from src.common.data_models import EmbeddingDefinition, Embeddings
-from src.constants import OUTPUT_PATH
-from src.evaluation import (
+from clip_eval.common.data_models import EmbeddingDefinition, Embeddings
+from clip_eval.constants import OUTPUT_PATH
+from clip_eval.evaluation import (
     ClassificationModel,
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
 )
-from src.utils import read_all_cached_embeddings
+from clip_eval.utils import read_all_cached_embeddings
 
 
 def run_evaluation(
@@ -80,7 +80,7 @@ def export_evaluation_to_csv(
 
 if __name__ == "__main__":
     models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier]
-    defs = [d for k, v in read_all_cached_embeddings().items() for d in v]
+    defs = read_all_cached_embeddings(as_list=True)
     print(defs)
     performances = run_evaluation(models, defs)
     export_evaluation_to_csv(defs, performances)

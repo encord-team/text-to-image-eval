@@ -1,7 +1,7 @@
 ## Goals are:
 
-- [ ] Have a way to load classification datasets from HF. See this [colab](https://colab.research.google.com/drive/1O7PBYHKrk8SELHq40AoH8hehig-WNezS?usp=sharing)
-- [ ] Have a way to load clip mod from HF. See this [colab](https://colab.research.google.com/drive/1O7PBYHKrk8SELHq40AoH8hehig-WNezS?usp=sharing)
+- [x] Have a way to load classification datasets from HF. See this [colab](https://colab.research.google.com/drive/1O7PBYHKrk8SELHq40AoH8hehig-WNezS?usp=sharing)
+- [x] Have a way to load clip mod from HF. See this [colab](https://colab.research.google.com/drive/1O7PBYHKrk8SELHq40AoH8hehig-WNezS?usp=sharing)
 - [ ] Find relevant datasets for medical domain
 - [ ] Find relevant "CLIP" models for medical domain
 - [ ] Compute embeddings across datasets and models for medical and store them
@@ -26,10 +26,12 @@
 ### CLI Interface
 
 Basic CLI interface available with:
-`PYTHONPATH=$PWD python src/cli.py`
 
+```shell
+clip-eval [command]
+```
 
-### Commands I used to run different bits of the code
+### [DEPRECATED] Commands I used to run different bits of the code
 
 0. data models: `PYTHONPATH=$PWD python src/common/data_models.py`
 1. knn: `PYTHONPATH=$PWD python src/evaluation/knn.py`

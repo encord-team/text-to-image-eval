@@ -1,11 +1,12 @@
 from abc import abstractmethod
+from typing import Literal
 
 import numpy as np
 import umap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
-from src.common import EmbeddingArray, EmbeddingDefinition, ReductionArray
+from clip_eval.common import EmbeddingArray, EmbeddingDefinition, ReductionArray
 
 
 class Reducer:
@@ -74,6 +75,20 @@ class PCAReducer(Reducer):
     def reduce(cls, embeddings: EmbeddingArray, **kwargs) -> ReductionArray:
         reducer = PCA(n_components=2)
         return reducer.fit_transform(embeddings)
+
+
+__REDUCTIONS = {
+    UMAPReducer.title(): UMAPReducer,
+    TSNEReducer.title(): TSNEReducer,
+    PCAReducer.title(): PCAReducer,
+}
+REDUCTIONS = Literal["umap"] | Literal["tsne"] | Literal["pca"]
+
+
+def reduction_from_string(name: str) -> UMAPReducer | TSNEReducer | PCAReducer:
+    if name not in __REDUCTIONS:
+        raise KeyError(f"{name} not in set {set(__REDUCTIONS.keys())}")
+    return __REDUCTIONS[name]
 
 
 if __name__ == "__main__":

@@ -1,14 +1,15 @@
 import logging
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import numpy as np
 from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
 
-from src.common.base import Embeddings
-from src.common.string_utils import safe_str
-from src.constants import PROJECT_PATHS
+from clip_eval.constants import PROJECT_PATHS
+
+from .base import Embeddings
+from .string_utils import safe_str
 
 SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")
@@ -62,6 +63,12 @@ class EmbeddingDefinition(BaseModel):
 
     def __str__(self):
         return self.model + "_" + self.dataset
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, EmbeddingDefinition) and self.model == other.model and self.dataset == other.dataset
+
+    def __hash__(self):
+        return hash((self.model, self.dataset))
 
 
 if __name__ == "__main__":
