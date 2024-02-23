@@ -1,7 +1,9 @@
 import csv
 from datetime import datetime
+from typing import Literal
 
 import numpy as np
+from tabulate import tabulate
 
 from clip_eval.common.data_models import EmbeddingDefinition, Embeddings
 from clip_eval.constants import OUTPUT_PATH
@@ -14,22 +16,49 @@ from clip_eval.evaluation import (
 from clip_eval.utils import read_all_cached_embeddings
 
 
+def print_evaluation_results(
+    results: dict[EmbeddingDefinition, dict[str, float]],
+    classifier_column: (Literal["linear_probe"] | Literal["zero_shot"] | Literal["wKNN"]) = "linear_probe",
+):
+    defs = list(results.keys())
+    model_names = list(set(map(lambda d: d.model, defs)))
+    dataset_names = list(set(map(lambda d: d.dataset, defs)))
+
+    table: list[list[float | str]] = [
+        ["Model/Dataset"] + dataset_names,
+    ] + [[m] + ["-"] * len(dataset_names) for m in model_names]
+
+    def set_score(d: EmbeddingDefinition, s: float):
+        row = model_names.index(d.model) + 1
+        col = dataset_names.index(d.dataset) + 1
+        table[row][col] = f"{s:.4f}"
+
+    for d, res in results.items():
+        s = res.get(classifier_column)
+        if s:
+            set_score(d, res[classifier_column])
+
+    print(f"{'='*5} {classifier_column} {'='*5}")
+    print(tabulate(table))
+
+
 def run_evaluation(
     classifiers: list[type[ClassificationModel]],
     embedding_definitions: list[EmbeddingDefinition],
     seed: int = 42,
     train_split: float = 0.7,  # TODO: This is very much out of the blue
-) -> list[dict[str, float]]:
-    embeddings_performance: list[dict[str, float]] = []
+) -> dict[EmbeddingDefinition, dict[str, float]]:
+    embeddings_performance: dict[EmbeddingDefinition, dict[str, float]] = {}
+    model_keys: set[str] = set()
+
     for def_ in embedding_definitions:
         embeddings = def_.load_embeddings()
 
         if embeddings is None:
             print(f"No embedding found for {def_}")
-            embeddings_performance.append({})
             continue
 
-        n, d = embeddings.images.shape
+        n, _ = embeddings.images.shape
 
         np.random.seed(seed)
         selection = np.random.permutation(n)
@@ -46,16 +75,19 @@ def run_evaluation(
             "labels": train_labels,
             "class_embeddings": embeddings.classes,
         }
-        classifier_performance = {}
+        classifier_performance: dict[str, float] = embeddings_performance.setdefault(def_, {})
         for classifier_type in classifiers:
             if classifier_type == ZeroShotClassifier and embeddings.classes is None:
                 continue
             classifier = classifier_type(**model_args)
-            probs, y_hat = classifier.predict(Embeddings(images=validation_embeddings, labels=validation_labels))
-            acc = (y_hat == validation_labels).astype(float).mean()
-            print(def_, classifier.title, acc)
+            _, y_hat = classifier.predict(Embeddings(images=validation_embeddings, labels=validation_labels))
+            acc: float = (y_hat == validation_labels).astype(float).mean().item()
             classifier_performance[classifier.title] = acc
-        embeddings_performance.append(classifier_performance)
+            model_keys.add(classifier.title)
+
+    for n in model_keys:
+        print_evaluation_results(embeddings_performance, n)
+
     return embeddings_performance
 
 

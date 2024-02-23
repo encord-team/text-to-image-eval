@@ -28,7 +28,7 @@ class LinearProbeClassifier(ClassificationModel):
             labels: The labels associated to the embeddings
             num_classes: If not specified will be inferred from the labels.
         """
-        super().__init__("linear-probe")
+        super().__init__("linear_probe")
         self.num_classes = num_classes or labels.max() + 1
 
         embeddings = self.normalize(embeddings)
