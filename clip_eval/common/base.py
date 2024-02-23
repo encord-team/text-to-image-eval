@@ -6,7 +6,7 @@ from pydantic import BaseModel, model_validator
 from torch.utils.data import DataLoader
 
 from clip_eval.constants import NPZ_KEYS
-from clip_eval.dataset import Dataset, dataset_provider
+from clip_eval.dataset import DataRow, Dataset, dataset_provider
 from clip_eval.models import CLIPModel, model_provider
 
 from .numpy_types import ClassArray, EmbeddingArray
@@ -78,15 +78,12 @@ class Embeddings(BaseModel):
 
     @staticmethod
     def build_embedding(model: CLIPModel, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
-        features = list(set(dataset._dataset[dataset.label]))
-        feature_map = {feature: i for i, feature in enumerate(features)}
-
-        def _collate_fn(examples) -> dict[str, torch.Tensor]:
+        def _collate_fn(examples: DataRow) -> dict[str, torch.Tensor]:
             images = []
             labels = []
             for example in examples:
-                images.append(example["image"])
-                labels.append(feature_map[example[dataset.label]])
+                images.append(example.image)
+                labels.append(example.label)
 
             pixel_values = torch.stack(images)
             labels = torch.tensor(labels)
