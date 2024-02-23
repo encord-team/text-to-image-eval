@@ -63,12 +63,6 @@ def download_data_from_project(project: Project, data_dir: Path, overwrite_annot
     :param overwrite_annotations: Flag that indicates whether to overwrite existing annotations if they exist.
     """
     data_dir.mkdir(parents=True, exist_ok=True)
-    data_hashes = [lr_metadata.data_hash for lr_metadata in project.list_label_rows(include_uninitialised_labels=True)]
     for label_row in tqdm(project.list_label_rows_v2(), desc=f"Downloading [{project.title}]"):
         if label_row.data_type in {DataType.IMAGE, DataType.IMG_GROUP}:
             download_label_row_data(project, label_row, data_dir, overwrite_annotations)
-
-    with tqdm(total=len(data_hashes), desc=f"Downloading [{project.title}]") as pbar:
-        for data_hash in data_hashes:
-            download_label_row_data(project, data_hash, data_dir, overwrite_annotations)
-            pbar.update(1)
