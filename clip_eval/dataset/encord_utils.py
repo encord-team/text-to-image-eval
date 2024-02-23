@@ -20,16 +20,23 @@ def download_image(image_data: Image | Video, destination_dir: Path) -> Path:
 def download_label_row_data(
     project: Project, label_row: LabelRowV2, data_dir: Path, overwrite_annotations: bool = False
 ) -> list[Path]:
-    label_row_dir = data_dir / label_row.data_hash
+    label_row_dir = data_dir / project.project_hash / label_row.data_hash
     label_row_dir.mkdir(parents=True, exist_ok=True)
 
     # Download the annotations
-    label_row.initialise_labels()
     label_row_annotations = label_row_dir / "annotations.json"
     if not label_row_annotations.exists() or overwrite_annotations:
+        label_row.initialise_labels()
         label_row_annotations.write_text(json.dumps(label_row.to_encord_dict()), encoding="utf-8")
+    else:
+        # Needed to iterate the label row's frames
+        label_row.from_labels_dict(json.loads(label_row_annotations.read_text(encoding="utf-8")))
 
     # Download the images
+    is_frame_missing = any(not (label_row_dir / fv.image_title).exists() for fv in label_row.get_frame_views())
+    if not is_frame_missing:
+        return [label_row_dir / fv.image_title for fv in label_row.get_frame_views()]
+
     if label_row.data_type == DataType.IMAGE:
         # TODO This `if` is here because of a SDK bug, remove it when IMAGE data is stored in the proper image field [1]
         images_data = [project.get_data(label_row.data_hash, get_signed_url=True)[0]]
