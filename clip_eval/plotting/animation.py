@@ -11,7 +11,7 @@ from clip_eval.common.numpy_types import N2Array
 from clip_eval.constants import OUTPUT_PATH
 from clip_eval.dataset import dataset_provider
 
-from .reduction import REDUCTIONS, Reducer, reduction_from_string
+from .reduction import REDUCTIONS, reduction_from_string
 
 
 def build_update_plot(scat: PathCollection, reduced_1, reduced_2: N2Array) -> Callable[[float], PathCollection]:
@@ -21,16 +21,6 @@ def build_update_plot(scat: PathCollection, reduced_1, reduced_2: N2Array) -> Ca
         return scat
 
     return update_plot
-
-
-def lazy_reduce(d: EmbeddingDefinition, reduction: Reducer) -> N2Array:
-    red_file = d.get_reduction_path(reduction.title())
-    if red_file.is_file():
-        reduced = np.load(red_file)
-    else:
-        reduced = reduction.get_reduction(d)
-        np.save(red_file, reduced)
-    return reduced
 
 
 def standardize(a: N2Array):
@@ -66,8 +56,8 @@ def build_animation(
 
     reducer = reduction_from_string(reduction)
 
-    reduced_1 = standardize(lazy_reduce(defn_1, reducer))
-    reduced_2 = rotate_to_target(standardize(lazy_reduce(defn_2, reducer)), reduced_1)
+    reduced_1 = standardize(reducer.get_reduction(defn_1))
+    reduced_2 = rotate_to_target(standardize(reducer.get_reduction(defn_2)), reduced_1)
 
     print("Reductions made")
 
