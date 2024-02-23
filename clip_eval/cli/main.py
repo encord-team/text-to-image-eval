@@ -113,7 +113,9 @@ def animate_embeddings():
     # Error could be localised better
     defns = select_existing_embedding_definitions(by_dataset=True)
     assert len(defns) == 2, "Please select exactly two models to make animation"
-    anim = build_animation(*defns)
+    def1 = max(defns, key=lambda d: int(d.model == "clip"))
+    def2 = defns[0] if defns[0] != def1 else defns[1]
+    anim = build_animation(def1, def2)
     save_animation_to_file(anim, *defns)
     plt.show()
 
