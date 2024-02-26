@@ -98,7 +98,6 @@ def evaluate_embeddings(
     performances = run_evaluation(models, defns)
     if save:
         export_evaluation_to_csv(defns, performances)
-    print(performances)
 
 
 @cli.command(
