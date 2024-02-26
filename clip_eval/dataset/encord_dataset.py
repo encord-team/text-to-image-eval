@@ -43,13 +43,11 @@ class EncordDataset(Dataset):
         return len(self._frame_paths)
 
     def _get_frame_path(self, label_row: LabelRowV2, frame: int) -> Path:
-        frame_view = label_row.get_frame_view(frame)
         return get_frame_file(
             data_dir=self._cache_dir,
             project_hash=self._project.project_hash,
-            label_row_hash=label_row.label_hash,
-            frame_hash=frame_view.image_hash,
-            frame_title=frame_view.image_title,
+            label_row=label_row,
+            frame=frame,
         )
 
     def _get_label_row_annotations(self, label_row: LabelRowV2) -> Path:

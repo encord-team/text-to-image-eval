@@ -34,7 +34,10 @@ def download_label_row_data(
         label_row.from_labels_dict(json.loads(label_row_annotations.read_text(encoding="utf-8")))
 
     # Download the images
-    is_frame_missing = any(not (label_row_dir / fv.image_title).exists() for fv in label_row.get_frame_views())
+    is_frame_missing = any(
+        not get_frame_file(data_dir, project.project_hash, label_row, idx).exists()
+        for idx in range(label_row.number_of_frames)
+    )
     if not is_frame_missing:
         return [label_row_dir / fv.image_title for fv in label_row.get_frame_views()]
 
@@ -74,7 +77,7 @@ def download_data_from_project(project: Project, data_dir: Path, overwrite_annot
     :param overwrite_annotations: Flag that indicates whether to overwrite existing annotations if they exist.
     """
     data_dir.mkdir(parents=True, exist_ok=True)
-    for label_row in tqdm(project.list_label_rows_v2(), desc=f"Downloading [{project.title}]"):
+    for label_row in tqdm(project.list_label_rows_v2(), desc=f"Fetching Encord project `{project.title}`"):
         if label_row.data_type in {DataType.IMAGE, DataType.IMG_GROUP}:
             download_label_row_data(data_dir, project, label_row, overwrite_annotations)
 
@@ -84,7 +87,15 @@ def get_frame_name(frame_hash: str, frame_title: str) -> str:
     return f"{frame_hash}.{file_extension}"
 
 
-def get_frame_file(data_dir: Path, project_hash: str, label_row_hash: str, frame_hash: str, frame_title: str) -> Path:
+def get_frame_file(data_dir: Path, project_hash: str, label_row: LabelRowV2, frame: int) -> Path:
+    label_row_dir = get_label_row_dir(data_dir, project_hash, label_row.label_hash)
+    frame_view = label_row.get_frame_view(frame)
+    return label_row_dir / get_frame_name(frame_view.image_hash, frame_view.image_title)
+
+
+def get_frame_file_raw(
+    data_dir: Path, project_hash: str, label_row_hash: str, frame_hash: str, frame_title: str
+) -> Path:
     return get_label_row_dir(data_dir, project_hash, label_row_hash) / get_frame_name(frame_hash, frame_title)
 
 
