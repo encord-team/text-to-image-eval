@@ -127,7 +127,7 @@ class SiglipModel(CLIPModel):
         self._setup()
 
     def _setup(self, **kwargs):
-        self.model = HF_SiglipModel.from_pretrained(self.title_in_source)
+        self.model = HF_SiglipModel.from_pretrained(self.title_in_source).to(self.device)
         self.processor = HF_SiglipProcessor.from_pretrained(self.title_in_source)
         self.process_fn = self.define_process_fn()
 
