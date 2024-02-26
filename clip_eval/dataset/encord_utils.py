@@ -47,7 +47,6 @@ def download_label_row_data(
         # Missing field caused by the SDK bug
         images_data[0]["image_hash"] = label_row.data_hash
     else:
-        # TODO test this
         images_data = project.get_data(label_row.data_hash, get_signed_url=True)[1]
     return collect_async(
         lambda image_data: download_image(image_data, label_row_dir),
