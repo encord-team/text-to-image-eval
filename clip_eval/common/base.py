@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import numpy as np
-import torch
 from pydantic import BaseModel, model_validator
 from torch.utils.data import DataLoader
 
