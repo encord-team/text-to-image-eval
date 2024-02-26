@@ -1,4 +1,4 @@
-from .CLIP_model import CLIPModel, closed_CLIPModel, open_CLIPModel
+from .CLIP_model import CLIPModel, SiglipModel, closed_CLIPModel, open_CLIPModel
 
 
 class ModelProvider:
@@ -37,3 +37,5 @@ model_provider.register_model("rscid", closed_CLIPModel, title_in_source="flax-c
 model_provider.register_model("street", closed_CLIPModel, title_in_source="geolocal/StreetCLIP")
 model_provider.register_model("apple", open_CLIPModel, title_in_source="apple/DFN5B-CLIP-ViT-H-14")
 model_provider.register_model("eva-clip", open_CLIPModel, title_in_source="BAAI/EVA-CLIP-8B-448")
+model_provider.register_model("siglip_small", SiglipModel, title_in_source="google/siglip-base-patch16-224")
+model_provider.register_model("siglip_large", SiglipModel, title_in_source="google/siglip-large-patch16-256")
