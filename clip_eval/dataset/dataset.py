@@ -8,8 +8,8 @@ class Dataset(TorchDataset, ABC):
     def __init__(
         self,
         title: str,
-        title_in_source: str | None = None,
         *,
+        title_in_source: str | None = None,
         transform=None,
         **kwargs,
     ):
@@ -45,12 +45,12 @@ class HFDataset(Dataset):
     def __init__(
         self,
         title: str,
-        title_in_source: str | None = None,
         *,
+        title_in_source: str | None = None,
         transform=None,
         **kwargs,
     ):
-        super().__init__(title, title_in_source, transform=transform)
+        super().__init__(title, title_in_source=title_in_source, transform=transform)
         self._setup(**kwargs)
 
     def __getitem__(self, idx):

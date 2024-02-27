@@ -19,6 +19,8 @@
    ```
    export CLIP_CACHE_PATH=$PWD/.cache
    export OUTPUT_PATH=$PWD/output
+   export ENCORD_SSH_KEY_PATH=<path_to_the_encord_ssh_key_file>
+   export ENCORD_CACHE_DIR=$PWD/.cache/encord
    ```
 
 ### CLI Interface

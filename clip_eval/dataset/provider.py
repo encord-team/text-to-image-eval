@@ -1,4 +1,5 @@
 from .dataset import Dataset, HFDataset
+from .encord_dataset import EncordDataset
 
 
 class DatasetProvider:
@@ -35,3 +36,7 @@ dataset_provider.register_dataset(
     title_in_source="HES-XPLAIN/SportsImageClassification",
 )
 dataset_provider.register_dataset("geo-landmarks", HFDataset, title_in_source="Qdrant/google-landmark-geo")
+
+dataset_provider.register_dataset(
+    "rsicd", EncordDataset, project_hash="46ba913e-1428-48ef-be7f-2553e69bc1e6", classification_hash="4f6cf0c8"
+)
