@@ -155,7 +155,7 @@ class open_CLIPModel(CLIPModel):
         model, _, preprocess = open_clip.create_model_and_transforms(
             model_name=self.model_name, pretrained=self.pretrained, **kwargs
         )
-        self.model = model
+        self.model = model.to(self.device)
         self.processor = preprocess
 
     def build_embedding(self, dataloader: DataLoader):
