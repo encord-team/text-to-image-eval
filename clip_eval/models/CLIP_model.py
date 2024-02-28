@@ -95,7 +95,7 @@ class closed_CLIPModel(CLIPModel):
 
         return collate_fn
 
-    def _setup(self) -> None:
+    def _setup(self, **kwargs) -> None:
         self.model = HF_ClipModel.from_pretrained(self.title_in_source).to(self.device)  # type: ignore
         load_result = HF_ClipProcessor.from_pretrained(self.title_in_source)
         self.processor = load_result[0] if isinstance(load_result, tuple) else load_result
@@ -177,13 +177,8 @@ class SiglipModel(CLIPModel):
     def __init__(self, title: str, title_in_source: str | None = None, device: str | None = None, **kwargs) -> None:
         super().__init__(title, title_in_source, device, **kwargs)
 
-<<<<<<< HEAD
     def _setup(self, **kwargs):
         self.model = HF_SiglipModel.from_pretrained(self.title_in_source).to(self.device)
-=======
-    def _setup(self, **kwargs) -> None:
-        self.model = HF_SiglipModel.from_pretrained(self.title_in_source)
->>>>>>> fce42fd (Collate, transform returned from functions. Signature / Type tidying)
         self.processor = HF_SiglipProcessor.from_pretrained(self.title_in_source)
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
