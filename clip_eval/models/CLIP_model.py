@@ -28,6 +28,7 @@ class CLIPModel(ABC):
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._check_device(device)
         self.__device = torch.device(device)
+        self._setup()
 
     @property
     def title(self) -> str:
@@ -69,7 +70,6 @@ class CLIPModel(ABC):
 class closed_CLIPModel(CLIPModel):
     def __init__(self, title: str, title_in_source: str, device: str | None = None) -> None:
         super().__init__(title, title_in_source, device)
-        self._setup()
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
@@ -128,7 +128,6 @@ class open_CLIPModel(CLIPModel):
         self.model_name = model_name
         title_in_source = model_name + "_" + pretrained
         super().__init__(title, title_in_source, device, **kwargs)
-        self._setup()
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
@@ -177,7 +176,6 @@ class open_CLIPModel(CLIPModel):
 class SiglipModel(CLIPModel):
     def __init__(self, title: str, title_in_source: str | None = None, device: str | None = None, **kwargs) -> None:
         super().__init__(title, title_in_source, device, **kwargs)
-        self._setup()
 
 <<<<<<< HEAD
     def _setup(self, **kwargs):
