@@ -67,7 +67,7 @@ class CLIPModel(ABC):
             raise ValueError(f"Unavailable device: {device}")
 
 
-class closed_CLIPModel(CLIPModel):
+class ClosedCLIPModel(CLIPModel):
     def __init__(self, title: str, title_in_source: str, device: str | None = None) -> None:
         super().__init__(title, title_in_source, device)
 
@@ -115,7 +115,11 @@ class closed_CLIPModel(CLIPModel):
         return image_embeddings, labels
 
 
-class open_CLIPModel(CLIPModel):
+class sds_A:
+    pass
+
+
+class OpenCLIPModel(CLIPModel):
     def __init__(
         self,
         title: str,
