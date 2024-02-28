@@ -28,7 +28,7 @@ class CLIPModel(ABC):
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._check_device(device)
         self.__device = torch.device(device)
-        self._setup()
+        self._setup(**kwargs)
 
     @property
     def title(self) -> str:
