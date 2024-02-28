@@ -42,15 +42,15 @@ class CLIPModel(ABC):
         return self.__device
 
     @abstractmethod
-    def _setup(self, **kwargs):
+    def _setup(self, **kwargs) -> None:
         pass
 
     @abstractmethod
-    def get_transform(self):
+    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         ...
 
     @abstractmethod
-    def get_collate_fn(self):
+    def get_collate_fn(self) -> Callable[[Any], Any]:
         ...
 
     @abstractmethod
@@ -71,7 +71,7 @@ class closed_CLIPModel(CLIPModel):
         super().__init__(title, title_in_source, device)
         self._setup()
 
-    def define_process_fn(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
+    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
             batch["image"] = [
@@ -81,7 +81,7 @@ class closed_CLIPModel(CLIPModel):
 
         return process_fn
 
-    def define_collate_fn(self) -> Callable[[Any], Any]:
+    def get_collate_fn(self) -> Callable[[Any], Any]:
         def collate_fn(examples) -> dict[str, torch.Tensor]:
             images = []
             labels = []
@@ -95,12 +95,10 @@ class closed_CLIPModel(CLIPModel):
 
         return collate_fn
 
-    def _setup(self):
+    def _setup(self) -> None:
         self.model = HF_ClipModel.from_pretrained(self.title_in_source).to(self.device)  # type: ignore
         load_result = HF_ClipProcessor.from_pretrained(self.title_in_source)
         self.processor = load_result[0] if isinstance(load_result, tuple) else load_result
-        self.__transform = self.define_process_fn()
-        self.__collate_fn = self.define_collate_fn()
 
     def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
         tmp_embeddings = []
@@ -116,28 +114,23 @@ class closed_CLIPModel(CLIPModel):
         labels = class_array.numpy()
         return image_embeddings, labels
 
-    def get_transform(self):
-        return self.__transform
-
-    def get_collate_fn(self):
-        return self.__collate_fn
-
 
 class open_CLIPModel(CLIPModel):
     def __init__(
         self,
         title: str,
-        title_in_source: str | None = None,
+        model_name: str,
+        pretrained: str,
         device: str | None = None,
         **kwargs,
     ) -> None:
-        model_name = kwargs.pop("model_name", "")
-        pretrained = kwargs.pop("pretrained", "")
-        title_in_source = title_in_source or model_name + "_" + pretrained
+        self.pretrained = pretrained
+        self.model_name = model_name
+        title_in_source = model_name + "_" + pretrained
         super().__init__(title, title_in_source, device, **kwargs)
-        self._setup(model_name, pretrained)
+        self._setup()
 
-    def define_process_fn(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
+    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
             batch["image"] = [self.processor(i).to(self.device).unsqueeze(0) for i in images]
@@ -145,7 +138,7 @@ class open_CLIPModel(CLIPModel):
 
         return process_fn
 
-    def define_collate_fn(self) -> Callable[[Any], Any]:
+    def get_collate_fn(self) -> Callable[[Any], Any]:
         def collate_fn(examples) -> dict[str, torch.Tensor]:
             images = []
             labels = []
@@ -159,14 +152,12 @@ class open_CLIPModel(CLIPModel):
 
         return collate_fn
 
-    def _setup(self, model_name: str, pretrained: str, **kwargs):
+    def _setup(self, **kwargs) -> None:
         model, _, preprocess = open_clip.create_model_and_transforms(
-            model_name=model_name, pretrained=pretrained, **kwargs
+            model_name=self.model_name, pretrained=self.pretrained, **kwargs
         )
         self.model = model
         self.processor = preprocess
-        self.__transform = self.define_process_fn()
-        self.__collate_fn = self.define_collate_fn()
 
     def build_embedding(self, dataloader: DataLoader):
         tmp_embeddings = []
@@ -182,25 +173,22 @@ class open_CLIPModel(CLIPModel):
         labels = class_array.numpy()
         return image_embeddings, labels
 
-    def get_transform(self):
-        return self.__transform
-
-    def get_collate_fn(self):
-        return self.__collate_fn
-
 
 class SiglipModel(CLIPModel):
     def __init__(self, title: str, title_in_source: str | None = None, device: str | None = None, **kwargs) -> None:
         super().__init__(title, title_in_source, device, **kwargs)
         self._setup()
 
+<<<<<<< HEAD
     def _setup(self, **kwargs):
         self.model = HF_SiglipModel.from_pretrained(self.title_in_source).to(self.device)
+=======
+    def _setup(self, **kwargs) -> None:
+        self.model = HF_SiglipModel.from_pretrained(self.title_in_source)
+>>>>>>> fce42fd (Collate, transform returned from functions. Signature / Type tidying)
         self.processor = HF_SiglipProcessor.from_pretrained(self.title_in_source)
-        self.__transform = self.define_process_fn()
-        self.__collate_fn = self.define_collate_fn()
 
-    def define_process_fn(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
+    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
             batch["image"] = [
@@ -210,7 +198,7 @@ class SiglipModel(CLIPModel):
 
         return process_fn
 
-    def define_collate_fn(self) -> Callable[[Any], Any]:
+    def get_collate_fn(self) -> Callable[[Any], Any]:
         def collate_fn(examples) -> dict[str, torch.Tensor]:
             images = []
             labels = []
@@ -237,9 +225,3 @@ class SiglipModel(CLIPModel):
         class_array = torch.concatenate(tmp_labels)
         labels = class_array.numpy()
         return image_embeddings, labels
-
-    def get_transform(self):
-        return self.__transform
-
-    def get_collate_fn(self):
-        return self.__collate_fn
