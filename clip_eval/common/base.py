@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import numpy as np
-import torch
 from pydantic import BaseModel, model_validator
 from torch.utils.data import DataLoader
 
@@ -78,19 +77,8 @@ class Embeddings(BaseModel):
 
     @staticmethod
     def build_embedding(model: CLIPModel, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
-        def _collate_fn(examples) -> dict[str, torch.Tensor]:
-            images = []
-            labels = []
-            for example in examples:
-                images.append(example["image"])
-                labels.append(example["label"])
-
-            pixel_values = torch.stack(images)
-            labels = torch.tensor(labels)
-            return {"pixel_values": pixel_values, "labels": labels}
-
         dataset.set_transform(model.get_transform())
-        dataloader = DataLoader(dataset, collate_fn=_collate_fn, batch_size=batch_size)
+        dataloader = DataLoader(dataset, collate_fn=model.get_collate_fn(), batch_size=batch_size)
 
         image_embeddings, labels = model.build_embedding(dataloader)
         embeddings = Embeddings(images=image_embeddings, labels=labels)

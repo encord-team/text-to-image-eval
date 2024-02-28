@@ -3,6 +3,7 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
+import open_clip
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -27,6 +28,7 @@ class CLIPModel(ABC):
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._check_device(device)
         self.__device = torch.device(device)
+        self._setup(**kwargs)
 
     @property
     def title(self) -> str:
@@ -41,15 +43,19 @@ class CLIPModel(ABC):
         return self.__device
 
     @abstractmethod
-    def _setup(self, **kwargs):
+    def _setup(self, **kwargs) -> None:
         pass
 
     @abstractmethod
-    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
+    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         ...
 
     @abstractmethod
-    def get_transform(self) -> Callable[[Any], Any]:
+    def get_collate_fn(self) -> Callable[[Any], Any]:
+        ...
+
+    @abstractmethod
+    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
         ...
 
     @staticmethod
@@ -64,9 +70,8 @@ class CLIPModel(ABC):
 class closed_CLIPModel(CLIPModel):
     def __init__(self, title: str, title_in_source: str, device: str | None = None) -> None:
         super().__init__(title, title_in_source, device)
-        self._setup()
 
-    def define_process_fn(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
+    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
             batch["image"] = [
@@ -76,11 +81,24 @@ class closed_CLIPModel(CLIPModel):
 
         return process_fn
 
-    def _setup(self):
+    def get_collate_fn(self) -> Callable[[Any], Any]:
+        def collate_fn(examples) -> dict[str, torch.Tensor]:
+            images = []
+            labels = []
+            for example in examples:
+                images.append(example["image"])
+                labels.append(example["label"])
+
+            pixel_values = torch.stack(images)
+            labels = torch.tensor(labels)
+            return {"pixel_values": pixel_values, "labels": labels}
+
+        return collate_fn
+
+    def _setup(self, **kwargs) -> None:
         self.model = HF_ClipModel.from_pretrained(self.title_in_source).to(self.device)  # type: ignore
         load_result = HF_ClipProcessor.from_pretrained(self.title_in_source)
         self.processor = load_result[0] if isinstance(load_result, tuple) else load_result
-        self.process_fn = self.define_process_fn()
 
     def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
         tmp_embeddings = []
@@ -95,43 +113,75 @@ class closed_CLIPModel(CLIPModel):
         class_array = torch.concatenate(tmp_labels)
         labels = class_array.numpy()
         return image_embeddings, labels
-
-    def get_transform(self) -> Callable[[Any], Any]:
-        return self.process_fn
 
 
 class open_CLIPModel(CLIPModel):
     def __init__(
         self,
         title: str,
-        title_in_source: str | None = None,
+        model_name: str,
+        pretrained: str,
         device: str | None = None,
         **kwargs,
     ) -> None:
+        self.pretrained = pretrained
+        self.model_name = model_name
+        title_in_source = model_name + "_" + pretrained
         super().__init__(title, title_in_source, device, **kwargs)
-        self._setup()
 
-    def _setup(self, **kwargs):
-        raise NotImplementedError("open Clip not implemented")
+    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
+        def process_fn(batch) -> dict[str, list[Any]]:
+            images = [i.convert("RGB") for i in batch["image"]]
+            batch["image"] = [self.processor(i).to(self.device).unsqueeze(0) for i in images]
+            return batch
+
+        return process_fn
+
+    def get_collate_fn(self) -> Callable[[Any], Any]:
+        def collate_fn(examples) -> dict[str, torch.Tensor]:
+            images = []
+            labels = []
+            for example in examples:
+                images.append(example["image"])
+                labels.append(example["label"])
+
+            torch_images = torch.stack(images)
+            labels = torch.tensor(labels)
+            return {"image": torch_images, "labels": labels}
+
+        return collate_fn
+
+    def _setup(self, **kwargs) -> None:
+        model, _, preprocess = open_clip.create_model_and_transforms(
+            model_name=self.model_name, pretrained=self.pretrained, **kwargs
+        )
+        self.model = model
+        self.processor = preprocess
 
     def build_embedding(self, dataloader: DataLoader):
-        raise NotImplementedError("open Clip not implemented")
-
-    def get_transform(self) -> Callable[[Any], Any]:
-        raise NotImplementedError("open Clip not implemented")
+        tmp_embeddings = []
+        tmp_labels = []
+        with torch.inference_mode():
+            for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
+                tmp_labels.append(batch["labels"])
+                features = torch.stack([self.model.encode_image(image) for image in batch["image"]])
+                emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
+                tmp_embeddings.append(emb.to("cpu"))
+        image_embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
+        class_array = torch.concatenate(tmp_labels)
+        labels = class_array.numpy()
+        return image_embeddings, labels
 
 
 class SiglipModel(CLIPModel):
     def __init__(self, title: str, title_in_source: str | None = None, device: str | None = None, **kwargs) -> None:
         super().__init__(title, title_in_source, device, **kwargs)
-        self._setup()
 
     def _setup(self, **kwargs):
         self.model = HF_SiglipModel.from_pretrained(self.title_in_source).to(self.device)
         self.processor = HF_SiglipProcessor.from_pretrained(self.title_in_source)
-        self.process_fn = self.define_process_fn()
 
-    def define_process_fn(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
+    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
             batch["image"] = [
@@ -140,6 +190,20 @@ class SiglipModel(CLIPModel):
             return batch
 
         return process_fn
+
+    def get_collate_fn(self) -> Callable[[Any], Any]:
+        def collate_fn(examples) -> dict[str, torch.Tensor]:
+            images = []
+            labels = []
+            for example in examples:
+                images.append(example["image"])
+                labels.append(example["label"])
+
+            pixel_values = torch.stack(images)
+            labels = torch.tensor(labels)
+            return {"pixel_values": pixel_values, "labels": labels}
+
+        return collate_fn
 
     def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
         tmp_embeddings = []
@@ -154,6 +218,3 @@ class SiglipModel(CLIPModel):
         class_array = torch.concatenate(tmp_labels)
         labels = class_array.numpy()
         return image_embeddings, labels
-
-    def get_transform(self) -> Callable[[Any], Any]:
-        return self.process_fn
