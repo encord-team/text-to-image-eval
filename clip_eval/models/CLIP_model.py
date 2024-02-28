@@ -115,10 +115,6 @@ class ClosedCLIPModel(CLIPModel):
         return image_embeddings, labels
 
 
-class sds_A:
-    pass
-
-
 class OpenCLIPModel(CLIPModel):
     def __init__(
         self,
