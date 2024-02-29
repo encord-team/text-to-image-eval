@@ -67,7 +67,7 @@ class CLIPModel(ABC):
             raise ValueError(f"Unavailable device: {device}")
 
 
-class closed_CLIPModel(CLIPModel):
+class ClosedCLIPModel(CLIPModel):
     def __init__(self, title: str, title_in_source: str, device: str | None = None) -> None:
         super().__init__(title, title_in_source, device)
 
@@ -115,7 +115,7 @@ class closed_CLIPModel(CLIPModel):
         return image_embeddings, labels
 
 
-class open_CLIPModel(CLIPModel):
+class OpenCLIPModel(CLIPModel):
     def __init__(
         self,
         title: str,
@@ -155,7 +155,7 @@ class open_CLIPModel(CLIPModel):
         model, _, preprocess = open_clip.create_model_and_transforms(
             model_name=self.model_name, pretrained=self.pretrained, **kwargs
         )
-        self.model = model
+        self.model = model.to(self.device)
         self.processor = preprocess
 
     def build_embedding(self, dataloader: DataLoader):

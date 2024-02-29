@@ -1,4 +1,4 @@
-from .CLIP_model import CLIPModel, SiglipModel, closed_CLIPModel, open_CLIPModel
+from .CLIP_model import CLIPModel, ClosedCLIPModel, OpenCLIPModel, SiglipModel
 
 
 class ModelProvider:
@@ -19,24 +19,24 @@ class ModelProvider:
 
 
 model_provider = ModelProvider()
-model_provider.register_model("clip", closed_CLIPModel, title_in_source="openai/clip-vit-large-patch14-336")
-model_provider.register_model("plip", closed_CLIPModel, title_in_source="vinid/plip")
+model_provider.register_model("clip", ClosedCLIPModel, title_in_source="openai/clip-vit-large-patch14-336")
+model_provider.register_model("plip", ClosedCLIPModel, title_in_source="vinid/plip")
 model_provider.register_model(
     "pubmed",
-    closed_CLIPModel,
+    ClosedCLIPModel,
     title_in_source="flaviagiammarino/pubmed-clip-vit-base-patch32",
 )
-model_provider.register_model("bioclip", closed_CLIPModel, title_in_source="imageomics/bioclip")
+model_provider.register_model("bioclip", ClosedCLIPModel, title_in_source="imageomics/bioclip")
 model_provider.register_model(
     "tinyclip",
-    closed_CLIPModel,
+    ClosedCLIPModel,
     title_in_source="wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M",
 )
-model_provider.register_model("fashion", closed_CLIPModel, title_in_source="patrickjohncyh/fashion-clip")
-model_provider.register_model("rscid", closed_CLIPModel, title_in_source="flax-community/clip-rsicd")
-model_provider.register_model("street", closed_CLIPModel, title_in_source="geolocal/StreetCLIP")
-model_provider.register_model("apple", open_CLIPModel, title_in_source="apple/DFN5B-CLIP-ViT-H-14")
-model_provider.register_model("eva-clip", open_CLIPModel, title_in_source="BAAI/EVA-CLIP-8B-448")
-model_provider.register_model("vit-b-32-laion2b", open_CLIPModel, model_name="ViT-B-32", pretrained="laion2b_e16")
+model_provider.register_model("fashion", ClosedCLIPModel, title_in_source="patrickjohncyh/fashion-clip")
+model_provider.register_model("rscid", ClosedCLIPModel, title_in_source="flax-community/clip-rsicd")
+model_provider.register_model("street", ClosedCLIPModel, title_in_source="geolocal/StreetCLIP")
+model_provider.register_model("apple", OpenCLIPModel, title_in_source="apple/DFN5B-CLIP-ViT-H-14")
+model_provider.register_model("eva-clip", OpenCLIPModel, title_in_source="BAAI/EVA-CLIP-8B-448")
+model_provider.register_model("vit-b-32-laion2b", OpenCLIPModel, model_name="ViT-B-32", pretrained="laion2b_e16")
 model_provider.register_model("siglip_small", SiglipModel, title_in_source="google/siglip-base-patch16-224")
 model_provider.register_model("siglip_large", SiglipModel, title_in_source="google/siglip-large-patch16-256")
