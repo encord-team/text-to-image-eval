@@ -33,6 +33,10 @@ class Dataset(TorchDataset, ABC):
     def title_in_source(self) -> str:
         return self.__title_in_source
 
+    @property
+    def class_names(self) -> str:
+        return self.class_names
+
     def set_transform(self, transform):
         self.transform = transform
 
@@ -69,5 +73,6 @@ class HFDataset(Dataset):
             if split is None:
                 split = Split.TRAIN
             self._dataset = load_dataset(self.title_in_source, split=split, **kwargs)
+            self.class_names = self._dataset.info.features["label"].names
         except Exception as e:
             raise ValueError(f"Failed to load dataset from Hugging Face: {self.title_in_source}") from e

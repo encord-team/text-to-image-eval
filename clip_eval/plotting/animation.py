@@ -47,7 +47,7 @@ def build_animation(
     reduction: REDUCTIONS = "umap",
 ) -> animation.FuncAnimation:
     dataset = dataset_provider.get_dataset(defn_1.dataset)
-    label_names: list[str] = dataset._dataset.info.features["label"].names  # label is hardcoded here
+    label_names: list[str] = dataset.class_names  # label is hardcoded here
 
     embeds = defn_1.load_embeddings()  # FIXME: This is expensive to get just labels
     if embeds is None:
