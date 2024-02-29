@@ -16,6 +16,7 @@ class Dataset(TorchDataset, ABC):
         self.transform = transform
         self.__title = title
         self.__title_in_source = title if title_in_source is None else title_in_source
+        self.__class_names = []
 
     @abstractmethod
     def __getitem__(self, idx):
@@ -34,8 +35,12 @@ class Dataset(TorchDataset, ABC):
         return self.__title_in_source
 
     @property
-    def class_names(self) -> str:
-        return self.class_names
+    def class_names(self) -> list[str]:
+        return self.__class_names
+
+    @class_names.setter
+    def class_names(self, class_names: list[str]) -> None:
+        self.__class_names = class_names
 
     def set_transform(self, transform):
         self.transform = transform
