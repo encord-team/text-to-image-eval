@@ -78,6 +78,11 @@ class HFDataset(Dataset):
             if split is None:
                 split = Split.TRAIN
             self._dataset = load_dataset(self.title_in_source, split=split, **kwargs)
+
+            # Standardize the dataset features
+            if "labels" in self._dataset.features:
+                self._dataset = self._dataset.rename_column("labels", "label")
+
             self.class_names = self._dataset.info.features["label"].names
         except Exception as e:
             raise ValueError(f"Failed to load dataset from Hugging Face: {self.title_in_source}") from e

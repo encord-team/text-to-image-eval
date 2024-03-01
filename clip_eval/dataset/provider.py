@@ -29,6 +29,7 @@ dataset_provider.register_dataset(
     "chest-xray-classification",
     HFDataset,
     title_in_source="trpakov/chest-xray-classification",
+    name="full",
 )
 dataset_provider.register_dataset(
     "sports-classification",
