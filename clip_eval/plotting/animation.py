@@ -221,6 +221,11 @@ def build_animation(
     reduced_1 = standardize(reducer.get_reduction(defn_1))
     reduced_2 = rotate_to_target(standardize(reducer.get_reduction(defn_2)), reduced_1)
 
+    if reduced_1.shape[0] > 2_000:
+        selection = np.random.permutation(reduced_1.shape[0])[2_000]
+        reduced_1 = reduced_1[selection]
+        reduced_2 = reduced_2[selection]
+
     return create_embedding_chart(
         reduced_1,
         reduced_2,
