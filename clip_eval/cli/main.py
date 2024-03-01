@@ -106,7 +106,7 @@ def evaluate_embeddings(
 The interface will prompt you to choose which embeddings you want to use.
 """,
 )
-def animate_embeddings():
+def animate_embeddings(interactive: Annotated[bool, Option(help="Interactive plot instead of animation")] = False):
     from clip_eval.plotting.animation import build_animation, save_animation_to_file
 
     # Error could be localised better
@@ -114,9 +114,12 @@ def animate_embeddings():
     assert len(defns) == 2, "Please select exactly two models to make animation"
     def1 = max(defns, key=lambda d: int(d.model == "clip"))
     def2 = defns[0] if defns[0] != def1 else defns[1]
-    anim = build_animation(def1, def2)
-    save_animation_to_file(anim, *defns)
-    plt.show()
+    res = build_animation(def1, def2, interactive=interactive)
+
+    if res is None:
+        plt.show()
+    else:
+        save_animation_to_file(res, *defns)
 
 
 @cli.command("list", help="List models and datasets. By default, only cached pairs are listed.")
