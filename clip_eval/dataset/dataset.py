@@ -16,6 +16,7 @@ class Dataset(TorchDataset, ABC):
         self.transform = transform
         self.__title = title
         self.__title_in_source = title if title_in_source is None else title_in_source
+        self.__class_names = []
 
     @abstractmethod
     def __getitem__(self, idx):
@@ -32,6 +33,14 @@ class Dataset(TorchDataset, ABC):
     @property
     def title_in_source(self) -> str:
         return self.__title_in_source
+
+    @property
+    def class_names(self) -> list[str]:
+        return self.__class_names
+
+    @class_names.setter
+    def class_names(self, class_names: list[str]) -> None:
+        self.__class_names = class_names
 
     def set_transform(self, transform):
         self.transform = transform
@@ -69,5 +78,6 @@ class HFDataset(Dataset):
             if split is None:
                 split = Split.TRAIN
             self._dataset = load_dataset(self.title_in_source, split=split, **kwargs)
+            self.class_names = self._dataset.info.features["label"].names
         except Exception as e:
             raise ValueError(f"Failed to load dataset from Hugging Face: {self.title_in_source}") from e
