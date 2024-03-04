@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-_CACHE_PATH = Path(os.environ.get("CLIP_CACHE_PATH", ".cache"))
+# If the cache directory is not explicitly specified, use the `.cache` directory located in the project's root.
+_CACHE_PATH = Path(os.environ.get("CLIP_CACHE_PATH", Path(__file__).parent.parent / ".cache"))
 _OUTPUT_PATH = Path(os.environ.get("OUTPUT_PATH", "output"))
 
 
