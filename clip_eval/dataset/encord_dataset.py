@@ -20,12 +20,14 @@ class EncordDataset(Dataset):
         *,
         title_in_source: str | None = None,
         transform=None,
+        cache_dir: str,
         ssh_key_path: str | None = None,
-        cache_dir: str | None = None,
         **kwargs,
     ):
-        super().__init__(title, title_in_source=title_in_source, transform=transform)
-        self._setup(project_hash, classification_hash, ssh_key_path, cache_dir, **kwargs)
+        super().__init__(title, title_in_source=title_in_source, transform=transform, cache_dir=cache_dir)
+        # Separate Encord datasets from other sources
+        self._cache_dir /= "encord"
+        self._setup(project_hash, classification_hash, ssh_key_path, **kwargs)
 
     def __getitem__(self, idx):
         frame_path = self._frame_paths[idx]
@@ -62,7 +64,6 @@ class EncordDataset(Dataset):
         project_hash: str,
         classification_hash: str,
         ssh_key_path: str | None = None,
-        cache_dir: str | None = None,
         **kwargs,
     ):
         ssh_key_path = ssh_key_path or os.getenv("ENCORD_SSH_KEY_PATH")
@@ -82,14 +83,6 @@ class EncordDataset(Dataset):
             raise ValueError("Expected a classification hash with an attribute of type `Radio`")
         self._attribute = radio_attribute
         self.class_names = [o.title for o in self._attribute.options]  # TODO Expose class names as a property
-
-        cache_dir = cache_dir or os.getenv("ENCORD_CACHE_DIR")
-        if cache_dir is None:
-            raise ValueError(
-                "The `cache_dir` parameter and the `ENCORD_CACHE_DIR` environment variable are both missing."
-                "Please set one of them to proceed`"
-            )
-        self._cache_dir = Path(cache_dir)
 
         # Allow to overwrite annotations if the `overwrite_annotations` keyword is supplied in the class' init
         download_data_from_project(self._project, self._cache_dir, **kwargs)

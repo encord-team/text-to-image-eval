@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from datasets import Split, load_dataset
 from torch.utils.data import Dataset as TorchDataset
@@ -11,12 +12,14 @@ class Dataset(TorchDataset, ABC):
         *,
         title_in_source: str | None = None,
         transform=None,
+        cache_dir: str,
         **kwargs,
     ):
         self.transform = transform
         self.__title = title
         self.__title_in_source = title if title_in_source is None else title_in_source
         self.__class_names = []
+        self._cache_dir: Path = Path(cache_dir).expanduser().resolve() / "datasets"
 
     @abstractmethod
     def __getitem__(self, idx):
@@ -57,9 +60,12 @@ class HFDataset(Dataset):
         *,
         title_in_source: str | None = None,
         transform=None,
+        cache_dir: str,
         **kwargs,
     ):
-        super().__init__(title, title_in_source=title_in_source, transform=transform)
+        super().__init__(title, title_in_source=title_in_source, transform=transform, cache_dir=cache_dir)
+        # Separate HF datasets from other sources
+        self._cache_dir /= "huggingface"
         self._setup(**kwargs)
 
     def __getitem__(self, idx):
@@ -77,7 +83,12 @@ class HFDataset(Dataset):
             # Retrieve the train data if no split has been explicitly specified
             if split is None:
                 split = Split.TRAIN
-            self._dataset = load_dataset(self.title_in_source, split=split, **kwargs)
+            self._dataset = load_dataset(
+                self.title_in_source,
+                split=split,
+                cache_dir=self._cache_dir.as_posix(),
+                **kwargs,
+            )
 
             # Standardize the dataset features
             if "labels" in self._dataset.features:

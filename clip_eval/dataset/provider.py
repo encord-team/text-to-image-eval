@@ -1,8 +1,10 @@
+from copy import deepcopy
+from typing import Any
+
+from clip_eval.constants import _CACHE_PATH
+
 from .dataset import Dataset, HFDataset
 from .encord_dataset import EncordDataset
-from typing import Any
-from copy import deepcopy
-from clip_eval.constants import _CACHE_PATH
 
 
 class DatasetProvider:
