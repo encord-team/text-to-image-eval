@@ -61,11 +61,13 @@ class HFDataset(Dataset):
         title_in_source: str | None = None,
         transform=None,
         cache_dir: str,
+        target_feature: str = "label",
         **kwargs,
     ):
         super().__init__(title, title_in_source=title_in_source, transform=transform, cache_dir=cache_dir)
         # Separate HF datasets from other sources
         self._cache_dir /= "huggingface"
+        self._target_feature = target_feature
         self._setup(**kwargs)
 
     def __getitem__(self, idx):
@@ -90,9 +92,13 @@ class HFDataset(Dataset):
                 **kwargs,
             )
 
-            # Standardize the dataset features
-            if "labels" in self._dataset.features:
-                self._dataset = self._dataset.rename_column("labels", "label")
+            # Rename the target feature to `label`
+            # TODO do not rename the target feature but use it in the embeddings computations instead of the `label` tag
+            if self._target_feature not in self._dataset.features:
+                raise ValueError(
+                    f"The dataset `{self.title}` does not have the target feature `{self._target_feature}`"
+                )
+            self._dataset = self._dataset.rename_column(self._target_feature, "label")
 
             self.class_names = self._dataset.info.features["label"].names
         except Exception as e:

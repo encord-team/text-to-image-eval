@@ -48,6 +48,7 @@ dataset_provider.register_dataset(
     HFDataset,
     title_in_source="alkzar90/NIH-Chest-X-ray-dataset",
     name="image-classification",
+    target_feature="labels",
     trust_remote_code=True,
 )
 dataset_provider.register_dataset("Alzheimer-MRI", HFDataset, title_in_source="Falah/Alzheimer_MRI")
@@ -57,6 +58,7 @@ dataset_provider.register_dataset(
     HFDataset,
     title_in_source="trpakov/chest-xray-classification",
     name="full",
+    target_feature="labels",
 )
 dataset_provider.register_dataset(
     "sports-classification",
