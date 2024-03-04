@@ -52,7 +52,7 @@ dataset_provider.register_dataset(
     trust_remote_code=True,
 )
 dataset_provider.register_dataset("Alzheimer-MRI", HFDataset, title_in_source="Falah/Alzheimer_MRI")
-dataset_provider.register_dataset("Skin-cancer", HFDataset, title_in_source="marmal88/skin_cancer")
+dataset_provider.register_dataset("skin-cancer", HFDataset, title_in_source="marmal88/skin_cancer", target_feature="dx")
 dataset_provider.register_dataset(
     "chest-xray-classification",
     HFDataset,

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from datasets import ClassLabel, Sequence, Split, load_dataset
+from datasets import ClassLabel, Sequence, Split, Value, load_dataset
 from torch.utils.data import Dataset as TorchDataset
 
 
@@ -92,12 +92,16 @@ class HFDataset(Dataset):
                 **kwargs,
             )
 
-            # Rename the target feature to `label`
-            # TODO do not rename the target feature but use it in the embeddings computations instead of the `label` tag
             if self._target_feature not in self._dataset.features:
                 raise ValueError(
                     f"The dataset `{self.title}` does not have the target feature `{self._target_feature}`"
                 )
+            # Encode the target feature if necessary (e.g. use integer instead of string in the label values)
+            if isinstance(self._dataset.features[self._target_feature], Value):
+                self._dataset = self._dataset.class_encode_column(self._target_feature)
+
+            # Rename the target feature to `label`
+            # TODO do not rename the target feature but use it in the embeddings computations instead of the `label` tag
             self._dataset = self._dataset.rename_column(self._target_feature, "label")
 
             label_feature = self._dataset.features["label"]
