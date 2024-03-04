@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from datasets import Split, load_dataset
+from datasets import ClassLabel, Sequence, Split, load_dataset
 from torch.utils.data import Dataset as TorchDataset
 
 
@@ -100,6 +100,14 @@ class HFDataset(Dataset):
                 )
             self._dataset = self._dataset.rename_column(self._target_feature, "label")
 
-            self.class_names = self._dataset.info.features["label"].names
+            label_feature = self._dataset.features["label"]
+            if isinstance(label_feature, Sequence):  # Drop potential wrapper
+                label_feature = label_feature.feature
+
+            if isinstance(label_feature, ClassLabel):
+                self.class_names = label_feature.names
+            else:
+                raise TypeError(f"Expected target feature of type `ClassLabel`, found `{type(label_feature).__name__}`")
+
         except Exception as e:
             raise ValueError(f"Failed to load dataset from Hugging Face: {self.title_in_source}") from e
