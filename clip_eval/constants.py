@@ -5,13 +5,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-_CACHE_PATH = Path(os.environ.get("CLIP_CACHE_PATH", ".cache"))
+CACHE_PATH = Path(os.environ.get("CLIP_CACHE_PATH", ".cache"))
 _OUTPUT_PATH = Path(os.environ.get("OUTPUT_PATH", "output"))
 
 
 class PROJECT_PATHS:
-    EMBEDDINGS = _CACHE_PATH / "embeddings"
-    REDUCTIONS = _CACHE_PATH / "reductions"
+    EMBEDDINGS = CACHE_PATH / "embeddings"
+    REDUCTIONS = CACHE_PATH / "reductions"
 
 
 class NPZ_KEYS:

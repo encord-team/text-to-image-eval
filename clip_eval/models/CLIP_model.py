@@ -14,7 +14,7 @@ from transformers import SiglipModel as HF_SiglipModel
 from transformers import SiglipProcessor as HF_SiglipProcessor
 
 from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
-from clip_eval.constants import _CACHE_PATH
+from clip_eval.constants import CACHE_PATH
 
 
 class CLIPModel(ABC):
@@ -33,7 +33,7 @@ class CLIPModel(ABC):
         self._check_device(device)
         self.__device = torch.device(device)
         if cache_dir is None:
-            cache_dir = _CACHE_PATH
+            cache_dir = CACHE_PATH
         self._cache_dir = Path(cache_dir).expanduser().resolve() / "models"
 
     @property
