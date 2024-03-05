@@ -34,7 +34,7 @@ class CLIPModel(ABC):
         self.__device = torch.device(device)
         if cache_dir is None:
             cache_dir = CACHE_PATH
-        self._cache_dir = Path(cache_dir).expanduser().resolve() / "models"
+        self._cache_dir = Path(cache_dir).expanduser().resolve() / "models" / title
 
     @property
     def title(self) -> str:
@@ -84,7 +84,6 @@ class ClosedCLIPModel(CLIPModel):
         **kwargs,
     ) -> None:
         super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir)
-        self._cache_dir /= "huggingface"
         self._setup(**kwargs)
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
@@ -147,7 +146,6 @@ class OpenCLIPModel(CLIPModel):
     ) -> None:
         self.pretrained = pretrained
         super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir, **kwargs)
-        self._cache_dir /= "openai"
         self._setup(**kwargs)
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
@@ -208,7 +206,6 @@ class SiglipModel(CLIPModel):
         **kwargs,
     ) -> None:
         super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir, **kwargs)
-        self._cache_dir /= "huggingface"
         self._setup(**kwargs)
 
     def _setup(self, **kwargs):
