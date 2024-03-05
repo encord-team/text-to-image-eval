@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -13,14 +14,17 @@ from transformers import SiglipModel as HF_SiglipModel
 from transformers import SiglipProcessor as HF_SiglipProcessor
 
 from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
+from clip_eval.constants import _CACHE_PATH
 
 
 class CLIPModel(ABC):
     def __init__(
         self,
         title: str,
-        title_in_source: str | None = None,
         device: str | None = None,
+        *,
+        title_in_source: str | None = None,
+        cache_dir: str | None = None,
         **kwargs,
     ) -> None:
         self.__title = title
@@ -28,7 +32,9 @@ class CLIPModel(ABC):
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self._check_device(device)
         self.__device = torch.device(device)
-        self._setup(**kwargs)
+        if cache_dir is None:
+            cache_dir = _CACHE_PATH
+        self._cache_dir = Path(cache_dir).expanduser().resolve() / "models"
 
     @property
     def title(self) -> str:
@@ -68,8 +74,18 @@ class CLIPModel(ABC):
 
 
 class ClosedCLIPModel(CLIPModel):
-    def __init__(self, title: str, title_in_source: str, device: str | None = None) -> None:
-        super().__init__(title, title_in_source, device)
+    def __init__(
+        self,
+        title: str,
+        device: str | None = None,
+        *,
+        title_in_source: str | None = None,
+        cache_dir: str | None = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir)
+        self._cache_dir /= "huggingface"
+        self._setup(**kwargs)
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
@@ -96,8 +112,11 @@ class ClosedCLIPModel(CLIPModel):
         return collate_fn
 
     def _setup(self, **kwargs) -> None:
-        self.model = HF_ClipModel.from_pretrained(self.title_in_source).to(self.device)  # type: ignore
-        load_result = HF_ClipProcessor.from_pretrained(self.title_in_source)
+        self.model = HF_ClipModel.from_pretrained(
+            self.title_in_source,
+            cache_dir=self._cache_dir,
+        ).to(self.device)  # type: ignore
+        load_result = HF_ClipProcessor.from_pretrained(self.title_in_source, cache_dir=self._cache_dir)
         self.processor = load_result[0] if isinstance(load_result, tuple) else load_result
 
     def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
@@ -119,15 +138,19 @@ class OpenCLIPModel(CLIPModel):
     def __init__(
         self,
         title: str,
+        device: str | None = None,
+        *,
         model_name: str,
         pretrained: str,
-        device: str | None = None,
+        cache_dir: str | None = None,
         **kwargs,
     ) -> None:
         self.pretrained = pretrained
         self.model_name = model_name
         title_in_source = model_name + "_" + pretrained
-        super().__init__(title, title_in_source, device, **kwargs)
+        super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir, **kwargs)
+        self._cache_dir /= "openai"
+        self._setup(**kwargs)
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
@@ -153,7 +176,7 @@ class OpenCLIPModel(CLIPModel):
 
     def _setup(self, **kwargs) -> None:
         model, _, preprocess = open_clip.create_model_and_transforms(
-            model_name=self.model_name, pretrained=self.pretrained, **kwargs
+            model_name=self.model_name, pretrained=self.pretrained, cache_dir=self._cache_dir.as_posix(), **kwargs
         )
         self.model = model.to(self.device)
         self.processor = preprocess
@@ -174,12 +197,22 @@ class OpenCLIPModel(CLIPModel):
 
 
 class SiglipModel(CLIPModel):
-    def __init__(self, title: str, title_in_source: str | None = None, device: str | None = None, **kwargs) -> None:
-        super().__init__(title, title_in_source, device, **kwargs)
+    def __init__(
+        self,
+        title: str,
+        device: str | None = None,
+        *,
+        title_in_source: str | None = None,
+        cache_dir: str | None = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir, **kwargs)
+        self._cache_dir /= "huggingface"
+        self._setup(**kwargs)
 
     def _setup(self, **kwargs):
-        self.model = HF_SiglipModel.from_pretrained(self.title_in_source).to(self.device)
-        self.processor = HF_SiglipProcessor.from_pretrained(self.title_in_source)
+        self.model = HF_SiglipModel.from_pretrained(self.title_in_source, cache_dir=self._cache_dir).to(self.device)
+        self.processor = HF_SiglipProcessor.from_pretrained(self.title_in_source, cache_dir=self._cache_dir)
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
