@@ -25,8 +25,6 @@ class EncordDataset(Dataset):
         **kwargs,
     ):
         super().__init__(title, title_in_source=title_in_source, transform=transform, cache_dir=cache_dir)
-        # Separate Encord datasets from other sources
-        self._cache_dir /= "encord"
         self._setup(project_hash, classification_hash, ssh_key_path, **kwargs)
 
     def __getitem__(self, idx):

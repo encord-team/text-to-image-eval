@@ -23,7 +23,7 @@ class Dataset(TorchDataset, ABC):
         self.__class_names = []
         if cache_dir is None:
             cache_dir = CACHE_PATH
-        self._cache_dir: Path = Path(cache_dir).expanduser().resolve() / "datasets"
+        self._cache_dir: Path = Path(cache_dir).expanduser().resolve() / "datasets" / title
 
     @abstractmethod
     def __getitem__(self, idx):
@@ -69,8 +69,6 @@ class HFDataset(Dataset):
         **kwargs,
     ):
         super().__init__(title, title_in_source=title_in_source, transform=transform, cache_dir=cache_dir)
-        # Separate HF datasets from other sources
-        self._cache_dir /= "huggingface"
         self._target_feature = target_feature
         self._setup(**kwargs)
 
