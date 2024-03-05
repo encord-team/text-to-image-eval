@@ -26,7 +26,6 @@ model_provider.register_model(
     ClosedCLIPModel,
     title_in_source="flaviagiammarino/pubmed-clip-vit-base-patch32",
 )
-model_provider.register_model("bioclip", ClosedCLIPModel, title_in_source="imageomics/bioclip")
 model_provider.register_model(
     "tinyclip",
     ClosedCLIPModel,
@@ -35,8 +34,11 @@ model_provider.register_model(
 model_provider.register_model("fashion", ClosedCLIPModel, title_in_source="patrickjohncyh/fashion-clip")
 model_provider.register_model("rscid", ClosedCLIPModel, title_in_source="flax-community/clip-rsicd")
 model_provider.register_model("street", ClosedCLIPModel, title_in_source="geolocal/StreetCLIP")
-model_provider.register_model("apple", OpenCLIPModel, title_in_source="apple/DFN5B-CLIP-ViT-H-14")
+
+model_provider.register_model("apple", OpenCLIPModel, title_in_source="hf-hub:apple/DFN5B-CLIP-ViT-H-14")
 model_provider.register_model("eva-clip", OpenCLIPModel, title_in_source="BAAI/EVA-CLIP-8B-448")
-model_provider.register_model("vit-b-32-laion2b", OpenCLIPModel, model_name="ViT-B-32", pretrained="laion2b_e16")
+model_provider.register_model("bioclip", OpenCLIPModel, title_in_source="hf-hub:imageomics/bioclip")
+model_provider.register_model("vit-b-32-laion2b", OpenCLIPModel, title_in_source="ViT-B-32", pretrained="laion2b_e16")
+
 model_provider.register_model("siglip_small", SiglipModel, title_in_source="google/siglip-base-patch16-224")
 model_provider.register_model("siglip_large", SiglipModel, title_in_source="google/siglip-large-patch16-256")
