@@ -20,7 +20,7 @@ class EncordDataset(Dataset):
         *,
         title_in_source: str | None = None,
         transform=None,
-        cache_dir: str,
+        cache_dir: str | None = None,
         ssh_key_path: str | None = None,
         **kwargs,
     ):

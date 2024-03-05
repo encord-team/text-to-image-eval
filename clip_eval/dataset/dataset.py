@@ -4,6 +4,8 @@ from pathlib import Path
 from datasets import ClassLabel, Sequence, Split, Value, load_dataset
 from torch.utils.data import Dataset as TorchDataset
 
+from clip_eval.constants import CACHE_PATH
+
 
 class Dataset(TorchDataset, ABC):
     def __init__(
@@ -12,13 +14,15 @@ class Dataset(TorchDataset, ABC):
         *,
         title_in_source: str | None = None,
         transform=None,
-        cache_dir: str,
+        cache_dir: str | None = None,
         **kwargs,
     ):
         self.transform = transform
         self.__title = title
         self.__title_in_source = title if title_in_source is None else title_in_source
         self.__class_names = []
+        if cache_dir is None:
+            cache_dir = CACHE_PATH
         self._cache_dir: Path = Path(cache_dir).expanduser().resolve() / "datasets"
 
     @abstractmethod
@@ -60,7 +64,7 @@ class HFDataset(Dataset):
         *,
         title_in_source: str | None = None,
         transform=None,
-        cache_dir: str,
+        cache_dir: str | None = None,
         target_feature: str = "label",
         **kwargs,
     ):

@@ -6,13 +6,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # If the cache directory is not explicitly specified, use the `.cache` directory located in the project's root.
-_CACHE_PATH = Path(os.environ.get("CLIP_CACHE_PATH", Path(__file__).parent.parent / ".cache"))
+CACHE_PATH = Path(os.environ.get("CLIP_CACHE_PATH", Path(__file__).parent.parent / ".cache"))
 _OUTPUT_PATH = Path(os.environ.get("OUTPUT_PATH", "output"))
 
 
 class PROJECT_PATHS:
-    EMBEDDINGS = _CACHE_PATH / "embeddings"
-    REDUCTIONS = _CACHE_PATH / "reductions"
+    EMBEDDINGS = CACHE_PATH / "embeddings"
+    REDUCTIONS = CACHE_PATH / "reductions"
 
 
 class NPZ_KEYS:

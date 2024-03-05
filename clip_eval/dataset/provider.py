@@ -1,7 +1,7 @@
 from copy import deepcopy
 from typing import Any
 
-from clip_eval.constants import _CACHE_PATH
+from clip_eval.constants import CACHE_PATH
 
 from .dataset import Dataset, HFDataset
 from .encord_dataset import EncordDataset
@@ -39,7 +39,7 @@ class DatasetProvider:
 
 dataset_provider = DatasetProvider()
 # Add global settings
-dataset_provider.add_global_setting("cache_dir", _CACHE_PATH)
+dataset_provider.add_global_setting("cache_dir", CACHE_PATH)
 
 dataset_provider.register_dataset("LungCancer4Types", HFDataset, title_in_source="Kabil007/LungCancer4Types")
 dataset_provider.register_dataset("plants", HFDataset, title_in_source="sampath017/plants")
