@@ -34,7 +34,7 @@ class CLIPModel(ABC):
         self.__device = torch.device(device)
         if cache_dir is None:
             cache_dir = CACHE_PATH
-        self._cache_dir = Path(cache_dir).expanduser().resolve() / "models"
+        self._cache_dir = Path(cache_dir).expanduser().resolve() / "models" / title
 
     @property
     def title(self) -> str:
@@ -84,7 +84,6 @@ class ClosedCLIPModel(CLIPModel):
         **kwargs,
     ) -> None:
         super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir)
-        self._cache_dir /= "huggingface"
         self._setup(**kwargs)
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
@@ -140,16 +139,13 @@ class OpenCLIPModel(CLIPModel):
         title: str,
         device: str | None = None,
         *,
-        model_name: str,
-        pretrained: str,
+        title_in_source: str,
+        pretrained: str | None = None,
         cache_dir: str | None = None,
         **kwargs,
     ) -> None:
         self.pretrained = pretrained
-        self.model_name = model_name
-        title_in_source = model_name + "_" + pretrained
         super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir, **kwargs)
-        self._cache_dir /= "openai"
         self._setup(**kwargs)
 
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
@@ -176,7 +172,10 @@ class OpenCLIPModel(CLIPModel):
 
     def _setup(self, **kwargs) -> None:
         model, _, preprocess = open_clip.create_model_and_transforms(
-            model_name=self.model_name, pretrained=self.pretrained, cache_dir=self._cache_dir.as_posix(), **kwargs
+            model_name=self.title_in_source,
+            pretrained=self.pretrained,
+            cache_dir=self._cache_dir.as_posix(),
+            **kwargs,
         )
         self.model = model.to(self.device)
         self.processor = preprocess
@@ -207,7 +206,6 @@ class SiglipModel(CLIPModel):
         **kwargs,
     ) -> None:
         super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir, **kwargs)
-        self._cache_dir /= "huggingface"
         self._setup(**kwargs)
 
     def _setup(self, **kwargs):
