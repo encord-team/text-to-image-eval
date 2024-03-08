@@ -104,7 +104,8 @@ class HFDataset(Dataset):
 
             # Rename the target feature to `label`
             # TODO do not rename the target feature but use it in the embeddings computations instead of the `label` tag
-            self._dataset = self._dataset.rename_column(self._target_feature, "label")
+            if self._target_feature != "label":
+                self._dataset = self._dataset.rename_column(self._target_feature, "label")
 
             label_feature = self._dataset.features["label"]
             if isinstance(label_feature, Sequence):  # Drop potential wrapper
