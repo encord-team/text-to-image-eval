@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated, Optional, Literal
 
 import matplotlib.pyplot as plt
 from typer import Option, Typer
@@ -106,7 +106,10 @@ def evaluate_embeddings(
 The interface will prompt you to choose which embeddings you want to use.
 """,
 )
-def animate_embeddings(interactive: Annotated[bool, Option(help="Interactive plot instead of animation")] = False):
+def animate_embeddings(
+        interactive: Annotated[bool, Option(help="Interactive plot instead of animation")] = False,
+        reduction: Annotated[str, Option(help="Reduction type [pca, tsne, umap (default)")] = "umap", 
+    ):
     from clip_eval.plotting.animation import build_animation, save_animation_to_file
 
     # Error could be localised better
@@ -114,7 +117,7 @@ def animate_embeddings(interactive: Annotated[bool, Option(help="Interactive plo
     assert len(defns) == 2, "Please select exactly two models to make animation"
     def1 = max(defns, key=lambda d: int(d.model == "clip"))
     def2 = defns[0] if defns[0] != def1 else defns[1]
-    res = build_animation(def1, def2, interactive=interactive)
+    res = build_animation(def1, def2, interactive=interactive, reduction=reduction)
 
     if res is None:
         plt.show()

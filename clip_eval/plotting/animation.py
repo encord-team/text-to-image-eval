@@ -166,8 +166,8 @@ def rotate_to_target(source: N2Array, destination: N2Array) -> N2Array:
     source = np.pad(source, [(0, 0), (0, 1)], mode="constant", constant_values=0.0)
     destination = np.pad(destination, [(0, 0), (0, 1)], mode="constant", constant_values=0.0)
 
-    rot, *_ = R.align_vectors(source, destination, return_sensitivity=True)
-    out = source @ rot.as_matrix()
+    rot, *_ = R.align_vectors(destination, source, return_sensitivity=True)
+    out = rot.apply(source)
     return out[:, :2]
 
 
@@ -220,16 +220,18 @@ def build_animation(
     reducer = reduction_from_string(reduction)
     reduced_1 = standardize(reducer.get_reduction(defn_1))
     reduced_2 = rotate_to_target(standardize(reducer.get_reduction(defn_2)), reduced_1)
+    labels = embeds.labels
 
     if reduced_1.shape[0] > 2_000:
-        selection = np.random.permutation(reduced_1.shape[0])[2_000]
+        selection = np.random.permutation(reduced_1.shape[0])[:2_000]
         reduced_1 = reduced_1[selection]
         reduced_2 = reduced_2[selection]
+        labels = labels[selection]
 
     return create_embedding_chart(
         reduced_1,
         reduced_2,
-        embeds.labels,
+        labels,
         defn_1.model,
         defn_2.model,
         suptitle=dataset.title,
