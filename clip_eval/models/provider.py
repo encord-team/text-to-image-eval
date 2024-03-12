@@ -1,4 +1,5 @@
 from .CLIP_model import CLIPModel, ClosedCLIPModel, OpenCLIPModel, SiglipModel
+from .local import LocalCLIPModel
 
 
 class ModelProvider:
@@ -42,3 +43,6 @@ model_provider.register_model("vit-b-32-laion2b", OpenCLIPModel, title_in_source
 
 model_provider.register_model("siglip_small", SiglipModel, title_in_source="google/siglip-base-patch16-224")
 model_provider.register_model("siglip_large", SiglipModel, title_in_source="google/siglip-large-patch16-256")
+
+# Local sources
+model_provider.register_model("rsicd-encord", LocalCLIPModel, title_in_source="ViT-B/32")
