@@ -33,7 +33,7 @@ model_provider.register_model(
     title_in_source="wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M",
 )
 model_provider.register_model("fashion", ClosedCLIPModel, title_in_source="patrickjohncyh/fashion-clip")
-model_provider.register_model("rscid", ClosedCLIPModel, title_in_source="flax-community/clip-rsicd")
+model_provider.register_model("rsicd", ClosedCLIPModel, title_in_source="flax-community/clip-rsicd")
 model_provider.register_model("street", ClosedCLIPModel, title_in_source="geolocal/StreetCLIP")
 
 model_provider.register_model("apple", OpenCLIPModel, title_in_source="hf-hub:apple/DFN5B-CLIP-ViT-H-14")
