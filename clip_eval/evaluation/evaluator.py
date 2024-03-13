@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Literal
 
 import numpy as np
+from natsort import natsorted
 from tabulate import tabulate
 
 from clip_eval.common.data_models import EmbeddingDefinition, Embeddings
@@ -21,8 +22,8 @@ def print_evaluation_results(
     classifier_column: (Literal["linear_probe"] | Literal["zero_shot"] | Literal["wKNN"]) = "linear_probe",
 ):
     defs = list(results.keys())
-    model_names = list(set(map(lambda d: d.model, defs)))
-    dataset_names = list(set(map(lambda d: d.dataset, defs)))
+    model_names = natsorted(set(map(lambda d: d.model, defs)))
+    dataset_names = natsorted(set(map(lambda d: d.dataset, defs)))
 
     table: list[list[float | str]] = [
         ["Model/Dataset"] + dataset_names,
