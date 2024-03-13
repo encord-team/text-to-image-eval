@@ -12,6 +12,7 @@ _OUTPUT_PATH = Path(os.environ.get("OUTPUT_PATH", "output"))
 
 class PROJECT_PATHS:
     EMBEDDINGS = CACHE_PATH / "embeddings"
+    MODELS = CACHE_PATH / "models"
     REDUCTIONS = CACHE_PATH / "reductions"
 
 
