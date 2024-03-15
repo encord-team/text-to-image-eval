@@ -152,7 +152,7 @@ class OpenCLIPModel(CLIPModel):
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
-            batch["image"] = [self.preprocess(i).to(self.device).unsqueeze(0) for i in images]
+            batch["image"] = [self.processor(i).unsqueeze(0) for i in images]
             return batch
 
         return process_fn
@@ -172,7 +172,7 @@ class OpenCLIPModel(CLIPModel):
         return collate_fn
 
     def _setup(self, **kwargs) -> None:
-        self.model, _, self.preprocess = open_clip.create_model_and_transforms(
+        self.model, _, self.processor = open_clip.create_model_and_transforms(
             model_name=self.title_in_source,
             pretrained=self.pretrained,
             cache_dir=self._cache_dir.as_posix(),
