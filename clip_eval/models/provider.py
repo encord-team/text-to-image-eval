@@ -45,4 +45,4 @@ model_provider.register_model("siglip_small", SiglipModel, title_in_source="goog
 model_provider.register_model("siglip_large", SiglipModel, title_in_source="google/siglip-large-patch16-256")
 
 # Local sources
-model_provider.register_model("rsicd-encord", LocalCLIPModel, title_in_source="ViT-B/32")
+model_provider.register_model("rsicd-encord", LocalCLIPModel, title_in_source="ViT-B-32")
