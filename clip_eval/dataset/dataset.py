@@ -52,6 +52,10 @@ class Dataset(TorchDataset, ABC):
     def set_transform(self, transform):
         self.transform = transform
 
+    @property
+    def text_queries(self) -> list[str]:
+        return [f"An image of a {class_name}" for class_name in self.class_names]
+
     @abstractmethod
     def _setup(self, **kwargs):
         pass

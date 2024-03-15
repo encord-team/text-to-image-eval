@@ -15,6 +15,7 @@ from transformers import SiglipProcessor as HF_SiglipProcessor
 
 from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
 from clip_eval.constants import CACHE_PATH
+from clip_eval.dataset import Dataset
 
 
 class CLIPModel(ABC):
@@ -61,7 +62,7 @@ class CLIPModel(ABC):
         ...
 
     @abstractmethod
-    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
+    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, EmbeddingArray, ClassArray]:
         ...
 
     @staticmethod
@@ -118,7 +119,7 @@ class ClosedCLIPModel(CLIPModel):
         load_result = HF_ClipProcessor.from_pretrained(self.title_in_source, cache_dir=self._cache_dir)
         self.processor = load_result[0] if isinstance(load_result, tuple) else load_result
 
-    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
+    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, EmbeddingArray, ClassArray]:
         tmp_embeddings = []
         tmp_labels = []
         with torch.inference_mode():
@@ -151,7 +152,7 @@ class OpenCLIPModel(CLIPModel):
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
-            batch["image"] = [self.processor(i).to(self.device).unsqueeze(0) for i in images]
+            batch["image"] = [self.preprocess(i).to(self.device).unsqueeze(0) for i in images]
             return batch
 
         return process_fn
@@ -171,28 +172,29 @@ class OpenCLIPModel(CLIPModel):
         return collate_fn
 
     def _setup(self, **kwargs) -> None:
-        model, _, preprocess = open_clip.create_model_and_transforms(
+        self.model, _, self.preprocess = open_clip.create_model_and_transforms(
             model_name=self.title_in_source,
             pretrained=self.pretrained,
             cache_dir=self._cache_dir.as_posix(),
+            device=self.device,
             **kwargs,
         )
-        self.model = model.to(self.device)
-        self.processor = preprocess
+        self.tokenizer = open_clip.get_tokenizer(model_name=self.title_in_source)
 
-    def build_embedding(self, dataloader: DataLoader):
-        tmp_embeddings = []
-        tmp_labels = []
+    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, EmbeddingArray, ClassArray]:
+        all_image_embeddings = []
+        all_labels = []
         with torch.inference_mode():
+            _dataset: Dataset = dataloader.dataset
+            text = self.tokenizer(_dataset.text_queries)
+            text_embeddings = self.model.encode_text(text, normalize=True).numpy(force=True)
             for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
-                tmp_labels.append(batch["labels"])
-                features = torch.stack([self.model.encode_image(image) for image in batch["image"]])
-                emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
-                tmp_embeddings.append(emb.to("cpu"))
-        image_embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
-        class_array = torch.concatenate(tmp_labels)
-        labels = class_array.numpy()
-        return image_embeddings, labels
+                image_features = self.model.encode_image(batch["image"].squeeze(), normalize=True)
+                all_image_embeddings.append(image_features.to("cpu"))
+                all_labels.append(batch["labels"])
+        image_embeddings = torch.concatenate(all_image_embeddings).numpy(force=True)
+        labels = torch.concatenate(all_labels).numpy(force=True).astype(np.int32)
+        return image_embeddings, text_embeddings, labels
 
 
 class SiglipModel(CLIPModel):
