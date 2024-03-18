@@ -1,4 +1,4 @@
-from .CLIP_model import CLIPModel, ClosedCLIPModel, OpenCLIPModel, SiglipModel
+from .CLIP_model import CLIPModel, ClosedCLIPModel, OpenCLIPModel
 from .local import LocalCLIPModel
 
 
@@ -35,14 +35,13 @@ model_provider.register_model(
 model_provider.register_model("fashion", ClosedCLIPModel, title_in_source="patrickjohncyh/fashion-clip")
 model_provider.register_model("rsicd", ClosedCLIPModel, title_in_source="flax-community/clip-rsicd")
 model_provider.register_model("street", ClosedCLIPModel, title_in_source="geolocal/StreetCLIP")
+model_provider.register_model("siglip_small", ClosedCLIPModel, title_in_source="google/siglip-base-patch16-224")
+model_provider.register_model("siglip_large", ClosedCLIPModel, title_in_source="google/siglip-large-patch16-256")
 
 model_provider.register_model("apple", OpenCLIPModel, title_in_source="hf-hub:apple/DFN5B-CLIP-ViT-H-14")
 model_provider.register_model("eva-clip", OpenCLIPModel, title_in_source="BAAI/EVA-CLIP-8B-448")
 model_provider.register_model("bioclip", OpenCLIPModel, title_in_source="hf-hub:imageomics/bioclip")
 model_provider.register_model("vit-b-32-laion2b", OpenCLIPModel, title_in_source="ViT-B-32", pretrained="laion2b_e16")
-
-model_provider.register_model("siglip_small", SiglipModel, title_in_source="google/siglip-base-patch16-224")
-model_provider.register_model("siglip_large", SiglipModel, title_in_source="google/siglip-large-patch16-256")
 
 # Local sources
 model_provider.register_model("rsicd-encord", LocalCLIPModel, title_in_source="ViT-B-32")

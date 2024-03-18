@@ -8,11 +8,9 @@ import open_clip
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from transformers import AutoModel as HF_AutoModel
+from transformers import AutoProcessor as HF_AutoProcessor
 from transformers import AutoTokenizer as HF_AutoTokenizer
-from transformers import CLIPModel as HF_ClipModel
-from transformers import CLIPProcessor as HF_ClipProcessor
-from transformers import SiglipModel as HF_SiglipModel
-from transformers import SiglipProcessor as HF_SiglipProcessor
 
 from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
 from clip_eval.constants import CACHE_PATH
@@ -113,11 +111,8 @@ class ClosedCLIPModel(CLIPModel):
         return collate_fn
 
     def _setup(self, **kwargs) -> None:
-        self.model = HF_ClipModel.from_pretrained(
-            self.title_in_source,
-            cache_dir=self._cache_dir,
-        ).to(self.device)  # type: ignore
-        load_result = HF_ClipProcessor.from_pretrained(self.title_in_source, cache_dir=self._cache_dir)
+        self.model = HF_AutoModel.from_pretrained(self.title_in_source, cache_dir=self._cache_dir).to(self.device)
+        load_result = HF_AutoProcessor.from_pretrained(self.title_in_source, cache_dir=self._cache_dir)
         self.processor = load_result[0] if isinstance(load_result, tuple) else load_result
         self.tokenizer = HF_AutoTokenizer.from_pretrained(self.title_in_source, cache_dir=self._cache_dir)
 
@@ -201,59 +196,3 @@ class OpenCLIPModel(CLIPModel):
         image_embeddings = torch.concatenate(all_image_embeddings).numpy(force=True)
         labels = torch.concatenate(all_labels).numpy(force=True).astype(np.int32)
         return image_embeddings, class_embeddings, labels
-
-
-class SiglipModel(CLIPModel):
-    def __init__(
-        self,
-        title: str,
-        device: str | None = None,
-        *,
-        title_in_source: str | None = None,
-        cache_dir: str | None = None,
-        **kwargs,
-    ) -> None:
-        super().__init__(title, device, title_in_source=title_in_source, cache_dir=cache_dir, **kwargs)
-        self._setup(**kwargs)
-
-    def _setup(self, **kwargs):
-        self.model = HF_SiglipModel.from_pretrained(self.title_in_source, cache_dir=self._cache_dir).to(self.device)
-        self.processor = HF_SiglipProcessor.from_pretrained(self.title_in_source, cache_dir=self._cache_dir)
-
-    def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
-        def process_fn(batch) -> dict[str, list[Any]]:
-            images = [i.convert("RGB") for i in batch["image"]]
-            batch["image"] = [
-                self.processor(images=[i], return_tensors="pt").to(self.device).pixel_values.squeeze() for i in images
-            ]
-            return batch
-
-        return process_fn
-
-    def get_collate_fn(self) -> Callable[[Any], Any]:
-        def collate_fn(examples) -> dict[str, torch.Tensor]:
-            images = []
-            labels = []
-            for example in examples:
-                images.append(example["image"])
-                labels.append(example["label"])
-
-            pixel_values = torch.stack(images)
-            labels = torch.tensor(labels)
-            return {"pixel_values": pixel_values, "labels": labels}
-
-        return collate_fn
-
-    def build_embedding(self, dataloader: DataLoader) -> tuple[EmbeddingArray, ClassArray]:
-        tmp_embeddings = []
-        tmp_labels = []
-        with torch.inference_mode():
-            for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
-                tmp_labels.append(batch["labels"])
-                features = self.model.get_image_features(pixel_values=batch["pixel_values"])
-                emb = (features / features.norm(p=2, dim=-1, keepdim=True)).squeeze()
-                tmp_embeddings.append(emb.to("cpu"))
-        image_embeddings: EmbeddingArray = np.concatenate(tmp_embeddings, 0)
-        class_array = torch.concatenate(tmp_labels)
-        labels = class_array.numpy()
-        return image_embeddings, labels
