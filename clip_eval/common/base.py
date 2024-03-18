@@ -80,8 +80,8 @@ class Embeddings(BaseModel):
         dataset.set_transform(model.get_transform())
         dataloader = DataLoader(dataset, collate_fn=model.get_collate_fn(), batch_size=batch_size)
 
-        image_embeddings, classes, labels = model.build_embedding(dataloader)
-        embeddings = Embeddings(images=image_embeddings, classes=classes, labels=labels)
+        image_embeddings, class_embeddings, labels = model.build_embedding(dataloader)
+        embeddings = Embeddings(images=image_embeddings, classes=class_embeddings, labels=labels)
         return embeddings
 
     class Config:
