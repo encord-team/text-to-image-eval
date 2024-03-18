@@ -153,7 +153,7 @@ class OpenCLIPModel(CLIPModel):
     def get_transform(self) -> Callable[[dict[str, Any]], dict[str, list[Any]]]:
         def process_fn(batch) -> dict[str, list[Any]]:
             images = [i.convert("RGB") for i in batch["image"]]
-            batch["image"] = [self.processor(i).unsqueeze(0) for i in images]
+            batch["image"] = [self.processor(i) for i in images]
             return batch
 
         return process_fn
@@ -190,7 +190,7 @@ class OpenCLIPModel(CLIPModel):
             text = self.tokenizer(_dataset.text_queries).to(self.device)
             class_embeddings = self.model.encode_text(text, normalize=True).numpy(force=True)
             for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
-                image_features = self.model.encode_image(batch["image"].squeeze(), normalize=True)
+                image_features = self.model.encode_image(batch["image"], normalize=True)
                 all_image_embeddings.append(image_features.to("cpu"))
                 all_labels.append(batch["labels"])
         image_embeddings = torch.concatenate(all_image_embeddings).numpy(force=True)
