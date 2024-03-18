@@ -121,7 +121,7 @@ class ClosedCLIPModel(CLIPModel):
         all_labels = []
         with torch.inference_mode():
             _dataset: Dataset = dataloader.dataset
-            inputs = self.tokenizer(_dataset.text_queries, padding=True, return_tensors="pt")
+            inputs = self.tokenizer(_dataset.text_queries, padding=True, return_tensors="pt").to(self.device)
             class_features = self.model.get_text_features(**inputs)
             normalized_class_features = class_features / class_features.norm(p=2, dim=-1, keepdim=True)
             class_embeddings = normalized_class_features.numpy(force=True)
