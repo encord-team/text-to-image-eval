@@ -187,7 +187,7 @@ class OpenCLIPModel(CLIPModel):
         all_labels = []
         with torch.inference_mode():
             _dataset: Dataset = dataloader.dataset
-            text = self.tokenizer(_dataset.text_queries)
+            text = self.tokenizer(_dataset.text_queries).to(self.device)
             class_embeddings = self.model.encode_text(text, normalize=True).numpy(force=True)
             for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
                 image_features = self.model.encode_image(batch["image"].squeeze(), normalize=True)
