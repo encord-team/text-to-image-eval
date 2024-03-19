@@ -11,9 +11,7 @@ def read_all_cached_embeddings(as_list: Literal[True]) -> list[EmbeddingDefiniti
 
 
 @overload
-def read_all_cached_embeddings(
-    as_list: Literal[False] = False,
-) -> dict[str, list[EmbeddingDefinition]]:
+def read_all_cached_embeddings(as_list: Literal[False] = False) -> dict[str, list[EmbeddingDefinition]]:
     ...
 
 
