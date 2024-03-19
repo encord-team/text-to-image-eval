@@ -1,4 +1,5 @@
 from itertools import product
+from typing import Literal, overload
 
 from InquirerPy import inquirer as inq
 from InquirerPy.base.control import Choice
@@ -9,10 +10,24 @@ from clip_eval.models.provider import model_provider
 from clip_eval.utils import read_all_cached_embeddings
 
 
+@overload
+def _do_embedding_definition_selection(
+    defs: list[EmbeddingDefinition], allow_multiple: Literal[True] = True
+) -> list[EmbeddingDefinition]:
+    ...
+
+
+@overload
+def _do_embedding_definition_selection(
+    defs: list[EmbeddingDefinition], allow_multiple: Literal[False]
+) -> EmbeddingDefinition:
+    ...
+
+
 def _do_embedding_definition_selection(
     defs: list[EmbeddingDefinition],
     allow_multiple: bool = True,
-) -> list[EmbeddingDefinition]:
+) -> list[EmbeddingDefinition] | EmbeddingDefinition:
     choices = [Choice(d, f"D: {d.dataset[:15]:18s} M: {d.model}") for d in defs]
     message = "Please select the desired pairs" if allow_multiple else "Please select a pair"
     definitions = inq.fuzzy(
@@ -21,9 +36,6 @@ def _do_embedding_definition_selection(
         multiselect=allow_multiple,
         vi_mode=True,
     ).execute()  # type: ignore
-    # If `multiselect` is False in `inq.fuzzy`, then an object is returned instead of a list of objects
-    if isinstance(definitions, EmbeddingDefinition):
-        definitions = [definitions]
     return definitions
 
 
@@ -58,7 +70,7 @@ def select_existing_embedding_definitions(
     if count is None:
         return _do_embedding_definition_selection(defs)
     else:
-        return [_do_embedding_definition_selection(defs, allow_multiple=False)[0] for _ in range(count)]
+        return [_do_embedding_definition_selection(defs, allow_multiple=False) for _ in range(count)]
 
 
 def select_from_all_embedding_definitions(
