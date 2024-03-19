@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal, overload
 
@@ -240,20 +240,20 @@ def build_animation(
     )
 
 
-def save_animation_to_file(anim: animation.FuncAnimation, defn_1, defn_2: EmbeddingDefinition):
-    ts = datetime.now()
-    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{defn_1}-{defn_2}_{ts.isoformat()}.gif"
+def save_animation_to_file(anim: animation.FuncAnimation, def1: EmbeddingDefinition, def2: EmbeddingDefinition):
+    date_code = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
+    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{def1.dataset}_{def1.model}_{def2.model}_{date_code}.gif"
     animation_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
     anim.save(animation_file)
-    print(f"Stored animation in `{animation_file}`")
+    print(f"Animation stored at `{animation_file.resolve().as_posix()}`")
 
 
 if __name__ == "__main__":
-    defn_1 = EmbeddingDefinition(model="clip", dataset="LungCancer4Types")
-    defn_2 = EmbeddingDefinition(model="pubmed", dataset="LungCancer4Types")
-    anim = build_animation(defn_1, defn_2, interactive=False)
-    ts = datetime.now()
-    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{defn_1}-{defn_2}_{ts.isoformat()}.gif"
+    def1 = EmbeddingDefinition(model="clip", dataset="LungCancer4Types")
+    def2 = EmbeddingDefinition(model="pubmed", dataset="LungCancer4Types")
+    anim = build_animation(def1, def2, interactive=False)
+    date_code = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
+    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{def1.dataset}_{def1.model}_{def2.model}_{date_code}.gif"
     animation_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
     anim.save(animation_file)
     plt.show()
