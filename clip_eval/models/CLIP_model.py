@@ -126,9 +126,9 @@ class ClosedCLIPModel(CLIPModel):
             normalized_class_features = class_features / class_features.norm(p=2, dim=-1, keepdim=True)
             class_embeddings = normalized_class_features.numpy(force=True)
             for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
-                image_features = self.model.get_image_features(pixel_values=batch["pixel_values"])
+                image_features = self.model.get_image_features(pixel_values=batch["pixel_values"].to(self.device))
                 normalized_image_features = (image_features / image_features.norm(p=2, dim=-1, keepdim=True)).squeeze()
-                all_image_embeddings.append(normalized_image_features.to("cpu"))
+                all_image_embeddings.append(normalized_image_features)
                 all_labels.append(batch["labels"])
         image_embeddings = torch.concatenate(all_image_embeddings).numpy(force=True)
         labels = torch.concatenate(all_labels).numpy(force=True).astype(np.int32)
@@ -190,8 +190,8 @@ class OpenCLIPModel(CLIPModel):
             text = self.tokenizer(_dataset.text_queries).to(self.device)
             class_embeddings = self.model.encode_text(text, normalize=True).numpy(force=True)
             for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
-                image_features = self.model.encode_image(batch["image"], normalize=True)
-                all_image_embeddings.append(image_features.to("cpu"))
+                image_features = self.model.encode_image(batch["image"].to(self.device), normalize=True)
+                all_image_embeddings.append(image_features)
                 all_labels.append(batch["labels"])
         image_embeddings = torch.concatenate(all_image_embeddings).numpy(force=True)
         labels = torch.concatenate(all_labels).numpy(force=True).astype(np.int32)
