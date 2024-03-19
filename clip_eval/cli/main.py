@@ -17,7 +17,7 @@ cli = Typer(name="clip-eval", no_args_is_help=True, rich_markup_mode="markdown")
 @cli.command(
     "build",
     help="""Build embeddings.
-If no argumens are given, you will be prompted to select a combination of dataset and model(s).
+If no arguments are given, you will be prompted to select a combination of dataset and model(s).
 You can use [TAB] to select multiple combinations and execute them sequentially.
  """,
 )
