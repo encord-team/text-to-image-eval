@@ -107,22 +107,18 @@ The interface will prompt you to choose which embeddings you want to use.
 """,
 )
 def animate_embeddings(
-        interactive: Annotated[bool, Option(help="Interactive plot instead of animation")] = False,
-        reduction: Annotated[str, Option(help="Reduction type [pca, tsne, umap (default)")] = "umap",
-    ):
+    interactive: Annotated[bool, Option(help="Interactive plot instead of animation")] = False,
+    reduction: Annotated[str, Option(help="Reduction type [pca, tsne, umap (default)")] = "umap",
+):
     from clip_eval.plotting.animation import build_animation, save_animation_to_file
 
-    # Error could be localised better
-    defns = select_existing_embedding_definitions(by_dataset=True)
-    assert len(defns) == 2, "Please select exactly two models to make animation"
-    def1 = max(defns, key=lambda d: int(d.model == "clip"))
-    def2 = defns[0] if defns[0] != def1 else defns[1]
-    res = build_animation(def1, def2, interactive=interactive, reduction=reduction)
+    defs = select_existing_embedding_definitions(by_dataset=True, count=2)
+    res = build_animation(defs[0], defs[1], interactive=interactive, reduction=reduction)
 
     if res is None:
         plt.show()
     else:
-        save_animation_to_file(res, *defns)
+        save_animation_to_file(res, *defs)
 
 
 @cli.command("list", help="List models and datasets. By default, only cached pairs are listed.")
