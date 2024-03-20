@@ -47,7 +47,7 @@ def build_command(
         try:
             embeddings = embd_defn.build_embeddings()
             print("Made embedding successfully")
-            embd_defn.save_embeddings(embeddings=embeddings)
+            embd_defn.save_embeddings(embeddings=embeddings, overwrite=True)
             print("Saved embedding to file successfully at", embd_defn.embedding_path)
         except Exception as e:
             print(f"Failed to build embeddings for this bastard: {embd_defn}")
