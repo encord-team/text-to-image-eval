@@ -122,3 +122,7 @@ class HFDataset(Dataset):
 
         except Exception as e:
             raise ValueError(f"Failed to load dataset from Hugging Face: {self.title_in_source}") from e
+
+    def __del__(self):
+        for f in self._cache_dir.glob("**/*.lock"):
+            f.unlink(missing_ok=True)
