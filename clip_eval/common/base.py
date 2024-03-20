@@ -31,7 +31,7 @@ class Embeddings(BaseModel):
 
         if d1 != d2:
             raise ValueError(
-                f"Image {self.images.shape} and classe {self.classes.shape} embeddings should have same dimensionality"
+                f"Image {self.images.shape} and class {self.classes.shape} embeddings should have same dimensionality"
             )
         return self
 
@@ -80,8 +80,8 @@ class Embeddings(BaseModel):
         dataset.set_transform(model.get_transform())
         dataloader = DataLoader(dataset, collate_fn=model.get_collate_fn(), batch_size=batch_size)
 
-        image_embeddings, labels = model.build_embedding(dataloader)
-        embeddings = Embeddings(images=image_embeddings, labels=labels)
+        image_embeddings, class_embeddings, labels = model.build_embedding(dataloader)
+        embeddings = Embeddings(images=image_embeddings, classes=class_embeddings, labels=labels)
         return embeddings
 
     class Config:
