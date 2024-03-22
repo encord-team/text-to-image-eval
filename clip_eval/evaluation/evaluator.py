@@ -81,8 +81,7 @@ def run_evaluation(
             if classifier_type == ZeroShotClassifier and embeddings.classes is None:
                 continue
             classifier = classifier_type(**model_args)
-            _, y_hat = classifier.predict(Embeddings(images=validation_embeddings, labels=validation_labels))
-            acc: float = (y_hat == validation_labels).astype(float).mean().item()
+            acc = classifier.evaluate(Embeddings(images=validation_embeddings, labels=validation_labels))
             classifier_performance[classifier.title] = acc
             model_keys.add(classifier.title)
 
