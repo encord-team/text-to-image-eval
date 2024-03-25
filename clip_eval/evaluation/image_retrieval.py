@@ -14,7 +14,7 @@ class ImageRetrievalEvaluator(EvaluationModel):
     def __init__(
         self,
         train_embeddings: Embeddings,
-        val_embeddings: Embeddings,
+        validation_embeddings: Embeddings,
         num_classes: int | None = None,
         k: int = 100,
     ) -> None:
@@ -33,7 +33,7 @@ class ImageRetrievalEvaluator(EvaluationModel):
         Raises:
             ValueError: If the faiss index fails to build.
         """
-        super().__init__(train_embeddings, val_embeddings, num_classes, title="image_retrieval")
+        super().__init__(train_embeddings, validation_embeddings, num_classes, title="image_retrieval")
         self.k = min(k, len(train_embeddings.images))
         unique_labels, label_counts = np.unique(train_embeddings.labels, return_counts=True)
         self._class_counts = dict(zip(unique_labels, label_counts, strict=True))

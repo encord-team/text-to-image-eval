@@ -1,6 +1,5 @@
 import csv
 from datetime import datetime
-from typing import Literal
 
 import numpy as np
 from natsort import natsorted
@@ -9,7 +8,8 @@ from tabulate import tabulate
 from clip_eval.common.data_models import EmbeddingDefinition, Embeddings
 from clip_eval.constants import OUTPUT_PATH
 from clip_eval.evaluation import (
-    ClassificationModel,
+    EvaluationModel,
+    ImageRetrievalEvaluator,
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
@@ -19,7 +19,7 @@ from clip_eval.utils import read_all_cached_embeddings
 
 def print_evaluation_results(
     results: dict[EmbeddingDefinition, dict[str, float]],
-    classifier_column: (Literal["linear_probe"] | Literal["zero_shot"] | Literal["wKNN"]) = "linear_probe",
+    evaluation_model_title: str,
 ):
     defs = list(results.keys())
     model_names = natsorted(set(map(lambda d: d.model, defs)))
@@ -35,16 +35,16 @@ def print_evaluation_results(
         table[row][col] = f"{s:.4f}"
 
     for d, res in results.items():
-        s = res.get(classifier_column)
+        s = res.get(evaluation_model_title)
         if s:
-            set_score(d, res[classifier_column])
+            set_score(d, res[evaluation_model_title])
 
-    print(f"{'='*5} {classifier_column} {'='*5}")
+    print(f"{'='*5} {evaluation_model_title} {'=' * 5}")
     print(tabulate(table))
 
 
 def run_evaluation(
-    classifiers: list[type[ClassificationModel]],
+    evaluators: list[type[EvaluationModel]],
     embedding_definitions: list[EmbeddingDefinition],
     seed: int = 42,
     train_split: float = 0.7,  # TODO: This is very much out of the blue
@@ -65,29 +65,29 @@ def run_evaluation(
         selection = np.random.permutation(n)
         train_size = int(n * train_split)
 
-        train_embeddings = embeddings.images[selection[:train_size]]
-        train_labels = embeddings.labels[selection[:train_size]]
+        train_embeddings = Embeddings(
+            images=embeddings.images[selection[:train_size]],
+            labels=embeddings.labels[selection[:train_size]],
+            classes=embeddings.classes,
+        )
+        validation_embeddings = Embeddings(
+            images=embeddings.images[selection[train_size:]],
+            labels=embeddings.labels[selection[train_size:]],
+        )
 
-        validation_embeddings = embeddings.images[selection[train_size:]]
-        validation_labels = embeddings.labels[selection[train_size:]]
-
-        model_args = {
-            "embeddings": train_embeddings,
-            "labels": train_labels,
-            "class_embeddings": embeddings.classes,
-        }
-        classifier_performance: dict[str, float] = embeddings_performance.setdefault(def_, {})
-        for classifier_type in classifiers:
-            if classifier_type == ZeroShotClassifier and embeddings.classes is None:
+        evaluator_performance: dict[str, float] = embeddings_performance.setdefault(def_, {})
+        for evaluator_type in evaluators:
+            if evaluator_type == ZeroShotClassifier and embeddings.classes is None:
                 continue
-            classifier = classifier_type(**model_args)
-            acc = classifier.evaluate(Embeddings(images=validation_embeddings, labels=validation_labels))
-            classifier_performance[classifier.title] = acc
-            model_keys.add(classifier.title)
+            evaluator = evaluator_type(
+                train_embeddings=train_embeddings,
+                validation_embeddings=validation_embeddings,
+            )
+            evaluator_performance[evaluator.title] = evaluator.evaluate()
+            model_keys.add(evaluator.title)
 
     for n in model_keys:
         print_evaluation_results(embeddings_performance, n)
-
     return embeddings_performance
 
 
@@ -111,7 +111,7 @@ def export_evaluation_to_csv(
 
 
 if __name__ == "__main__":
-    models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier]
+    models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier, ImageRetrievalEvaluator]
     defs = read_all_cached_embeddings(as_list=True)
     print(defs)
     performances = run_evaluation(models, defs)
