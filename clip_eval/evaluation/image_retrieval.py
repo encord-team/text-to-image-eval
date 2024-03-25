@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 import numpy as np
 from autofaiss import build_index
@@ -59,6 +60,10 @@ class ImageRetrievalEvaluator(EvaluationModel):
             accuracies.append(row_acc)
         return np.array(accuracies).mean().item()
 
+    @staticmethod
+    def get_default_params() -> dict[str, Any]:
+        return {"k": 100}
+
 
 if __name__ == "__main__":
     train_embeddings = Embeddings(
@@ -74,5 +79,5 @@ if __name__ == "__main__":
         val_embeddings,
         num_classes=10,
     )
-    avg_acc = image_retrieval.evaluate()
-    print(avg_acc)
+    mean_accuracy = image_retrieval.evaluate()
+    print(mean_accuracy)

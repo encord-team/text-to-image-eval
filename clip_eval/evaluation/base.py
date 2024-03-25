@@ -13,16 +13,16 @@ class EvaluationModel(ABC):
         self,
         title: str,
         train_embeddings: Embeddings,
-        val_embeddings: Embeddings,
+        validation_embeddings: Embeddings,
         num_classes: int | None = None,
     ) -> None:
         # Preprocessing the embeddings
         train_embeddings.images = self.normalize(train_embeddings.images)
-        val_embeddings.images = self.normalize(val_embeddings.images)
+        validation_embeddings.images = self.normalize(validation_embeddings.images)
 
         self._title = title
         self._train_embeddings = train_embeddings
-        self._val_embeddings = val_embeddings
+        self._val_embeddings = validation_embeddings
         self._check_dims()
 
         self._num_classes = num_classes or train_embeddings.labels.max() + 1
@@ -66,6 +66,10 @@ class EvaluationModel(ABC):
         return self._train_embeddings.images.shape[-1]
 
     @staticmethod
+    def get_default_params() -> dict[str, Any]:
+        return {}
+
+    @staticmethod
     def normalize(x: npt.NDArray[DType]) -> npt.NDArray[DType]:
         return x / np.linalg.norm(x, ord=2, axis=1, keepdims=True)
 
@@ -84,20 +88,16 @@ class EvaluationModel(ABC):
 
 class ClassificationModel(EvaluationModel):
     @staticmethod
-    def get_default_params() -> dict[str, Any]:
-        return {}
-
-    @staticmethod
     def softmax(x: npt.NDArray[DType]) -> npt.NDArray[DType]:
         z = x - x.max(axis=1, keepdims=True)
         numerator = np.exp(z)
         return np.exp(z) / np.sum(numerator, axis=1, keepdims=True)
 
     @abstractmethod
-    def predict(self, embeddings: Embeddings) -> tuple[ProbabilityArray, ClassArray]:
+    def predict(self) -> tuple[ProbabilityArray, ClassArray]:
         ...
 
     def evaluate(self) -> float:
-        _, y_hat = self.predict(self._val_embeddings)
+        _, y_hat = self.predict()
         acc: float = (y_hat == self._val_embeddings.labels).astype(float).mean().item()
         return acc
