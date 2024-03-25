@@ -9,7 +9,7 @@ from clip_eval.common.data_models import EmbeddingDefinition, Embeddings
 from clip_eval.constants import OUTPUT_PATH
 from clip_eval.evaluation import (
     EvaluationModel,
-    ImageRetrievalEvaluator,
+    I2IRetrievalEvaluator,
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
@@ -111,7 +111,7 @@ def export_evaluation_to_csv(
 
 
 if __name__ == "__main__":
-    models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier, ImageRetrievalEvaluator]
+    models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier, I2IRetrievalEvaluator]
     defs = read_all_cached_embeddings(as_list=True)
     print(defs)
     performances = run_evaluation(models, defs)

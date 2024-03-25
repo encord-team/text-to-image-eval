@@ -72,7 +72,7 @@ def evaluate_embeddings(
     save: Annotated[bool, Option(help="Save evaluation results to csv")] = False,
 ):
     from clip_eval.evaluation import (
-        ImageRetrievalEvaluator,
+        I2IRetrievalEvaluator,
         LinearProbeClassifier,
         WeightedKNNClassifier,
         ZeroShotClassifier,
@@ -95,7 +95,7 @@ def evaluate_embeddings(
     else:
         defns = select_existing_embedding_definitions()
 
-    models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier, ImageRetrievalEvaluator]
+    models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier, I2IRetrievalEvaluator]
     performances = run_evaluation(models, defns)
     if save:
         export_evaluation_to_csv(defns, performances)

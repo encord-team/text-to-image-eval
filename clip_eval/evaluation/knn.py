@@ -20,19 +20,20 @@ class WeightedKNNClassifier(ClassificationModel):
         k: int = 11,
     ) -> None:
         """
-        Weighted KNN classifier based on embeddings and labels given to the constructor.
+        Weighted KNN classifier based on the provided embeddings and labels.
         Output "probabilities" is a softmax over weighted votes of class.
 
-        Args:
-            embeddings: The embeddings to do similarity search against.
-            labels: The labels associated to the embeddings
-            k: Number of neighbors to use for voting. k neighbors e_i with classes y_i from `embeddings` and `labels`,
-                respectively, will be identified and their class vote will be 1/||e_i, q||_2^2 for class y_i where q is
-                the sample to predict. The one class with the highest vote will be chosen.
-            num_classes: If not specified will be inferred from the labels.
+        Given q, a sample to predict, this function identifies the k nearest neighbors (e_i)
+        with corresponding classes (y_i) from `train_embeddings.images` and `train_embeddings.labels`, respectively,
+        and assigns a class vote of 1/||e_i, q||_2^2 for class y_i.
+        The class with the highest vote count will be chosen.
 
-        Raises:
-            ValueError: If the faiss index fails to build.
+        :param train_embeddings: Embeddings and their labels used for setting up the search space.
+        :param validation_embeddings: Embeddings and their labels used for evaluating the search space.
+        :param num_classes: Number of classes. If not specified, it will be inferred from the train labels.
+        :param k: Number of nearest neighbors.
+
+        :raises ValueError: If the build of the faiss index for KNN fails.
         """
         super().__init__(train_embeddings, validation_embeddings, num_classes, title="wKNN")
         self.k = k

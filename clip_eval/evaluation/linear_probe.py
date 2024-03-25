@@ -20,12 +20,13 @@ class LinearProbeClassifier(ClassificationModel):
         use_cross_validation: bool = False,
     ) -> None:
         """
-        Logistic regression model based on embeddings and labels.
+        Logistic Regression model based on the provided embeddings and labels.
 
-        Args:
-            embeddings: The embeddings to do similarity search against.
-            labels: The labels associated to the embeddings
-            num_classes: If not specified will be inferred from the labels.
+        :param train_embeddings: Embeddings and their labels used for setting up the model.
+        :param validation_embeddings: Embeddings and their labels used for evaluating the model.
+        :param num_classes: Number of classes. If not specified, it will be inferred from the train labels.
+        :param log_reg_params: Parameters for the Logistic Regression model.
+        :param use_cross_validation: Flag that indicated whether to use cross-validation when training the model.
         """
         super().__init__(train_embeddings, validation_embeddings, num_classes, title="linear_probe")
 

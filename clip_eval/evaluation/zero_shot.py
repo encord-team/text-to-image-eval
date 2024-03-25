@@ -11,6 +11,13 @@ class ZeroShotClassifier(ClassificationModel):
         validation_embeddings: Embeddings,
         num_classes: int | None = None,
     ) -> None:
+        """
+        Zero-Shot classifier based on the provided embeddings and labels.
+
+        :param train_embeddings: Embeddings and their labels used for setting up the search space.
+        :param validation_embeddings: Embeddings and their labels used for evaluating the search space.
+        :param num_classes: Number of classes. If not specified, it will be inferred from the train labels.
+        """
         super().__init__(train_embeddings, validation_embeddings, num_classes, title="zero_shot")
         if self._train_embeddings.classes is None:
             raise ValueError("Expected class embeddings in `train_embeddings`, got `None`")
