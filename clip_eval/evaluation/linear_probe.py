@@ -4,7 +4,7 @@ from typing import Any
 import numpy as np
 from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
 
-from clip_eval.common import ClassArray, EmbeddingArray, Embeddings, ProbabilityArray
+from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
 from clip_eval.evaluation.base import ClassificationModel
 
 logger = logging.getLogger("multiclips")
@@ -27,7 +27,7 @@ class LinearProbeClassifier(ClassificationModel):
             labels: The labels associated to the embeddings
             num_classes: If not specified will be inferred from the labels.
         """
-        super().__init__("linear_probe", train_embeddings, validation_embeddings, num_classes)
+        super().__init__(train_embeddings, validation_embeddings, num_classes, title="linear_probe")
 
         params = log_reg_params or {}
         self.classifier: LogisticRegressionCV | LogisticRegression

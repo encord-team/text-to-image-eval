@@ -8,14 +8,26 @@ from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
 from clip_eval.common.numpy_types import DType
 
 
-class EvaluationModel(ABC):
+class EvaluationModelTitleInterface:
+    # Enforce the evaluation models' title while removing its explicit mention in the `EvaluationModel` init.
+    # This way, when `EvaluationModel` is used as a type hint, there won't be a warning about unfilled title.
+    def __init__(self, title: str, **kwargs) -> None:
+        self._title = title
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+
+class EvaluationModel(EvaluationModelTitleInterface, ABC):
     def __init__(
         self,
-        title: str,
         train_embeddings: Embeddings,
         validation_embeddings: Embeddings,
         num_classes: int | None = None,
+        **kwargs,
     ) -> None:
+        super().__init__(**kwargs)
         # Preprocessing the embeddings
         train_embeddings.images = self.normalize(train_embeddings.images)
         validation_embeddings.images = self.normalize(validation_embeddings.images)
@@ -24,11 +36,9 @@ class EvaluationModel(ABC):
         if validation_embeddings.classes is not None:
             validation_embeddings.classes = self.normalize(validation_embeddings.classes)
 
-        self._title = title
         self._train_embeddings = train_embeddings
         self._val_embeddings = validation_embeddings
         self._check_dims()
-
         self._num_classes = num_classes or train_embeddings.labels.max() + 1
 
     def _check_dims(self):
@@ -80,10 +90,6 @@ class EvaluationModel(ABC):
     @property
     def num_classes(self) -> int:
         return self._num_classes
-
-    @property
-    def title(self) -> str:
-        return self._title
 
     @abstractmethod
     def evaluate(self) -> float:

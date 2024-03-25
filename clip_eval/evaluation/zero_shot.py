@@ -11,7 +11,7 @@ class ZeroShotClassifier(ClassificationModel):
         validation_embeddings: Embeddings,
         num_classes: int | None = None,
     ) -> None:
-        super().__init__("zero_shot", train_embeddings, validation_embeddings, num_classes)
+        super().__init__(train_embeddings, validation_embeddings, num_classes, title="zero_shot")
         if self._train_embeddings.classes is None:
             raise ValueError("Expected class embeddings in `train_embeddings`, got `None`")
 

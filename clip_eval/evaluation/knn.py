@@ -34,7 +34,7 @@ class WeightedKNNClassifier(ClassificationModel):
         Raises:
             ValueError: If the faiss index fails to build.
         """
-        super().__init__("wKNN", train_embeddings, validation_embeddings, num_classes)
+        super().__init__(train_embeddings, validation_embeddings, num_classes, title="wKNN")
         self.k = k
 
         index, self.index_infos = build_index(train_embeddings.images, save_on_disk=False, verbose=logging.ERROR)
