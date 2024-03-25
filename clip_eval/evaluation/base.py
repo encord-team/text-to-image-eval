@@ -19,6 +19,10 @@ class EvaluationModel(ABC):
         # Preprocessing the embeddings
         train_embeddings.images = self.normalize(train_embeddings.images)
         validation_embeddings.images = self.normalize(validation_embeddings.images)
+        if train_embeddings.classes is not None:
+            train_embeddings.classes = self.normalize(train_embeddings.classes)
+        if validation_embeddings.classes is not None:
+            validation_embeddings.classes = self.normalize(validation_embeddings.classes)
 
         self._title = title
         self._train_embeddings = train_embeddings
