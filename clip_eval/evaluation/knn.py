@@ -25,7 +25,7 @@ class WeightedKNNClassifier(ClassificationModel):
 
         Given q, a sample to predict, this function identifies the k nearest neighbors (e_i)
         with corresponding classes (y_i) from `train_embeddings.images` and `train_embeddings.labels`, respectively,
-        and assigns a class vote of 1/||e_i, q||_2^2 for class y_i.
+        and assigns a class vote of 1/||e_i - q||_2^2 for class y_i.
         The class with the highest vote count will be chosen.
 
         :param train_embeddings: Embeddings and their labels used for setting up the search space.
@@ -38,7 +38,12 @@ class WeightedKNNClassifier(ClassificationModel):
         super().__init__(train_embeddings, validation_embeddings, num_classes, title="wKNN")
         self.k = k
 
-        index, self.index_infos = build_index(train_embeddings.images, save_on_disk=False, verbose=logging.ERROR)
+        index, self.index_infos = build_index(
+            train_embeddings.images,
+            metric_type="l2",
+            save_on_disk=False,
+            verbose=logging.ERROR,
+        )
         if index is None:
             raise ValueError("Failed to build an index for knn search")
         self._index = index
@@ -58,15 +63,17 @@ class WeightedKNNClassifier(ClassificationModel):
         n = len(self._val_embeddings.images)
         weighted_count = np.zeros((n, self.num_classes, self.k), dtype=np.float32)
         weighted_count[
-            np.tile(np.arange(n), (self.k,)).reshape(-1),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
+            np.tile(np.arange(n), self.k),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
             nearest_classes.reshape(-1),  # [class numbers]
-            np.tile(np.arange(self.k), (n,)),  # [0, 1, .., k-1, 0, 1, .., k-1, ..]
-        ] = 1 / dists.reshape(-1)
+            np.tile(np.arange(self.k), n),  # [0, 1, .., k-1, 0, 1, .., k-1, ..]
+        ] = 1 / np.square(dists.reshape(-1))
         probabilities = self.softmax(weighted_count.sum(-1))
         return probabilities, np.argmax(probabilities, axis=1)
 
 
 if __name__ == "__main__":
+    np.random.seed(42)
+
     train_embeddings = Embeddings(
         images=np.random.randn(100, 10).astype(np.float32),
         labels=np.random.randint(0, 10, size=(100,)),
