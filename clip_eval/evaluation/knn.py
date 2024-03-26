@@ -60,7 +60,7 @@ class WeightedKNNClassifier(ClassificationModel):
 
         # Calculate class votes from the distances (avoiding division by zero)
         max_value = np.finfo(np.float32).max
-        scores = np.where(dists.reshape(-1) == 0, max_value, 1 / np.square(dists.reshape(-1)))
+        scores = np.divide(1, np.square(dists), out=np.full_like(dists, max_value), where=dists != 0)
         # NOTE: if self.k and self.num_classes are both large, this might become a big one.
         # We can shape of a factor self.k if we count differently here.
         n = len(self._val_embeddings.images)
@@ -69,7 +69,7 @@ class WeightedKNNClassifier(ClassificationModel):
             np.tile(np.arange(n), self.k),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
             nearest_classes.reshape(-1),  # [class numbers]
             np.tile(np.arange(self.k), n),  # [0, 1, .., k-1, 0, 1, .., k-1, ..]
-        ] = scores
+        ] = scores.reshape(-1)
         probabilities = self.softmax(weighted_count.sum(-1))
         return probabilities, np.argmax(probabilities, axis=1)
 
