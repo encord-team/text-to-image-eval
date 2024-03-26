@@ -39,7 +39,13 @@ class EvaluationModel(EvaluationModelTitleInterface, ABC):
         self._train_embeddings = train_embeddings
         self._val_embeddings = validation_embeddings
         self._check_dims()
-        self._num_classes = num_classes or train_embeddings.labels.max() + 1
+
+        # Ensure that number of classes is always valid
+        self._num_classes: int = max(train_embeddings.labels.max(), validation_embeddings.labels.max()).item() + 1
+        if num_classes is not None:
+            if self._num_classes > num_classes:
+                raise ValueError("`num_classes` is lower than the number of classes found in the embeddings")
+            self._num_classes = num_classes
 
     def _check_dims(self):
         """
