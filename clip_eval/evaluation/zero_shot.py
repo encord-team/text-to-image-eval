@@ -2,6 +2,7 @@ import numpy as np
 
 from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
 from clip_eval.evaluation.base import ClassificationModel
+from clip_eval.evaluation.utils import softmax
 
 
 class ZeroShotClassifier(ClassificationModel):
@@ -27,8 +28,8 @@ class ZeroShotClassifier(ClassificationModel):
         return self._train_embeddings.classes.shape[-1]
 
     def predict(self) -> tuple[ProbabilityArray, ClassArray]:
-        inner_products = self.normalize(self._val_embeddings.images) @ self._train_embeddings.classes.T
-        probabilities = self.softmax(inner_products)
+        inner_products = self._val_embeddings.images @ self._train_embeddings.classes.T
+        probabilities = softmax(inner_products)
         return probabilities, np.argmax(probabilities, axis=1)
 
 

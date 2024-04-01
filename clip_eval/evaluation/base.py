@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-import numpy as np
-import numpy.typing as npt
-
 from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
-from clip_eval.common.numpy_types import DType
+
+from .utils import normalize
 
 
 class EvaluationModelTitleInterface:
@@ -29,12 +27,12 @@ class EvaluationModel(EvaluationModelTitleInterface, ABC):
     ) -> None:
         super().__init__(**kwargs)
         # Preprocessing the embeddings
-        train_embeddings.images = self.normalize(train_embeddings.images)
-        validation_embeddings.images = self.normalize(validation_embeddings.images)
+        train_embeddings.images = normalize(train_embeddings.images)
+        validation_embeddings.images = normalize(validation_embeddings.images)
         if train_embeddings.classes is not None:
-            train_embeddings.classes = self.normalize(train_embeddings.classes)
+            train_embeddings.classes = normalize(train_embeddings.classes)
         if validation_embeddings.classes is not None:
-            validation_embeddings.classes = self.normalize(validation_embeddings.classes)
+            validation_embeddings.classes = normalize(validation_embeddings.classes)
 
         self._train_embeddings = train_embeddings
         self._val_embeddings = validation_embeddings
@@ -89,10 +87,6 @@ class EvaluationModel(EvaluationModelTitleInterface, ABC):
     def get_default_params() -> dict[str, Any]:
         return {}
 
-    @staticmethod
-    def normalize(x: npt.NDArray[DType]) -> npt.NDArray[DType]:
-        return x / np.linalg.norm(x, ord=2, axis=1, keepdims=True)
-
     @property
     def num_classes(self) -> int:
         return self._num_classes
@@ -103,12 +97,6 @@ class EvaluationModel(EvaluationModelTitleInterface, ABC):
 
 
 class ClassificationModel(EvaluationModel):
-    @staticmethod
-    def softmax(x: npt.NDArray[DType]) -> npt.NDArray[DType]:
-        z = x - x.max(axis=1, keepdims=True)
-        numerator = np.exp(z)
-        return np.exp(z) / np.sum(numerator, axis=1, keepdims=True)
-
     @abstractmethod
     def predict(self) -> tuple[ProbabilityArray, ClassArray]:
         ...

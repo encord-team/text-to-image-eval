@@ -7,6 +7,7 @@ from autofaiss import build_index
 from clip_eval.common.data_models import Embeddings
 from clip_eval.common.numpy_types import ClassArray, ProbabilityArray
 from clip_eval.evaluation.base import ClassificationModel
+from clip_eval.evaluation.utils import softmax
 
 logger = logging.getLogger("multiclips")
 
@@ -70,7 +71,7 @@ class WeightedKNNClassifier(ClassificationModel):
             nearest_classes.reshape(-1),  # [class numbers]
             np.tile(np.arange(self.k), n),  # [0, 1, .., k-1, 0, 1, .., k-1, ..]
         ] = scores.reshape(-1)
-        probabilities = self.softmax(weighted_count.sum(-1))
+        probabilities = softmax(weighted_count.sum(-1))
         return probabilities, np.argmax(probabilities, axis=1)
 
 
