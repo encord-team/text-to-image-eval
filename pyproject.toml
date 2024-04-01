@@ -41,6 +41,7 @@ pre-commit = "^3.6.1"
 pyfzf = "^0.3.1"
 ipython = "^8.22.1"
 ipdb = "^0.13.13"
+pytest = "^8.1.1"
 
 [tool.poetry.scripts]
 clip-eval = "clip_eval.cli.main:cli"
