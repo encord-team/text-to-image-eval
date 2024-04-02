@@ -60,37 +60,17 @@ class WeightedKNNClassifier(ClassificationModel):
         nearest_classes = np.take(self._train_embeddings.labels, nearest_indices)
 
         # Calculate class votes from the distances (avoiding division by zero)
+        # Note: Values stored in `dists` are the squared 2-norm values of the respective distance vectors
         max_value = np.finfo(np.float32).max
-        scores = np.divide(1, np.square(dists), out=np.full_like(dists, max_value), where=dists != 0)
+        scores = np.divide(1, dists, out=np.full_like(dists, max_value), where=dists != 0)
         # NOTE: if self.k and self.num_classes are both large, this might become a big one.
         # We can shape of a factor self.k if we count differently here.
         n = len(self._val_embeddings.images)
         weighted_count = np.zeros((n, self.num_classes, self.k), dtype=np.float32)
         weighted_count[
-            np.tile(np.arange(n), self.k),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
+            np.repeat(np.arange(n), self.k),  # [0, 0, .., 0_k, 1, 1, .., 1_k, ..]
             nearest_classes.reshape(-1),  # [class numbers]
             np.tile(np.arange(self.k), n),  # [0, 1, .., k-1, 0, 1, .., k-1, ..]
         ] = scores.reshape(-1)
         probabilities = softmax(weighted_count.sum(-1))
         return probabilities, np.argmax(probabilities, axis=1)
-
-
-if __name__ == "__main__":
-    np.random.seed(42)
-
-    train_embeddings = Embeddings(
-        images=np.random.randn(100, 10).astype(np.float32),
-        labels=np.random.randint(0, 10, size=(100,)),
-    )
-    val_embeddings = Embeddings(
-        images=np.random.randn(2, 10).astype(np.float32),
-        labels=np.random.randint(0, 10, size=(2,)),
-    )
-    knn = WeightedKNNClassifier(
-        train_embeddings,
-        val_embeddings,
-        num_classes=10,
-    )
-    probs, pred_classes = knn.predict()
-    print(probs)
-    print(pred_classes)
