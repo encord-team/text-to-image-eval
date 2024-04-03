@@ -1,2 +1,2 @@
-from .dataset import Dataset
+from .base import Dataset
 from .provider import dataset_provider

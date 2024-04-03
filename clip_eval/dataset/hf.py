@@ -1,6 +1,6 @@
 from datasets import ClassLabel, Sequence, Split, Value, load_dataset
 
-from .dataset import Dataset
+from .base import Dataset
 
 
 class HFDataset(Dataset):

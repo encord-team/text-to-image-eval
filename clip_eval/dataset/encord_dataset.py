@@ -7,7 +7,7 @@ from encord.objects import Classification, LabelRowV2
 from encord.objects.common import PropertyType
 from PIL import Image
 
-from .dataset import Dataset
+from .base import Dataset
 from .encord_utils import download_data_from_project, get_frame_file, get_label_row_annotations_file
 
 

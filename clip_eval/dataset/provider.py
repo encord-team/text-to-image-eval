@@ -3,7 +3,7 @@ from typing import Any
 
 from clip_eval.constants import CACHE_PATH
 
-from .dataset import Dataset
+from .base import Dataset
 from .encord_dataset import EncordDataset
 from .hf import HFDataset
 
