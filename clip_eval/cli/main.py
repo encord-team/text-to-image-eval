@@ -32,18 +32,18 @@ def build_command(
         Option(help="Select dataset first, then model. Will only work if `model_dataset` not specified."),
     ] = False,
 ):
-    splits = [Split.TRAIN, Split.VALIDATION]
     if len(model_dataset) > 0:
         if model_dataset.count("/") != 1:
             raise ValueError("model dataset must contain only 1 /")
         model, dataset = model_dataset.split("/")
-        definitions = [EmbeddingDefinition(model=model, dataset=dataset, dataset_split=split) for split in splits]
+        definitions = [EmbeddingDefinition(model=model, dataset=dataset)]
     else:
         definitions = select_from_all_embedding_definitions(
             include_existing=include_existing,
             by_dataset=by_dataset,
         )
 
+    splits = [Split.TRAIN, Split.VALIDATION]
     for embd_defn in definitions:
         for split in splits:
             try:
