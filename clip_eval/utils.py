@@ -23,9 +23,13 @@ def read_all_cached_embeddings(
     Returns: a dictionary of <dataset, [embeddings]> where the list is over models.
     """
     defs_dict = {
-        d.name: [
-            EmbeddingDefinition(dataset=d.name, model=m.stem) for m in d.iterdir() if m.is_file() and m.suffix == ".npz"
-        ]
+        d.name: list(
+            {
+                EmbeddingDefinition(dataset=d.name, model=m.stem.rsplit("_", maxsplit=1)[0])
+                for m in d.iterdir()
+                if m.is_file() and m.suffix == ".npz"
+            }
+        )
         for d in PROJECT_PATHS.EMBEDDINGS.iterdir()
         if d.is_dir()
     }
