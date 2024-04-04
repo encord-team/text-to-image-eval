@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 import matplotlib.pyplot as plt
 from typer import Option, Typer
 
-from clip_eval.common.data_models import EmbeddingDefinition
+from clip_eval.common.data_models import EmbeddingDefinition, Split
 from clip_eval.utils import read_all_cached_embeddings
 
 from .utils import (
@@ -32,11 +32,12 @@ def build_command(
         Option(help="Select dataset first, then model. Will only work if `model_dataset` not specified."),
     ] = False,
 ):
+    splits = [Split.TRAIN, Split.VALIDATION]
     if len(model_dataset) > 0:
         if model_dataset.count("/") != 1:
             raise ValueError("model dataset must contain only 1 /")
         model, dataset = model_dataset.split("/")
-        definitions = [EmbeddingDefinition(model=model, dataset=dataset)]
+        definitions = [EmbeddingDefinition(model=model, dataset=dataset, dataset_split=split) for split in splits]
     else:
         definitions = select_from_all_embedding_definitions(
             include_existing=include_existing,
@@ -132,8 +133,8 @@ def list_models_datasets(
     from clip_eval.models import model_provider
 
     if all:
-        datasets = dataset_provider.list_dataset_names()
-        models = model_provider.list_model_names()
+        datasets = dataset_provider.list_dataset_titles()
+        models = model_provider.list_model_titles()
         print(f"Available datasets are: {', '.join(datasets)}")
         print(f"Available models are: {', '.join(models)}")
         return

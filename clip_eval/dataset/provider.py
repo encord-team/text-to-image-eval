@@ -1,6 +1,8 @@
 from copy import deepcopy
 from typing import Any
 
+from natsort import natsorted
+
 from clip_eval.constants import CACHE_PATH
 
 from .base import Dataset, Split
@@ -42,8 +44,11 @@ class DatasetProvider:
         kwargs_with_global_settings = self.global_settings | kwargs
         return source(title, split=split, **kwargs_with_global_settings)
 
-    def list_dataset_names(self) -> list[str]:
-        return list(self._datasets.keys())
+    def list_dataset_titles(self) -> list[str]:
+        dataset_titles = [
+            dict_key[0] if isinstance(dict_key, tuple) else dict_key for dict_key in self._datasets.keys()
+        ]
+        return natsorted(set(dataset_titles))
 
 
 dataset_provider = DatasetProvider()

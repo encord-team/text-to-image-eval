@@ -1,3 +1,5 @@
+from natsort import natsorted
+
 from .CLIP_model import CLIPModel, ClosedCLIPModel, OpenCLIPModel
 from .local import LocalCLIPModel
 
@@ -15,8 +17,8 @@ class ModelProvider:
         source, kwargs = self._models[title]
         return source(title, **kwargs)
 
-    def list_model_names(self) -> list[str]:
-        return list(self._models.keys())
+    def list_model_titles(self) -> list[str]:
+        return natsorted(self._models.keys())
 
 
 model_provider = ModelProvider()

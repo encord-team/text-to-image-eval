@@ -5,8 +5,8 @@ from pydantic import BaseModel, model_validator
 from torch.utils.data import DataLoader
 
 from clip_eval.constants import NPZ_KEYS
-from clip_eval.dataset import Dataset, dataset_provider
-from clip_eval.models import CLIPModel, model_provider
+from clip_eval.dataset import Dataset
+from clip_eval.models import CLIPModel
 
 from .numpy_types import ClassArray, EmbeddingArray
 
@@ -67,13 +67,6 @@ class Embeddings(BaseModel):
             **to_store,
         )
         return path
-
-    @staticmethod
-    def from_embedding_definition(model_name: str, dataset_name: str) -> "Embeddings":
-        model = model_provider.get_model(model_name)
-        dataset = dataset_provider.get_dataset(dataset_name)
-        embeddings = Embeddings.build_embedding(model, dataset)
-        return embeddings
 
     @staticmethod
     def build_embedding(model: CLIPModel, dataset: Dataset, batch_size: int = 50) -> "Embeddings":

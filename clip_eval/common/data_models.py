@@ -7,6 +7,8 @@ from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
 
 from clip_eval.constants import PROJECT_PATHS
+from clip_eval.dataset import Split, dataset_provider
+from clip_eval.models import model_provider
 
 from .base import Embeddings
 from .string_utils import safe_str
@@ -18,9 +20,10 @@ logger = logging.getLogger("multiclips")
 class EmbeddingDefinition(BaseModel):
     model: SafeName
     dataset: SafeName
+    dataset_split: Split
 
     def _get_embedding_path(self, suffix: str) -> Path:
-        return Path(self.dataset) / f"{self.model}{suffix}"
+        return Path(self.dataset) / f"{self.model}_{self.dataset_split}{suffix}"
 
     @property
     def embedding_path(self) -> Path:
@@ -59,7 +62,9 @@ class EmbeddingDefinition(BaseModel):
         return True
 
     def build_embeddings(self) -> Embeddings:
-        return Embeddings.from_embedding_definition(self.model, self.dataset)
+        model = model_provider.get_model(self.model)
+        dataset = dataset_provider.get_dataset(self.dataset, self.dataset_split)
+        return Embeddings.build_embedding(model, dataset)
 
     def __str__(self):
         return self.model + "_" + self.dataset
