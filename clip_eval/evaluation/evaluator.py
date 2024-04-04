@@ -2,11 +2,10 @@ import csv
 from datetime import datetime
 from typing import Literal
 
-import numpy as np
 from natsort import natsorted
 from tabulate import tabulate
 
-from clip_eval.common.data_models import EmbeddingDefinition, Embeddings
+from clip_eval.common.data_models import EmbeddingDefinition, Split
 from clip_eval.constants import OUTPUT_PATH
 from clip_eval.evaluation import (
     ClassificationModel,
@@ -44,47 +43,33 @@ def print_evaluation_results(
 
 
 def run_evaluation(
-    classifiers: list[type[ClassificationModel]],
+    evaluators: list[type[ClassificationModel]],
     embedding_definitions: list[EmbeddingDefinition],
-    seed: int = 42,
-    train_split: float = 0.7,  # TODO: This is very much out of the blue
 ) -> dict[EmbeddingDefinition, dict[str, float]]:
     embeddings_performance: dict[EmbeddingDefinition, dict[str, float]] = {}
     model_keys: set[str] = set()
 
     for def_ in embedding_definitions:
-        embeddings = def_.load_embeddings()
+        train_embeddings = def_.load_embeddings(Split.TRAIN)
+        validation_embeddings = def_.load_embeddings(Split.VALIDATION)
 
-        if embeddings is None:
-            print(f"No embedding found for {def_}")
+        if train_embeddings is None:
+            print(f"No train embeddings were found for {def_}")
+            continue
+        if validation_embeddings is None:
+            print(f"No validation embeddings were found for {def_}")
             continue
 
-        n, _ = embeddings.images.shape
-
-        np.random.seed(seed)
-        selection = np.random.permutation(n)
-        train_size = int(n * train_split)
-
-        train_embeddings = embeddings.images[selection[:train_size]]
-        train_labels = embeddings.labels[selection[:train_size]]
-
-        validation_embeddings = embeddings.images[selection[train_size:]]
-        validation_labels = embeddings.labels[selection[train_size:]]
-
-        model_args = {
-            "embeddings": train_embeddings,
-            "labels": train_labels,
-            "class_embeddings": embeddings.classes,
-        }
-        classifier_performance: dict[str, float] = embeddings_performance.setdefault(def_, {})
-        for classifier_type in classifiers:
-            if classifier_type == ZeroShotClassifier and embeddings.classes is None:
+        evaluator_performance: dict[str, float] = embeddings_performance.setdefault(def_, {})
+        for evaluator_type in evaluators:
+            if evaluator_type == ZeroShotClassifier and train_embeddings.classes is None:
                 continue
-            classifier = classifier_type(**model_args)
-            _, y_hat = classifier.predict(Embeddings(images=validation_embeddings, labels=validation_labels))
-            acc: float = (y_hat == validation_labels).astype(float).mean().item()
-            classifier_performance[classifier.title] = acc
-            model_keys.add(classifier.title)
+            evaluator = evaluator_type(
+                train_embeddings=train_embeddings,
+                validation_embeddings=validation_embeddings,
+            )
+            evaluator_performance[evaluator.title] = evaluator.evaluate()
+            model_keys.add(evaluator.title)
 
     for n in model_keys:
         print_evaluation_results(embeddings_performance, n)
