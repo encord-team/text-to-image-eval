@@ -211,7 +211,7 @@ def build_animation(
     reduction: REDUCTIONS = "umap",
     interactive: bool = False,
 ) -> animation.FuncAnimation | None:
-    dataset = dataset_provider.get_dataset(defn_1.dataset)
+    dataset = dataset_provider.get_dataset(defn_1.dataset, defn_1.dataset_split)
 
     embeds = defn_1.load_embeddings()  # FIXME: This is expensive to get just labels
     if embeds is None:
@@ -242,18 +242,8 @@ def build_animation(
 
 def save_animation_to_file(anim: animation.FuncAnimation, def1: EmbeddingDefinition, def2: EmbeddingDefinition):
     date_code = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
-    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{def1.dataset}_{def1.model}_{def2.model}_{date_code}.gif"
+    file_name = f"transition_{def1.dataset}_{def1.model}_{def2.model}_{def1.dataset_split}_{date_code}.gif"
+    animation_file = OUTPUT_PATH.ANIMATIONS / file_name
     animation_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
     anim.save(animation_file)
     print(f"Animation stored at `{animation_file.resolve().as_posix()}`")
-
-
-if __name__ == "__main__":
-    def1 = EmbeddingDefinition(model="clip", dataset="LungCancer4Types")
-    def2 = EmbeddingDefinition(model="pubmed", dataset="LungCancer4Types")
-    anim = build_animation(def1, def2, interactive=False)
-    date_code = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
-    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{def1.dataset}_{def1.model}_{def2.model}_{date_code}.gif"
-    animation_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
-    anim.save(animation_file)
-    plt.show()

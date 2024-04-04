@@ -25,8 +25,14 @@ class DatasetProvider:
     def remove_global_setting(self, name: str):
         self._global_settings.pop(name, None)
 
-    def register_dataset(self, title: str, source: type[Dataset], **kwargs):
-        self._datasets[title] = (source, kwargs)
+    def register_dataset(self, source: type[Dataset], title: str, split: Split | None = None, **kwargs):
+        if split is None:
+            # One dataset with all the split definitions
+            self._datasets[title] = (source, kwargs)
+        else:
+            # One dataset is defined per split
+            kwargs.update(split=split)
+            self._datasets[(title, split)] = (source, kwargs)
 
     def get_dataset(self, title: str, split: Split) -> Dataset:
         if (title, split) in self._datasets:
@@ -34,7 +40,7 @@ class DatasetProvider:
             dict_key = (title, split)
             split = Split.ALL  # Ensure to read the whole dataset
         elif title in self._datasets:
-            # The dataset knows how to determine the split
+            # The dataset internally knows how to determine the split
             dict_key = title
         else:
             raise ValueError(f"Unrecognized dataset: {title}")
@@ -52,40 +58,46 @@ class DatasetProvider:
 
 
 dataset_provider = DatasetProvider()
-# Add global settings
+# Global settings
 dataset_provider.add_global_setting("cache_dir", CACHE_PATH)
 
+# Hugging Face datasets
+dataset_provider.register_dataset(HFDataset, "plants", title_in_source="sampath017/plants")
+dataset_provider.register_dataset(HFDataset, "Alzheimer-MRI", title_in_source="Falah/Alzheimer_MRI")
+dataset_provider.register_dataset(HFDataset, "skin-cancer", title_in_source="marmal88/skin_cancer", target_feature="dx")
+dataset_provider.register_dataset(HFDataset, "geo-landmarks", title_in_source="Qdrant/google-landmark-geo")
 dataset_provider.register_dataset(
-    "LungCancer4Types",
     HFDataset,
+    "LungCancer4Types",
     title_in_source="Kabil007/LungCancer4Types",
     revision="a1aab924c6bed6b080fc85552fd7b39724931605",
 )
-dataset_provider.register_dataset("plants", HFDataset, title_in_source="sampath017/plants")
 dataset_provider.register_dataset(
-    "NIH-Chest-X-ray",
     HFDataset,
+    "NIH-Chest-X-ray",
     title_in_source="alkzar90/NIH-Chest-X-ray-dataset",
     name="image-classification",
     target_feature="labels",
     trust_remote_code=True,
 )
-dataset_provider.register_dataset("Alzheimer-MRI", HFDataset, title_in_source="Falah/Alzheimer_MRI")
-dataset_provider.register_dataset("skin-cancer", HFDataset, title_in_source="marmal88/skin_cancer", target_feature="dx")
 dataset_provider.register_dataset(
-    "chest-xray-classification",
     HFDataset,
+    "chest-xray-classification",
     title_in_source="trpakov/chest-xray-classification",
     name="full",
     target_feature="labels",
 )
-dataset_provider.register_dataset(
-    "sports-classification",
-    HFDataset,
-    title_in_source="HES-XPLAIN/SportsImageClassification",
-)
-dataset_provider.register_dataset("geo-landmarks", HFDataset, title_in_source="Qdrant/google-landmark-geo")
 
 dataset_provider.register_dataset(
-    "rsicd", EncordDataset, project_hash="46ba913e-1428-48ef-be7f-2553e69bc1e6", classification_hash="4f6cf0c8"
+    HFDataset,
+    "sports-classification",
+    title_in_source="HES-XPLAIN/SportsImageClassification",
+)
+
+# Encord datasets
+dataset_provider.register_dataset(
+    EncordDataset,
+    "rsicd",
+    project_hash="46ba913e-1428-48ef-be7f-2553e69bc1e6",
+    classification_hash="4f6cf0c8",
 )
