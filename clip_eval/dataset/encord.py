@@ -7,7 +7,7 @@ from encord.objects import Classification, LabelRowV2
 from encord.objects.common import PropertyType
 from PIL import Image
 
-from .base import Dataset
+from .base import Dataset, Split
 from .encord_utils import download_data_from_project, get_frame_file, get_label_row_annotations_file
 
 
@@ -18,6 +18,7 @@ class EncordDataset(Dataset):
         project_hash: str,
         classification_hash: str,
         *,
+        split: Split,
         title_in_source: str | None = None,
         transform=None,
         cache_dir: str | None = None,

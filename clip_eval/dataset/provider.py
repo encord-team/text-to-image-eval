@@ -3,7 +3,7 @@ from typing import Any
 
 from clip_eval.constants import CACHE_PATH
 
-from .base import Dataset
+from .base import Dataset, Split
 from .encord import EncordDataset
 from .hf import HFDataset
 
@@ -26,13 +26,21 @@ class DatasetProvider:
     def register_dataset(self, title: str, source: type[Dataset], **kwargs):
         self._datasets[title] = (source, kwargs)
 
-    def get_dataset(self, title: str) -> Dataset:
-        if title not in self._datasets:
+    def get_dataset(self, title: str, split: Split) -> Dataset:
+        if (title, split) in self._datasets:
+            # The split corresponds to fetching a whole dataset (one-to-one relationship)
+            dict_key = (title, split)
+            split = Split.ALL  # Ensure to read the whole dataset
+        elif title in self._datasets:
+            # The dataset knows how to determine the split
+            dict_key = title
+        else:
             raise ValueError(f"Unrecognized dataset: {title}")
-        source, kwargs = self._datasets[title]
+
+        source, kwargs = self._datasets[dict_key]
         # Apply global settings. Values of local settings take priority when local and global settings share keys.
         kwargs_with_global_settings = self.global_settings | kwargs
-        return source(title, **kwargs_with_global_settings)
+        return source(title, split=split, **kwargs_with_global_settings)
 
     def list_dataset_names(self) -> list[str]:
         return list(self._datasets.keys())
