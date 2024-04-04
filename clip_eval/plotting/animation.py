@@ -12,7 +12,7 @@ from clip_eval.common import EmbeddingDefinition
 from clip_eval.common.data_models import SafeName
 from clip_eval.common.numpy_types import ClassArray, N2Array
 from clip_eval.constants import OUTPUT_PATH
-from clip_eval.dataset import dataset_provider
+from clip_eval.dataset import Split, dataset_provider
 
 from .reduction import REDUCTIONS, reduction_from_string
 
@@ -208,18 +208,19 @@ def build_animation(
     defn_1: EmbeddingDefinition,
     defn_2: EmbeddingDefinition,
     *,
+    split: Split = Split.VALIDATION,
     reduction: REDUCTIONS = "umap",
     interactive: bool = False,
 ) -> animation.FuncAnimation | None:
-    dataset = dataset_provider.get_dataset(defn_1.dataset, defn_1.dataset_split)
+    dataset = dataset_provider.get_dataset(defn_1.dataset, split)
 
-    embeds = defn_1.load_embeddings()  # FIXME: This is expensive to get just labels
+    embeds = defn_1.load_embeddings(split)  # FIXME: This is expensive to get just labels
     if embeds is None:
         raise ValueError("Empty embeddings")
 
     reducer = reduction_from_string(reduction)
-    reduced_1 = standardize(reducer.get_reduction(defn_1))
-    reduced_2 = rotate_to_target(standardize(reducer.get_reduction(defn_2)), reduced_1)
+    reduced_1 = standardize(reducer.get_reduction(defn_1, split))
+    reduced_2 = rotate_to_target(standardize(reducer.get_reduction(defn_2, split)), reduced_1)
     labels = embeds.labels
 
     if reduced_1.shape[0] > 2_000:

@@ -45,17 +45,18 @@ def build_command(
         )
 
     for embd_defn in definitions:
-        try:
-            embeddings = embd_defn.build_embeddings()
-            print("Made embedding successfully")
-            embd_defn.save_embeddings(embeddings=embeddings, overwrite=True)
-            print("Saved embedding to file successfully at", embd_defn.embedding_path)
-        except Exception as e:
-            print(f"Failed to build embeddings for this bastard: {embd_defn}")
-            print(e)
-            import traceback
+        for split in splits:
+            try:
+                embeddings = embd_defn.build_embeddings(split)
+                print("Made embedding successfully")
+                embd_defn.save_embeddings(embeddings=embeddings, split=split, overwrite=True)
+                print("Saved embedding to file successfully at", embd_defn.embedding_path(split))
+            except Exception as e:
+                print(f"Failed to build embeddings for this bastard: {embd_defn}")
+                print(e)
+                import traceback
 
-            traceback.print_exc()
+                traceback.print_exc()
 
 
 @cli.command(
