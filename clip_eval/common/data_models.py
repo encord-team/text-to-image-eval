@@ -70,10 +70,15 @@ class EmbeddingDefinition(BaseModel):
         return self.model + "_" + self.dataset
 
     def __eq__(self, other: Any) -> bool:
-        return isinstance(other, EmbeddingDefinition) and self.model == other.model and self.dataset == other.dataset
+        return (
+            isinstance(other, EmbeddingDefinition)
+            and self.model == other.model
+            and self.dataset == other.dataset
+            and self.dataset_split == other.dataset_split
+        )
 
     def __hash__(self):
-        return hash((self.model, self.dataset))
+        return hash((self.model, self.dataset, self.dataset_split))
 
 
 if __name__ == "__main__":
