@@ -1,7 +1,7 @@
 from copy import deepcopy
 from typing import Any
 
-from natsort import natsorted
+from natsort import natsorted, ns
 
 from clip_eval.constants import CACHE_PATH
 
@@ -54,7 +54,7 @@ class DatasetProvider:
         dataset_titles = [
             dict_key[0] if isinstance(dict_key, tuple) else dict_key for dict_key in self._datasets.keys()
         ]
-        return natsorted(set(dataset_titles))
+        return natsorted(set(dataset_titles), alg=ns.IGNORECASE)
 
 
 dataset_provider = DatasetProvider()

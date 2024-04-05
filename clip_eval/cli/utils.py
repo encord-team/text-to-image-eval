@@ -3,6 +3,7 @@ from typing import Literal, overload
 
 from InquirerPy import inquirer as inq
 from InquirerPy.base.control import Choice
+from natsort import natsorted, ns
 
 from clip_eval.common.data_models import EmbeddingDefinition
 from clip_eval.dataset.provider import dataset_provider
@@ -28,7 +29,8 @@ def _do_embedding_definition_selection(
     defs: list[EmbeddingDefinition],
     allow_multiple: bool = True,
 ) -> list[EmbeddingDefinition] | EmbeddingDefinition:
-    choices = [Choice(d, f"D: {d.dataset[:15]:18s} M: {d.model}") for d in defs]
+    sorted_defs = natsorted(defs, key=lambda x: (x.dataset, x.model), alg=ns.IGNORECASE)
+    choices = [Choice(d, f"D: {d.dataset[:15]:18s} M: {d.model}") for d in sorted_defs]
     message = "Please select the desired pairs" if allow_multiple else "Please select a pair"
     definitions = inq.fuzzy(
         message,

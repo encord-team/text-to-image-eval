@@ -1,7 +1,7 @@
 import csv
 from datetime import datetime
 
-from natsort import natsorted
+from natsort import natsorted, ns
 from tabulate import tabulate
 
 from clip_eval.common.data_models import EmbeddingDefinition, Split
@@ -21,8 +21,8 @@ def print_evaluation_results(
     evaluation_model_title: str,
 ):
     defs = list(results.keys())
-    model_names = natsorted(set(map(lambda d: d.model, defs)))
-    dataset_names = natsorted(set(map(lambda d: d.dataset, defs)))
+    model_names = natsorted(set(map(lambda d: d.model, defs)), alg=ns.IGNORECASE)
+    dataset_names = natsorted(set(map(lambda d: d.dataset, defs)), alg=ns.IGNORECASE)
 
     table: list[list[float | str]] = [
         ["Model/Dataset"] + dataset_names,
