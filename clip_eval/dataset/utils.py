@@ -5,8 +5,11 @@ from concurrent.futures import as_completed
 from pathlib import Path
 from typing import Any, TypeVar
 
+import numpy as np
 import requests
 from tqdm.auto import tqdm
+
+from .base import Split
 
 T = TypeVar("T")
 G = TypeVar("G")
@@ -63,3 +66,40 @@ def download_file(
             if chunk:
                 f.write(chunk)
         f.flush()
+
+
+def simple_random_split(
+    dataset_size: int,
+    seed: int = 42,
+    train_split: float = 0.7,
+    validation_split: float = 0.15,
+) -> dict[Split, np.ndarray]:
+    """
+    Split the dataset into training, validation, and test sets using simple random splitting.
+
+    :param dataset_size: The total size of the dataset.
+    :param seed: Random seed for reproducibility. Defaults to 42.
+    :param train_split: Percentage of the dataset to allocate to the training set. Defaults to 0.7.
+    :param validation_split: Percentage of the dataset to allocate to the validation set. Defaults to 0.15.
+    :return: A dictionary containing arrays with the indices of the data represented in the training,
+        validation, and test sets.
+
+    :raises ValueError: If the sum of `train_split` and `validation_split` is greater than 1,
+        or if `train_split` or `validation_split` are less than 0.
+    """
+    if train_split < 0 or validation_split < 0:
+        raise ValueError(f"Expected positive splits, got ({train_split=}, {validation_split=})")
+    if train_split + validation_split > 1:
+        raise ValueError(
+            f"Expected `train_split` and `validation_split` sum between 0 and 1, got {train_split + validation_split}"
+        )
+    rng = np.random.default_rng(seed)
+    selection = rng.permutation(dataset_size)
+    train_size = int(dataset_size * train_split)
+    validation_size = int(dataset_size * validation_split)
+    return {
+        Split.TRAIN: selection[:train_size],
+        Split.VALIDATION: selection[train_size : train_size + validation_size],
+        Split.TEST: selection[train_size + validation_size :],
+        Split.ALL: selection,
+    }

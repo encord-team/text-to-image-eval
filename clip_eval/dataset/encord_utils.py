@@ -6,7 +6,7 @@ from encord.orm.dataset import DataType, Image, Video
 from encord.project import LabelRowV2
 from tqdm.auto import tqdm
 
-from .utils import collect_async, download_file
+from .utils import Split, collect_async, download_file, simple_random_split
 
 
 def download_image(image_data: Image | Video, destination_dir: Path) -> Path:
@@ -104,3 +104,27 @@ def get_label_row_annotations_file(data_dir: Path, project_hash: str, label_row_
 
 def get_label_row_dir(data_dir: Path, project_hash: str, label_row_hash: str) -> Path:
     return data_dir / project_hash / label_row_hash
+
+
+def simple_project_split(
+    project: Project,
+    seed: int = 42,
+    train_split: float = 0.7,
+    validation_split: float = 0.15,
+) -> dict[Split, list[str]]:
+    """
+    Split the label rows of a project into training, validation, and test sets using simple random splitting.
+
+    :param project: The project containing the label rows to split.
+    :param seed: Random seed for reproducibility. Defaults to 42.
+    :param train_split: Percentage of the dataset to allocate to the training set. Defaults to 0.7.
+    :param validation_split: Percentage of the dataset to allocate to the validation set. Defaults to 0.15.
+    :return: A dictionary containing lists with the label hashes of the data represented in the training,
+        validation, and test sets.
+
+    :raises ValueError: If the sum of `train_split` and `validation_split` is greater than 1,
+        or if `train_split` or `validation_split` are less than 0.
+    """
+    label_rows = project.list_label_rows_v2()
+    split_to_indices = simple_random_split(len(label_rows), seed, train_split, validation_split)
+    return {split: [label_rows[i].label_hash for i in indices] for split, indices in split_to_indices.items()}
