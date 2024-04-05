@@ -48,9 +48,8 @@ def build_command(
         for split in splits:
             try:
                 embeddings = embd_defn.build_embeddings(split)
-                print("Made embedding successfully")
                 embd_defn.save_embeddings(embeddings=embeddings, split=split, overwrite=True)
-                print("Saved embedding to file successfully at", embd_defn.embedding_path(split))
+                print(f"Embeddings saved successfully to file at `{embd_defn.embedding_path(split)}`")
             except Exception as e:
                 print(f"Failed to build embeddings for this bastard: {embd_defn}")
                 print(e)
