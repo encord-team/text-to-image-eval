@@ -22,6 +22,9 @@ def read_all_cached_embeddings(
     Reads existing embedding definitions from the cache directory.
     Returns: a dictionary of <dataset, [embeddings]> where the list is over models.
     """
+    if not PROJECT_PATHS.EMBEDDINGS.exists():
+        return dict()
+
     defs_dict = {
         d.name: list(
             {
