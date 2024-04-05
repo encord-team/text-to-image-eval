@@ -1,6 +1,5 @@
 import csv
 from datetime import datetime
-from typing import Literal
 
 from natsort import natsorted
 from tabulate import tabulate
@@ -8,7 +7,8 @@ from tabulate import tabulate
 from clip_eval.common.data_models import EmbeddingDefinition, Split
 from clip_eval.constants import OUTPUT_PATH
 from clip_eval.evaluation import (
-    ClassificationModel,
+    EvaluationModel,
+    I2IRetrievalEvaluator,
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
@@ -18,7 +18,7 @@ from clip_eval.utils import read_all_cached_embeddings
 
 def print_evaluation_results(
     results: dict[EmbeddingDefinition, dict[str, float]],
-    classifier_column: (Literal["linear_probe"] | Literal["zero_shot"] | Literal["wKNN"]) = "linear_probe",
+    evaluation_model_title: str,
 ):
     defs = list(results.keys())
     model_names = natsorted(set(map(lambda d: d.model, defs)))
@@ -34,16 +34,16 @@ def print_evaluation_results(
         table[row][col] = f"{s:.4f}"
 
     for d, res in results.items():
-        s = res.get(classifier_column)
+        s = res.get(evaluation_model_title)
         if s:
-            set_score(d, res[classifier_column])
+            set_score(d, res[evaluation_model_title])
 
-    print(f"{'='*5} {classifier_column} {'='*5}")
+    print(f"{'='*5} {evaluation_model_title} {'=' * 5}")
     print(tabulate(table))
 
 
 def run_evaluation(
-    evaluators: list[type[ClassificationModel]],
+    evaluators: list[type[EvaluationModel]],
     embedding_definitions: list[EmbeddingDefinition],
 ) -> dict[EmbeddingDefinition, dict[str, float]]:
     embeddings_performance: dict[EmbeddingDefinition, dict[str, float]] = {}
@@ -73,7 +73,6 @@ def run_evaluation(
 
     for n in model_keys:
         print_evaluation_results(embeddings_performance, n)
-
     return embeddings_performance
 
 
@@ -97,7 +96,7 @@ def export_evaluation_to_csv(
 
 
 if __name__ == "__main__":
-    models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier]
+    models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier, I2IRetrievalEvaluator]
     defs = read_all_cached_embeddings(as_list=True)
     print(defs)
     performances = run_evaluation(models, defs)
