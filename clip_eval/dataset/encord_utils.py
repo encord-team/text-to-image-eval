@@ -61,6 +61,7 @@ def download_data_from_project(
     data_dir: Path,
     label_hashes: list[str] | None = None,
     overwrite_annotations: bool = False,
+    tqdm_desc: str | None = None,
 ) -> None:
     """
     Iterates through the images of the project and downloads their content, adhering to the following file structure:
@@ -82,11 +83,10 @@ def download_data_from_project(
         will be downloaded.
     :param overwrite_annotations: Flag that indicates whether to overwrite existing annotations if they exist.
     """
+    if tqdm_desc is None:
+        tqdm_desc = f"Fetching data from Encord project `{project.title}`"
     data_dir.mkdir(parents=True, exist_ok=True)
-    for label_row in tqdm(
-        project.list_label_rows_v2(label_hashes=label_hashes),
-        desc=f"Fetching data from Encord project `{project.title}`",
-    ):
+    for label_row in tqdm(project.list_label_rows_v2(label_hashes=label_hashes), desc=tqdm_desc):
         if label_row.data_type in {DataType.IMAGE, DataType.IMG_GROUP}:
             download_label_row_data(data_dir, project, label_row, overwrite_annotations)
 

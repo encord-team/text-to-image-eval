@@ -99,7 +99,13 @@ class EncordDataset(Dataset):
         lr_hashes = split_to_lr_hashes[self.split]
 
         # Get data from source. Users may supply the `overwrite_annotations` keyword in the init to download everything
-        download_data_from_project(self._project, self._cache_dir, lr_hashes, **kwargs)
+        download_data_from_project(
+            self._project,
+            self._cache_dir,
+            lr_hashes,
+            tqdm_desc=f"Fetching {self.split} data from Encord project `{self._project.title}`",
+            **kwargs,
+        )
 
         self._frame_paths = []
         self._labels = []
