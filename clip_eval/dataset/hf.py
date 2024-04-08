@@ -31,7 +31,6 @@ class HFDataset(Dataset):
 
     def _get_available_splits(self, **kwargs) -> list[Split]:
         datasets: DatasetDict = load_dataset(self.title_in_source, cache_dir=self._cache_dir.as_posix(), **kwargs)
-        print(self.title, datasets.keys())
         return list(Split(s) for s in datasets.keys() if s in [_ for _ in Split]) + [Split.ALL]
 
     def _setup(self, **kwargs):
