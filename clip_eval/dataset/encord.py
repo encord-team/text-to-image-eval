@@ -103,7 +103,7 @@ class EncordDataset(Dataset):
             self._project,
             self._cache_dir,
             lr_hashes,
-            tqdm_desc=f"Fetching {self.split} data from Encord project `{self._project.title}`",
+            tqdm_desc=f"Downloading {self.split} data from Encord project `{self._project.title}`",
             **kwargs,
         )
 
