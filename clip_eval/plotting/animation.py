@@ -12,7 +12,7 @@ from clip_eval.common import EmbeddingDefinition
 from clip_eval.common.data_models import SafeName
 from clip_eval.common.numpy_types import ClassArray, N2Array
 from clip_eval.constants import OUTPUT_PATH
-from clip_eval.dataset import dataset_provider
+from clip_eval.dataset import Split, dataset_provider
 
 from .reduction import REDUCTIONS, reduction_from_string
 
@@ -208,18 +208,19 @@ def build_animation(
     defn_1: EmbeddingDefinition,
     defn_2: EmbeddingDefinition,
     *,
+    split: Split = Split.VALIDATION,
     reduction: REDUCTIONS = "umap",
     interactive: bool = False,
 ) -> animation.FuncAnimation | None:
-    dataset = dataset_provider.get_dataset(defn_1.dataset)
+    dataset = dataset_provider.get_dataset(defn_1.dataset, split)
 
-    embeds = defn_1.load_embeddings()  # FIXME: This is expensive to get just labels
+    embeds = defn_1.load_embeddings(split)  # FIXME: This is expensive to get just labels
     if embeds is None:
         raise ValueError("Empty embeddings")
 
     reducer = reduction_from_string(reduction)
-    reduced_1 = standardize(reducer.get_reduction(defn_1))
-    reduced_2 = rotate_to_target(standardize(reducer.get_reduction(defn_2)), reduced_1)
+    reduced_1 = standardize(reducer.get_reduction(defn_1, split))
+    reduced_2 = rotate_to_target(standardize(reducer.get_reduction(defn_2, split)), reduced_1)
     labels = embeds.labels
 
     if reduced_1.shape[0] > 2_000:
@@ -240,20 +241,15 @@ def build_animation(
     )
 
 
-def save_animation_to_file(anim: animation.FuncAnimation, def1: EmbeddingDefinition, def2: EmbeddingDefinition):
+def save_animation_to_file(
+    anim: animation.FuncAnimation,
+    def1: EmbeddingDefinition,
+    def2: EmbeddingDefinition,
+    split: Split = Split.VALIDATION,
+):
     date_code = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
-    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{def1.dataset}_{def1.model}_{def2.model}_{date_code}.gif"
+    file_name = f"transition_{def1.dataset}_{def1.model}_{def2.model}_{split}_{date_code}.gif"
+    animation_file = OUTPUT_PATH.ANIMATIONS / file_name
     animation_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
     anim.save(animation_file)
     print(f"Animation stored at `{animation_file.resolve().as_posix()}`")
-
-
-if __name__ == "__main__":
-    def1 = EmbeddingDefinition(model="clip", dataset="LungCancer4Types")
-    def2 = EmbeddingDefinition(model="pubmed", dataset="LungCancer4Types")
-    anim = build_animation(def1, def2, interactive=False)
-    date_code = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
-    animation_file = OUTPUT_PATH.ANIMATIONS / f"transition_{def1.dataset}_{def1.model}_{def2.model}_{date_code}.gif"
-    animation_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
-    anim.save(animation_file)
-    plt.show()

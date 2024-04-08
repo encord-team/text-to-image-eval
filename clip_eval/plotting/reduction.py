@@ -7,6 +7,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 from clip_eval.common import EmbeddingArray, EmbeddingDefinition, ReductionArray
+from clip_eval.dataset import Split
 
 
 class Reducer:
@@ -24,19 +25,20 @@ class Reducer:
     def get_reduction(
         cls,
         embedding_def: EmbeddingDefinition,
+        split: Split,
         force_recompute: bool = False,
         save: bool = True,
         **kwargs,
     ) -> ReductionArray:
-        reduction_file = embedding_def.get_reduction_path(cls.title())
+        reduction_file = embedding_def.get_reduction_path(cls.title(), split=split)
         if reduction_file.is_file() and not force_recompute:
             reduction: ReductionArray = np.load(reduction_file)
             return reduction
 
-        elif not embedding_def.embedding_path.is_file():
-            raise ValueError(f"{embedding_def} does not have embeddings stored ({embedding_def.embedding_path})")
+        elif not embedding_def.embedding_path(split).is_file():
+            raise ValueError(f"{embedding_def} does not have embeddings stored ({embedding_def.embedding_path(split)})")
 
-        image_embeddings: EmbeddingArray = np.load(embedding_def.embedding_path)["image_embeddings"]
+        image_embeddings: EmbeddingArray = np.load(embedding_def.embedding_path(split))["image_embeddings"]
         reduction = cls.reduce(image_embeddings)
         if save:
             reduction_file.parent.mkdir(parents=True, exist_ok=True)

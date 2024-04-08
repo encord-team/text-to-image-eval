@@ -6,7 +6,7 @@ from encord.orm.dataset import DataType, Image, Video
 from encord.project import LabelRowV2
 from tqdm.auto import tqdm
 
-from .utils import collect_async, download_file
+from .utils import Split, collect_async, download_file, simple_random_split
 
 
 def download_image(image_data: Image | Video, destination_dir: Path) -> Path:
@@ -56,7 +56,13 @@ def download_label_row_data(
     )
 
 
-def download_data_from_project(project: Project, data_dir: Path, overwrite_annotations: bool = False) -> None:
+def download_data_from_project(
+    project: Project,
+    data_dir: Path,
+    label_hashes: list[str] | None = None,
+    overwrite_annotations: bool = False,
+    tqdm_desc: str | None = None,
+) -> None:
     """
     Iterates through the images of the project and downloads their content, adhering to the following file structure:
     data_dir/
@@ -73,10 +79,14 @@ def download_data_from_project(project: Project, data_dir: Path, overwrite_annot
     └── ...
     :param project: The project containing the images with their annotations.
     :param data_dir: The directory where the project data will be downloaded.
+    :param label_hashes: The hashes of the label rows that will be downloaded. If None, all label rows
+        will be downloaded.
     :param overwrite_annotations: Flag that indicates whether to overwrite existing annotations if they exist.
     """
+    if tqdm_desc is None:
+        tqdm_desc = f"Fetching data from Encord project `{project.title}`"
     data_dir.mkdir(parents=True, exist_ok=True)
-    for label_row in tqdm(project.list_label_rows_v2(), desc=f"Fetching Encord project `{project.title}`"):
+    for label_row in tqdm(project.list_label_rows_v2(label_hashes=label_hashes), desc=tqdm_desc):
         if label_row.data_type in {DataType.IMAGE, DataType.IMG_GROUP}:
             download_label_row_data(data_dir, project, label_row, overwrite_annotations)
 
@@ -104,3 +114,27 @@ def get_label_row_annotations_file(data_dir: Path, project_hash: str, label_row_
 
 def get_label_row_dir(data_dir: Path, project_hash: str, label_row_hash: str) -> Path:
     return data_dir / project_hash / label_row_hash
+
+
+def simple_project_split(
+    project: Project,
+    seed: int = 42,
+    train_split: float = 0.7,
+    validation_split: float = 0.15,
+) -> dict[Split, list[str]]:
+    """
+    Split the label rows of a project into training, validation, and test sets using simple random splitting.
+
+    :param project: The project containing the label rows to split.
+    :param seed: Random seed for reproducibility. Defaults to 42.
+    :param train_split: Percentage of the dataset to allocate to the training set. Defaults to 0.7.
+    :param validation_split: Percentage of the dataset to allocate to the validation set. Defaults to 0.15.
+    :return: A dictionary containing lists with the label hashes of the data represented in the training,
+        validation, and test sets.
+
+    :raises ValueError: If the sum of `train_split` and `validation_split` is greater than 1,
+        or if `train_split` or `validation_split` are less than 0.
+    """
+    label_rows = project.list_label_rows_v2()
+    split_to_indices = simple_random_split(len(label_rows), seed, train_split, validation_split)
+    return {split: [label_rows[i].label_hash for i in indices] for split, indices in split_to_indices.items()}

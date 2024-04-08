@@ -3,6 +3,7 @@ from typing import Literal, overload
 
 from InquirerPy import inquirer as inq
 from InquirerPy.base.control import Choice
+from natsort import natsorted, ns
 
 from clip_eval.common.data_models import EmbeddingDefinition
 from clip_eval.dataset.provider import dataset_provider
@@ -28,7 +29,8 @@ def _do_embedding_definition_selection(
     defs: list[EmbeddingDefinition],
     allow_multiple: bool = True,
 ) -> list[EmbeddingDefinition] | EmbeddingDefinition:
-    choices = [Choice(d, f"D: {d.dataset[:15]:18s} M: {d.model}") for d in defs]
+    sorted_defs = natsorted(defs, key=lambda x: (x.dataset, x.model), alg=ns.IGNORECASE)
+    choices = [Choice(d, f"D: {d.dataset[:15]:18s} M: {d.model}") for d in sorted_defs]
     message = "Please select the desired pairs" if allow_multiple else "Please select a pair"
     definitions = inq.fuzzy(
         message,
@@ -78,8 +80,8 @@ def select_from_all_embedding_definitions(
 ) -> list[EmbeddingDefinition]:
     existing = set(read_all_cached_embeddings(as_list=True))
 
-    models = model_provider.list_model_names()
-    datasets = dataset_provider.list_dataset_names()
+    models = model_provider.list_model_titles()
+    datasets = dataset_provider.list_dataset_titles()
 
     defs = [EmbeddingDefinition(dataset=d, model=m) for d, m in product(datasets, models)]
     if not include_existing:

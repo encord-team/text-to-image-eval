@@ -1,11 +1,10 @@
 import csv
 from datetime import datetime
 
-import numpy as np
-from natsort import natsorted
+from natsort import natsorted, ns
 from tabulate import tabulate
 
-from clip_eval.common.data_models import EmbeddingDefinition, Embeddings
+from clip_eval.common.data_models import EmbeddingDefinition, Split
 from clip_eval.constants import OUTPUT_PATH
 from clip_eval.evaluation import (
     EvaluationModel,
@@ -22,8 +21,8 @@ def print_evaluation_results(
     evaluation_model_title: str,
 ):
     defs = list(results.keys())
-    model_names = natsorted(set(map(lambda d: d.model, defs)))
-    dataset_names = natsorted(set(map(lambda d: d.dataset, defs)))
+    model_names = natsorted(set(map(lambda d: d.model, defs)), alg=ns.IGNORECASE)
+    dataset_names = natsorted(set(map(lambda d: d.dataset, defs)), alg=ns.IGNORECASE)
 
     table: list[list[float | str]] = [
         ["Model/Dataset"] + dataset_names,
@@ -46,38 +45,24 @@ def print_evaluation_results(
 def run_evaluation(
     evaluators: list[type[EvaluationModel]],
     embedding_definitions: list[EmbeddingDefinition],
-    seed: int = 42,
-    train_split: float = 0.7,  # TODO: This is very much out of the blue
 ) -> dict[EmbeddingDefinition, dict[str, float]]:
     embeddings_performance: dict[EmbeddingDefinition, dict[str, float]] = {}
     model_keys: set[str] = set()
 
     for def_ in embedding_definitions:
-        embeddings = def_.load_embeddings()
+        train_embeddings = def_.load_embeddings(Split.TRAIN)
+        validation_embeddings = def_.load_embeddings(Split.VALIDATION)
 
-        if embeddings is None:
-            print(f"No embedding found for {def_}")
+        if train_embeddings is None:
+            print(f"No train embeddings were found for {def_}")
             continue
-
-        n, _ = embeddings.images.shape
-
-        np.random.seed(seed)
-        selection = np.random.permutation(n)
-        train_size = int(n * train_split)
-
-        train_embeddings = Embeddings(
-            images=embeddings.images[selection[:train_size]],
-            labels=embeddings.labels[selection[:train_size]],
-            classes=embeddings.classes,
-        )
-        validation_embeddings = Embeddings(
-            images=embeddings.images[selection[train_size:]],
-            labels=embeddings.labels[selection[train_size:]],
-        )
+        if validation_embeddings is None:
+            print(f"No validation embeddings were found for {def_}")
+            continue
 
         evaluator_performance: dict[str, float] = embeddings_performance.setdefault(def_, {})
         for evaluator_type in evaluators:
-            if evaluator_type == ZeroShotClassifier and embeddings.classes is None:
+            if evaluator_type == ZeroShotClassifier and train_embeddings.classes is None:
                 continue
             evaluator = evaluator_type(
                 train_embeddings=train_embeddings,
