@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Any
 
 from encord import Project
 from encord.common.constants import DATETIME_STRING_FORMAT
@@ -44,7 +45,7 @@ def _download_label_rows(
     data_dir: Path,
     label_rows: list[LabelRowV2],
     overwrite_annotations: bool,
-    downloaded_label_rows_tracker: dict,
+    label_rows_info: dict[str, Any],
     tqdm_desc: str | None,
 ):
     if tqdm_desc is None:
@@ -55,14 +56,14 @@ def _download_label_rows(
             continue
         save_annotations = False
         # Trigger the images download if the label hash is not found or is None (never downloaded).
-        if label_row.label_hash not in downloaded_label_rows_tracker.keys():
+        if label_row.label_hash not in label_rows_info.keys():
             _download_label_row_image_data(data_dir, project, label_row)
             save_annotations = True
         # Overwrite annotations only if `last_edited_at` values differ between the existing and new annotations.
         elif (
             overwrite_annotations
             and label_row.last_edited_at.strftime(DATETIME_STRING_FORMAT)
-            != downloaded_label_rows_tracker[label_row.label_hash]["last_edited_at"]
+            != label_rows_info[label_row.label_hash]["last_edited_at"]
         ):
             label_row.initialise_labels()
             save_annotations = True
@@ -70,7 +71,7 @@ def _download_label_rows(
         if save_annotations:
             annotations_file = get_label_row_annotations_file(data_dir, project.project_hash, label_row.label_hash)
             annotations_file.write_text(json.dumps(label_row.to_encord_dict()), encoding="utf-8")
-            downloaded_label_rows_tracker[label_row.label_hash] = {"last_edited_at": label_row.last_edited_at}
+            label_rows_info[label_row.label_hash] = {"last_edited_at": label_row.last_edited_at}
 
 
 def download_data_from_project(
@@ -101,20 +102,16 @@ def download_data_from_project(
     :param tqdm_desc: Optional description for tqdm progress bar.
         Defaults to 'Downloading data from Encord project `{project.title}`'
     """
-    # Read internal file that controls the downloaded data progress
-    downloaded_label_rows_tracker_file = data_dir / project.project_hash / "label_rows.json"
-    downloaded_label_rows_tracker_file.parent.mkdir(parents=True, exist_ok=True)
-    downloaded_label_rows_tracker = (
-        json.loads(downloaded_label_rows_tracker_file.read_text(encoding="utf-8"))
-        if downloaded_label_rows_tracker_file.is_file()
-        else dict()
-    )
+    # Read file that tracks the downloaded data progress
+    lrs_info_file = get_label_rows_info_file(data_dir, project.project_hash)
+    lrs_info_file.parent.mkdir(parents=True, exist_ok=True)
+    label_rows_info = json.loads(lrs_info_file.read_text(encoding="utf-8")) if lrs_info_file.is_file() else dict()
 
     # Retrieve only the unseen data if there is no explicit annotation update
     filtered_label_rows = (
         label_rows
         if overwrite_annotations
-        else [lr for lr in label_rows if lr.label_hash not in downloaded_label_rows_tracker.keys()]
+        else [lr for lr in label_rows if lr.label_hash not in label_rows_info.keys()]
     )
     if len(filtered_label_rows) == 0:
         return
@@ -125,12 +122,12 @@ def download_data_from_project(
             data_dir,
             filtered_label_rows,
             overwrite_annotations,
-            downloaded_label_rows_tracker,
+            label_rows_info,
             tqdm_desc=tqdm_desc,
         )
     finally:
         # Save the current download progress in case of failure
-        downloaded_label_rows_tracker_file.write_text(json.dumps(downloaded_label_rows_tracker), encoding="utf-8")
+        lrs_info_file.write_text(json.dumps(label_rows_info), encoding="utf-8")
 
 
 def get_frame_name(frame_hash: str, frame_title: str) -> str:
@@ -156,6 +153,10 @@ def get_label_row_annotations_file(data_dir: Path, project_hash: str, label_row_
 
 def get_label_row_dir(data_dir: Path, project_hash: str, label_row_hash: str) -> Path:
     return data_dir / project_hash / label_row_hash
+
+
+def get_label_rows_info_file(data_dir: Path, project_hash: str) -> Path:
+    return data_dir / project_hash / "label_rows_info.json"
 
 
 def simple_project_split(
