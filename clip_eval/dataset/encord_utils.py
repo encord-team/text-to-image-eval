@@ -76,7 +76,7 @@ def _download_label_rows(
 def download_data_from_project(
     project: Project,
     data_dir: Path,
-    label_hashes: list[str] | None = None,
+    label_rows: list[LabelRowV2] | None = None,
     overwrite_annotations: bool = False,
     tqdm_desc: str | None = None,
 ) -> None:
@@ -96,8 +96,7 @@ def download_data_from_project(
     └── ...
     :param project: The project containing the images with their annotations.
     :param data_dir: The directory where the project data will be downloaded.
-    :param label_hashes: The hashes of the label rows that will be downloaded. If None, all label rows
-        will be downloaded.
+    :param label_rows: The label rows that will be downloaded. If None, all label rows will be downloaded.
     :param overwrite_annotations: Flag that indicates whether to overwrite existing annotations if they exist.
     :param tqdm_desc: Optional description for tqdm progress bar.
         Defaults to 'Downloading data from Encord project `{project.title}`'
@@ -111,17 +110,20 @@ def download_data_from_project(
         else dict()
     )
 
-    # Retrieve only new data if there is no explicit annotation update
-    if not overwrite_annotations:
-        label_hashes = list(set(label_hashes or []).difference(downloaded_label_rows_tracker.keys()))
-    if len(label_hashes) == 0:
+    # Retrieve only the unseen data if there is no explicit annotation update
+    filtered_label_rows = (
+        label_rows
+        if overwrite_annotations
+        else [lr for lr in label_rows if lr.label_hash not in downloaded_label_rows_tracker.keys()]
+    )
+    if len(filtered_label_rows) == 0:
         return
 
     try:
         _download_label_rows(
             project,
             data_dir,
-            project.list_label_rows_v2(label_hashes=label_hashes),
+            filtered_label_rows,
             overwrite_annotations,
             downloaded_label_rows_tracker,
             tqdm_desc=tqdm_desc,

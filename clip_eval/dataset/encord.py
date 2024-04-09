@@ -96,13 +96,13 @@ class EncordDataset(Dataset):
         else:
             split_to_lr_hashes = simple_project_split(self._project)
             splits_file.write_text(json.dumps(split_to_lr_hashes), encoding="utf-8")
-        lr_hashes = split_to_lr_hashes[self.split]
+        self._label_rows = self._project.list_label_rows_v2(label_hashes=split_to_lr_hashes[self.split])
 
         # Get data from source. Users may supply the `overwrite_annotations` keyword in the init to download everything
         download_data_from_project(
             self._project,
             self._cache_dir,
-            lr_hashes,
+            self._label_rows,
             tqdm_desc=f"Downloading {self.split} data from Encord project `{self._project.title}`",
             **kwargs,
         )
@@ -110,7 +110,7 @@ class EncordDataset(Dataset):
         self._frame_paths = []
         self._labels = []
         class_name_to_idx = {name: idx for idx, name in enumerate(self.class_names)}  # Fast lookup of class indices
-        for label_row in self._project.list_label_rows_v2(label_hashes=lr_hashes):
+        for label_row in self._label_rows:
             anns_path = self._get_label_row_annotations(label_row)
             label_row.from_labels_dict(json.loads(anns_path.read_text(encoding="utf-8")))
             for frame_view in label_row.get_frame_views():
