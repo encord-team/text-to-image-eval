@@ -177,4 +177,11 @@ def simple_project_split(
     """
     label_rows = project.list_label_rows_v2()
     split_to_indices = simple_random_split(len(label_rows), seed, train_split, validation_split)
+    enforce_label_rows_initialization(label_rows)  # Ensure that all label rows have a label hash
     return {split: [label_rows[i].label_hash for i in indices] for split, indices in split_to_indices.items()}
+
+
+def enforce_label_rows_initialization(label_rows: list[LabelRowV2]):
+    for lr in label_rows:
+        if lr.label_hash is None:
+            lr.initialise_labels()
