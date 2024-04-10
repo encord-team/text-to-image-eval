@@ -1,0 +1,6 @@
+{
+  "dataset_type": "HFDataset",
+  "module_path": "../types/hf.py",
+  "title": "plants",
+  "title_in_source": "sampath017/plants"
+}

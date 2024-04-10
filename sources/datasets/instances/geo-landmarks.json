@@ -1,0 +1,6 @@
+{
+  "dataset_type": "HFDataset",
+  "module_path": "../types/hf.py",
+  "title": "geo-landmarks",
+  "title_in_source": "Qdrant/google-landmark-geo"
+}

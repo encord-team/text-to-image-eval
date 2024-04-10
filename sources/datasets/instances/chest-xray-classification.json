@@ -1,0 +1,8 @@
+{
+  "dataset_type": "HFDataset",
+  "module_path": "../types/hf.py",
+  "title": "chest-xray-classification",
+  "title_in_source": "trpakov/chest-xray-classification",
+  "name": "full",
+  "target_feature": "labels"
+}

@@ -8,8 +8,6 @@ from natsort import natsorted, ns
 from clip_eval.constants import CACHE_PATH, SOURCES_PATH
 
 from .base import Dataset, Split
-from sources.datasets.types.encord import EncordDataset
-from sources.datasets.types.hf import HFDataset
 from .utils import load_class_from_path
 
 
@@ -97,44 +95,3 @@ dataset_provider = DatasetProvider()
 dataset_provider.add_global_setting("cache_dir", CACHE_PATH)
 
 dataset_provider.register_datasets_from_sources_dir(SOURCES_PATH.DATASET_INSTANCE_DEFINITIONS)
-
-# Hugging Face datasets
-dataset_provider.register_dataset(HFDataset, "plants", title_in_source="sampath017/plants")
-dataset_provider.register_dataset(HFDataset, "Alzheimer-MRI", title_in_source="Falah/Alzheimer_MRI")
-dataset_provider.register_dataset(HFDataset, "skin-cancer", title_in_source="marmal88/skin_cancer", target_feature="dx")
-dataset_provider.register_dataset(HFDataset, "geo-landmarks", title_in_source="Qdrant/google-landmark-geo")
-dataset_provider.register_dataset(
-    HFDataset,
-    "LungCancer4Types",
-    title_in_source="Kabil007/LungCancer4Types",
-    revision="a1aab924c6bed6b080fc85552fd7b39724931605",
-)
-dataset_provider.register_dataset(
-    HFDataset,
-    "NIH-Chest-X-ray",
-    title_in_source="alkzar90/NIH-Chest-X-ray-dataset",
-    name="image-classification",
-    target_feature="labels",
-    trust_remote_code=True,
-)
-dataset_provider.register_dataset(
-    HFDataset,
-    "chest-xray-classification",
-    title_in_source="trpakov/chest-xray-classification",
-    name="full",
-    target_feature="labels",
-)
-
-dataset_provider.register_dataset(
-    HFDataset,
-    "sports-classification",
-    title_in_source="HES-XPLAIN/SportsImageClassification",
-)
-
-# Encord datasets
-dataset_provider.register_dataset(
-    EncordDataset,
-    "rsicd",
-    project_hash="46ba913e-1428-48ef-be7f-2553e69bc1e6",
-    classification_hash="4f6cf0c8",
-)
