@@ -1,16 +1,8 @@
-import importlib.util
 from itertools import chain
 from typing import Literal, overload
 
 from clip_eval.common.data_models import EmbeddingDefinition
 from clip_eval.constants import PROJECT_PATHS
-
-
-def load_class_from_path(module_path: str, class_name: str):
-    spec = importlib.util.spec_from_file_location(module_path, module_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return getattr(module, class_name)
 
 
 @overload
