@@ -5,11 +5,11 @@ from typing import Any
 
 from natsort import natsorted, ns
 
-from clip_eval.constants import CACHE_PATH
+from clip_eval.constants import CACHE_PATH, SOURCES_PATH
 
 from .base import Dataset, Split
-from .encord import EncordDataset
-from .hf import HFDataset
+from sources.datasets.types.encord import EncordDataset
+from sources.datasets.types.hf import HFDataset
 from .utils import load_class_from_path
 
 
@@ -90,6 +90,8 @@ class DatasetProvider:
 dataset_provider = DatasetProvider()
 # Global settings
 dataset_provider.add_global_setting("cache_dir", CACHE_PATH)
+
+dataset_provider.register_datasets_from_sources_dir(SOURCES_PATH.DATASET_INSTANCE_DEFINITIONS)
 
 # Hugging Face datasets
 dataset_provider.register_dataset(HFDataset, "plants", title_in_source="sampath017/plants")

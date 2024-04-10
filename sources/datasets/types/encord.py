@@ -9,8 +9,8 @@ from encord.objects import Classification, LabelRowV2
 from encord.objects.common import PropertyType
 from PIL import Image
 
-from .base import Dataset, Split
-from .encord_utils import (
+from clip_eval.dataset.base import Dataset, Split
+from clip_eval.dataset.encord_utils import (
     download_data_from_project,
     get_frame_file,
     get_label_row_annotations_file,
