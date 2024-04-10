@@ -17,7 +17,7 @@ class DatasetProvider:
     def __init__(self):
         self._datasets = {}
         self._global_settings: dict[str, Any] = dict()
-        self.__known_dataset_types: dict[tuple[str, str], Any] = dict()
+        self.__known_dataset_types: dict[tuple[Path, str], Any] = dict()
 
     @property
     def global_settings(self) -> dict:
@@ -40,18 +40,23 @@ class DatasetProvider:
 
     def register_dataset_from_json_definition(self, json_definition: Path) -> None:
         dataset_params: dict = json.loads(json_definition.read_text(encoding="utf-8"))
-        module_path: str | None = dataset_params.pop("module_path", None)
+        module_path_str: str | None = dataset_params.pop("module_path", None)
         dataset_type_name: str | None = dataset_params.pop("dataset_type", None)
-        if module_path is None or dataset_type_name is None:
+        if module_path_str is None or dataset_type_name is None:
             raise ValueError(
                 f"Missing required fields `module_path` or `dataset_type` in "
                 f"the JSON definition file: {json_definition.as_posix()}"
             )
 
+        # Handle relative module paths
+        module_path = Path(module_path_str)
+        if not module_path.is_absolute():
+            module_path = (json_definition.parent / module_path).resolve()
+
         # Fetch the class of the dataset type stated in the definition
         dataset_type = self.__known_dataset_types.get((module_path, dataset_type_name))
         if dataset_type is None:
-            dataset_type = load_class_from_path(module_path, dataset_type_name)
+            dataset_type = load_class_from_path(module_path.as_posix(), dataset_type_name)
             if not issubclass(dataset_type, Dataset):
                 raise ValueError(
                     f"Dataset type specified in the JSON definition file `{json_definition.as_posix()}` "
