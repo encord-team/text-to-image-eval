@@ -1,0 +1,8 @@
+{
+  "model_type": "Name of the class that implements the model behavior",
+  "module_path": "Path to the file containing the model class implementation. It can be either an absolute path or a path relative to the location of this JSON file.",
+  "title": "Title of the model used for reference within this app",
+  "title_in_source": "Optional parameter to record the title of this model in its source",
+  "custom_param_1": "Optional parameter for customizing the model class initialization",
+  "custom_param_2": "Optional parameter for customizing the model class initialization"
+}

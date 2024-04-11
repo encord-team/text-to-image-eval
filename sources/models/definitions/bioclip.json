@@ -1,0 +1,6 @@
+{
+  "model_type": "OpenCLIPModel",
+  "module_path": "../types/open_clip.py",
+  "title": "bioclip",
+  "title_in_source": "hf-hub:imageomics/bioclip"
+}

@@ -1,15 +1,53 @@
+import json
+from pathlib import Path
+from typing import Any
+
 from natsort import natsorted, ns
 
-from .CLIP_model import CLIPModel, ClosedCLIPModel, OpenCLIPModel
-from .local import LocalCLIPModel
+from clip_eval.constants import SOURCES_PATH
+from clip_eval.dataset.utils import load_class_from_path
+
+from .CLIP_model import CLIPModel
 
 
 class ModelProvider:
     def __init__(self) -> None:
         self._models = {}
+        self.__known_model_types: dict[tuple[Path, str], Any] = dict()
 
     def register_model(self, title: str, source: type[CLIPModel], **kwargs):
         self._models[title] = (source, kwargs)
+
+    def register_model_from_json_definition(self, json_definition: Path) -> None:
+        model_params: dict = json.loads(json_definition.read_text(encoding="utf-8"))
+        module_path_str: str | None = model_params.pop("module_path", None)
+        model_type_name: str | None = model_params.pop("model_type", None)
+        if module_path_str is None or model_type_name is None:
+            raise ValueError(
+                f"Missing required fields `module_path` or `model_type` in "
+                f"the JSON definition file: {json_definition.as_posix()}"
+            )
+
+        # Handle relative module paths
+        module_path = Path(module_path_str)
+        if not module_path.is_absolute():
+            module_path = (json_definition.parent / module_path).resolve()
+
+        # Fetch the class of the model type stated in the definition
+        model_type = self.__known_model_types.get((module_path, model_type_name))
+        if model_type is None:
+            model_type = load_class_from_path(module_path.as_posix(), model_type_name)
+            if not issubclass(model_type, CLIPModel):
+                raise ValueError(
+                    f"Model type specified in the JSON definition file `{json_definition.as_posix()}` "
+                    f"does not inherit from the base class `Model`"
+                )
+            self.__known_model_types[(module_path, model_type_name)] = model_type
+        self.register_model(model_type, **model_params)
+
+    def register_models_from_sources_dir(self, source_dir: Path) -> None:
+        for f in source_dir.glob("*.json"):
+            self.register_model_from_json_definition(f)
 
     def get_model(self, title: str) -> CLIPModel:
         if title not in self._models:
@@ -22,28 +60,4 @@ class ModelProvider:
 
 
 model_provider = ModelProvider()
-model_provider.register_model("clip", ClosedCLIPModel, title_in_source="openai/clip-vit-large-patch14-336")
-model_provider.register_model("plip", ClosedCLIPModel, title_in_source="vinid/plip")
-model_provider.register_model(
-    "pubmed",
-    ClosedCLIPModel,
-    title_in_source="flaviagiammarino/pubmed-clip-vit-base-patch32",
-)
-model_provider.register_model(
-    "tinyclip",
-    ClosedCLIPModel,
-    title_in_source="wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M",
-)
-model_provider.register_model("fashion", ClosedCLIPModel, title_in_source="patrickjohncyh/fashion-clip")
-model_provider.register_model("rsicd", ClosedCLIPModel, title_in_source="flax-community/clip-rsicd")
-model_provider.register_model("street", ClosedCLIPModel, title_in_source="geolocal/StreetCLIP")
-model_provider.register_model("siglip_small", ClosedCLIPModel, title_in_source="google/siglip-base-patch16-224")
-model_provider.register_model("siglip_large", ClosedCLIPModel, title_in_source="google/siglip-large-patch16-256")
-
-model_provider.register_model("apple", OpenCLIPModel, title_in_source="hf-hub:apple/DFN5B-CLIP-ViT-H-14")
-model_provider.register_model("eva-clip", OpenCLIPModel, title_in_source="BAAI/EVA-CLIP-8B-448")
-model_provider.register_model("bioclip", OpenCLIPModel, title_in_source="hf-hub:imageomics/bioclip")
-model_provider.register_model("vit-b-32-laion2b", OpenCLIPModel, title_in_source="ViT-B-32", pretrained="laion2b_e16")
-
-# Local sources
-model_provider.register_model("rsicd-encord", LocalCLIPModel, title_in_source="ViT-B-32")
+model_provider.register_models_from_sources_dir(SOURCES_PATH.MODEL_INSTANCE_DEFINITIONS)

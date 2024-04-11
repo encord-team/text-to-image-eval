@@ -1,4 +1,4 @@
-from .CLIP_model import OpenCLIPModel
+from sources.models.types.open_clip import OpenCLIPModel
 
 
 class LocalCLIPModel(OpenCLIPModel):
