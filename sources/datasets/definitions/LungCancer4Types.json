@@ -1,6 +1,6 @@
 {
   "dataset_type": "HFDataset",
-  "module_path": "../types/hf.py",
+  "module_path": "../types/hugging_face.py",
   "title": "LungCancer4Types",
   "title_in_source": "Kabil007/LungCancer4Types",
   "revision": "a1aab924c6bed6b080fc85552fd7b39724931605"

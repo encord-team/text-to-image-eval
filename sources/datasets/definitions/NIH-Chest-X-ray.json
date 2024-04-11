@@ -1,6 +1,6 @@
 {
   "dataset_type": "HFDataset",
-  "module_path": "../types/hf.py",
+  "module_path": "../types/hugging_face.py",
   "title": "NIH-Chest-X-ray",
   "title_in_source": "alkzar90/NIH-Chest-X-ray-dataset",
   "name": "image-classification",
