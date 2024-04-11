@@ -11,10 +11,10 @@ from transformers import AutoTokenizer as HF_AutoTokenizer
 
 from clip_eval.common import ClassArray, EmbeddingArray
 from clip_eval.dataset import Dataset
-from clip_eval.models import CLIPModel
+from clip_eval.models import Model
 
 
-class ClosedCLIPModel(CLIPModel):
+class ClosedCLIPModel(Model):
     def __init__(
         self,
         title: str,

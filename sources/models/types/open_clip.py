@@ -9,10 +9,10 @@ from tqdm import tqdm
 
 from clip_eval.common import ClassArray, EmbeddingArray
 from clip_eval.dataset import Dataset
-from clip_eval.models import CLIPModel
+from clip_eval.models import Model
 
 
-class OpenCLIPModel(CLIPModel):
+class OpenCLIPModel(Model):
     def __init__(
         self,
         title: str,

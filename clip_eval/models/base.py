@@ -10,7 +10,7 @@ from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
 from clip_eval.constants import CACHE_PATH
 
 
-class CLIPModel(ABC):
+class Model(ABC):
     def __init__(
         self,
         title: str,

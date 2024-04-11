@@ -7,7 +7,7 @@ from natsort import natsorted, ns
 from clip_eval.constants import SOURCES_PATH
 from clip_eval.dataset.utils import load_class_from_path
 
-from .CLIP_model import CLIPModel
+from .base import Model
 
 
 class ModelProvider:
@@ -15,7 +15,7 @@ class ModelProvider:
         self._models = {}
         self.__known_model_types: dict[tuple[Path, str], Any] = dict()
 
-    def register_model(self, title: str, source: type[CLIPModel], **kwargs):
+    def register_model(self, title: str, source: type[Model], **kwargs):
         self._models[title] = (source, kwargs)
 
     def register_model_from_json_definition(self, json_definition: Path) -> None:
@@ -37,7 +37,7 @@ class ModelProvider:
         model_type = self.__known_model_types.get((module_path, model_type_name))
         if model_type is None:
             model_type = load_class_from_path(module_path.as_posix(), model_type_name)
-            if not issubclass(model_type, CLIPModel):
+            if not issubclass(model_type, Model):
                 raise ValueError(
                     f"Model type specified in the JSON definition file `{json_definition.as_posix()}` "
                     f"does not inherit from the base class `Model`"
@@ -49,7 +49,7 @@ class ModelProvider:
         for f in source_dir.glob("*.json"):
             self.register_model_from_json_definition(f)
 
-    def get_model(self, title: str) -> CLIPModel:
+    def get_model(self, title: str) -> Model:
         if title not in self._models:
             raise ValueError(f"Unrecognized model: {title}")
         source, kwargs = self._models[title]
