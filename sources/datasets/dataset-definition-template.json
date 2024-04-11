@@ -1,0 +1,8 @@
+{
+  "dataset_type": "Name of the class that implements the dataset behavior",
+  "module_path": "Path to the file containing the dataset class implementation. It can be either an absolute path or a path relative to the location of this JSON file.",
+  "title": "Title of the dataset used for reference within this app",
+  "title_in_source": "Optional parameter to record the title of this dataset in its source",
+  "custom_param_1": "Optional parameter for customizing the dataset class initialization",
+  "custom_param_2": "Optional parameter for customizing the dataset class initialization"
+}
