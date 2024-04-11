@@ -15,7 +15,7 @@ class ModelProvider:
         self._models = {}
         self.__known_model_types: dict[tuple[Path, str], Any] = dict()
 
-    def register_model(self, title: str, source: type[Model], **kwargs):
+    def register_model(self, source: type[Model], title: str, **kwargs):
         self._models[title] = (source, kwargs)
 
     def register_model_from_json_definition(self, json_definition: Path) -> None:
