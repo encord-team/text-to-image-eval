@@ -130,12 +130,12 @@ def list_models_datasets(
         Option(help="List all models and dataset that are available via the tool."),
     ] = False,
 ):
-    from clip_eval.dataset.provider import dataset_provider
-    from clip_eval.models import model_provider
+    from clip_eval.dataset import DatasetProvider
+    from clip_eval.models import ModelProvider
 
     if all:
-        datasets = dataset_provider.list_dataset_titles()
-        models = model_provider.list_model_titles()
+        datasets = DatasetProvider.prepare().list_dataset_titles()
+        models = ModelProvider.prepare().list_model_titles()
         print(f"Available datasets are: {', '.join(datasets)}")
         print(f"Available models are: {', '.join(models)}")
         return

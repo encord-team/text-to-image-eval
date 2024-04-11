@@ -11,9 +11,18 @@ from .base import Model
 
 
 class ModelProvider:
+    __instance = None
+
     def __init__(self) -> None:
         self._models = {}
         self.__known_model_types: dict[tuple[Path, str], Any] = dict()
+
+    @classmethod
+    def prepare(cls):
+        if cls.__instance is None:
+            cls.__instance = cls()
+            cls.__instance.register_models_from_sources_dir(SOURCES_PATH.MODEL_INSTANCE_DEFINITIONS)
+        return cls.__instance
 
     def register_model(self, source: type[Model], title: str, **kwargs):
         self._models[title] = (source, kwargs)
@@ -57,7 +66,3 @@ class ModelProvider:
 
     def list_model_titles(self) -> list[str]:
         return natsorted(self._models.keys(), alg=ns.IGNORECASE)
-
-
-model_provider = ModelProvider()
-model_provider.register_models_from_sources_dir(SOURCES_PATH.MODEL_INSTANCE_DEFINITIONS)

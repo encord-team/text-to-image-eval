@@ -12,7 +12,7 @@ from encord.orm.dataset import DataType, Image, Video
 from PIL import Image as PILImage
 from tqdm.auto import tqdm
 
-from clip_eval.dataset.base import Dataset, Split
+from clip_eval.dataset import Dataset, Split
 from clip_eval.dataset.utils import collect_async, download_file, simple_random_split
 
 

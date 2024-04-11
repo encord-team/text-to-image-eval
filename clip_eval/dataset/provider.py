@@ -12,10 +12,21 @@ from .utils import load_class_from_path
 
 
 class DatasetProvider:
+    __instance = None
+
     def __init__(self):
         self._datasets = {}
         self._global_settings: dict[str, Any] = dict()
         self.__known_dataset_types: dict[tuple[Path, str], Any] = dict()
+
+    @classmethod
+    def prepare(cls):
+        if cls.__instance is None:
+            cls.__instance = cls()
+            cls.__instance.register_datasets_from_sources_dir(SOURCES_PATH.DATASET_INSTANCE_DEFINITIONS)
+            # Global settings
+            cls.__instance.add_global_setting("cache_dir", CACHE_PATH)
+        return cls.__instance
 
     @property
     def global_settings(self) -> dict:
@@ -88,10 +99,3 @@ class DatasetProvider:
             dict_key[0] if isinstance(dict_key, tuple) else dict_key for dict_key in self._datasets.keys()
         ]
         return natsorted(set(dataset_titles), alg=ns.IGNORECASE)
-
-
-dataset_provider = DatasetProvider()
-# Global settings
-dataset_provider.add_global_setting("cache_dir", CACHE_PATH)
-
-dataset_provider.register_datasets_from_sources_dir(SOURCES_PATH.DATASET_INSTANCE_DEFINITIONS)

@@ -6,8 +6,8 @@ from InquirerPy.base.control import Choice
 from natsort import natsorted, ns
 
 from clip_eval.common.data_models import EmbeddingDefinition
-from clip_eval.dataset.provider import dataset_provider
-from clip_eval.models.provider import model_provider
+from clip_eval.dataset import DatasetProvider
+from clip_eval.models import ModelProvider
 from clip_eval.utils import read_all_cached_embeddings
 
 
@@ -80,8 +80,8 @@ def select_from_all_embedding_definitions(
 ) -> list[EmbeddingDefinition]:
     existing = set(read_all_cached_embeddings(as_list=True))
 
-    models = model_provider.list_model_titles()
-    datasets = dataset_provider.list_dataset_titles()
+    models = ModelProvider.prepare().list_model_titles()
+    datasets = DatasetProvider.prepare().list_dataset_titles()
 
     defs = [EmbeddingDefinition(dataset=d, model=m) for d, m in product(datasets, models)]
     if not include_existing:
