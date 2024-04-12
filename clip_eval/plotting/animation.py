@@ -212,7 +212,7 @@ def build_animation(
     reduction: REDUCTIONS = "umap",
     interactive: bool = False,
 ) -> animation.FuncAnimation | None:
-    dataset = DatasetProvider.prepare().get_dataset(defn_1.dataset, split)
+    dataset = DatasetProvider.get_dataset(defn_1.dataset, split)
 
     embeds = defn_1.load_embeddings(split)  # FIXME: This is expensive to get just labels
     if embeds is None:

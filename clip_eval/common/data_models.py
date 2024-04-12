@@ -61,8 +61,8 @@ class EmbeddingDefinition(BaseModel):
         return True
 
     def build_embeddings(self, split: Split) -> Embeddings:
-        model = ModelProvider.prepare().get_model(self.model)
-        dataset = DatasetProvider.prepare().get_dataset(self.dataset, split)
+        model = ModelProvider.get_model(self.model)
+        dataset = DatasetProvider.get_dataset(self.dataset, split)
         return Embeddings.build_embedding(model, dataset)
 
     def __str__(self):

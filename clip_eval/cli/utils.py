@@ -80,8 +80,8 @@ def select_from_all_embedding_definitions(
 ) -> list[EmbeddingDefinition]:
     existing = set(read_all_cached_embeddings(as_list=True))
 
-    models = ModelProvider.prepare().list_model_titles()
-    datasets = DatasetProvider.prepare().list_dataset_titles()
+    models = ModelProvider.list_model_titles()
+    datasets = DatasetProvider.list_dataset_titles()
 
     defs = [EmbeddingDefinition(dataset=d, model=m) for d, m in product(datasets, models)]
     if not include_existing:

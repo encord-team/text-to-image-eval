@@ -12,22 +12,24 @@ from .base import Model
 
 class ModelProvider:
     __instance = None
+    __known_model_types: dict[tuple[Path, str], Any] = dict()
 
     def __init__(self) -> None:
         self._models = {}
-        self.__known_model_types: dict[tuple[Path, str], Any] = dict()
 
     @classmethod
     def prepare(cls):
         if cls.__instance is None:
             cls.__instance = cls()
-            cls.__instance.register_models_from_sources_dir(SOURCES_PATH.MODEL_INSTANCE_DEFINITIONS)
+            cls.register_models_from_sources_dir(SOURCES_PATH.MODEL_INSTANCE_DEFINITIONS)
         return cls.__instance
 
-    def register_model(self, source: type[Model], title: str, **kwargs):
-        self._models[title] = (source, kwargs)
+    @classmethod
+    def register_model(cls, source: type[Model], title: str, **kwargs):
+        cls.prepare()._models[title] = (source, kwargs)
 
-    def register_model_from_json_definition(self, json_definition: Path) -> None:
+    @classmethod
+    def register_model_from_json_definition(cls, json_definition: Path) -> None:
         model_params: dict = json.loads(json_definition.read_text(encoding="utf-8"))
         module_path_str: str | None = model_params.pop("module_path", None)
         model_type_name: str | None = model_params.pop("model_type", None)
@@ -43,7 +45,7 @@ class ModelProvider:
             module_path = (json_definition.parent / module_path).resolve()
 
         # Fetch the class of the model type stated in the definition
-        model_type = self.__known_model_types.get((module_path, model_type_name))
+        model_type = cls.__known_model_types.get((module_path, model_type_name))
         if model_type is None:
             model_type = load_class_from_path(module_path.as_posix(), model_type_name)
             if not issubclass(model_type, Model):
@@ -51,18 +53,22 @@ class ModelProvider:
                     f"Model type specified in the JSON definition file `{json_definition.as_posix()}` "
                     f"does not inherit from the base class `Model`"
                 )
-            self.__known_model_types[(module_path, model_type_name)] = model_type
-        self.register_model(model_type, **model_params)
+            cls.__known_model_types[(module_path, model_type_name)] = model_type
+        cls.register_model(model_type, **model_params)
 
-    def register_models_from_sources_dir(self, source_dir: Path) -> None:
+    @classmethod
+    def register_models_from_sources_dir(cls, source_dir: Path) -> None:
         for f in source_dir.glob("*.json"):
-            self.register_model_from_json_definition(f)
+            cls.register_model_from_json_definition(f)
 
-    def get_model(self, title: str) -> Model:
-        if title not in self._models:
+    @classmethod
+    def get_model(cls, title: str) -> Model:
+        instance = cls.prepare()
+        if title not in instance._models:
             raise ValueError(f"Unrecognized model: {title}")
-        source, kwargs = self._models[title]
+        source, kwargs = instance._models[title]
         return source(title, **kwargs)
 
-    def list_model_titles(self) -> list[str]:
-        return natsorted(self._models.keys(), alg=ns.IGNORECASE)
+    @classmethod
+    def list_model_titles(cls) -> list[str]:
+        return natsorted(cls.prepare()._models.keys(), alg=ns.IGNORECASE)
