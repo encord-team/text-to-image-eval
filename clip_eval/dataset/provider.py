@@ -7,7 +7,7 @@ from natsort import natsorted, ns
 
 from clip_eval.constants import CACHE_PATH, SOURCES_PATH
 
-from .base import Dataset, Split
+from .base import Dataset, DatasetDefinitionSpec, Split
 from .utils import load_class_from_path
 
 
@@ -53,31 +53,21 @@ class DatasetProvider:
 
     @classmethod
     def register_dataset_from_json_definition(cls, json_definition: Path) -> None:
-        dataset_params: dict = json.loads(json_definition.read_text(encoding="utf-8"))
-        module_path_str: str | None = dataset_params.pop("module_path", None)
-        dataset_type_name: str | None = dataset_params.pop("dataset_type", None)
-        if module_path_str is None or dataset_type_name is None:
-            raise ValueError(
-                f"Missing required fields `module_path` or `dataset_type` in "
-                f"the JSON definition file: {json_definition.as_posix()}"
-            )
-
-        # Handle relative module paths
-        module_path = Path(module_path_str)
-        if not module_path.is_absolute():
-            module_path = (json_definition.parent / module_path).resolve()
+        spec = DatasetDefinitionSpec(**json.loads(json_definition.read_text(encoding="utf-8")))
+        if not spec.module_path.is_absolute():  # Handle relative module paths
+            spec.module_path = (json_definition.parent / spec.module_path).resolve()
 
         # Fetch the class of the dataset type stated in the definition
-        dataset_type = cls.__known_dataset_types.get((module_path, dataset_type_name))
+        dataset_type = cls.__known_dataset_types.get((spec.module_path, spec.dataset_type))
         if dataset_type is None:
-            dataset_type = load_class_from_path(module_path.as_posix(), dataset_type_name)
+            dataset_type = load_class_from_path(spec.module_path.as_posix(), spec.dataset_type)
             if not issubclass(dataset_type, Dataset):
                 raise ValueError(
                     f"Dataset type specified in the JSON definition file `{json_definition.as_posix()}` "
                     f"does not inherit from the base class `Dataset`"
                 )
-            cls.__known_dataset_types[(module_path, dataset_type_name)] = dataset_type
-        cls.register_dataset(dataset_type, **dataset_params)
+            cls.__known_dataset_types[(spec.module_path, spec.dataset_type)] = dataset_type
+        cls.register_dataset(dataset_type, **spec.model_dump(exclude={"module_path", "dataset_type"}))
 
     @classmethod
     def register_datasets_from_sources_dir(cls, source_dir: Path) -> None:

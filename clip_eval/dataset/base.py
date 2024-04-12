@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from enum import StrEnum, auto
 from pathlib import Path
 
+from pydantic import BaseModel, ConfigDict
 from torch.utils.data import Dataset as TorchDataset
 
 from clip_eval.constants import CACHE_PATH
@@ -12,6 +13,18 @@ class Split(StrEnum):
     VALIDATION = auto()
     TEST = auto()
     ALL = auto()
+
+
+class DatasetDefinitionSpec(BaseModel):
+    dataset_type: str
+    module_path: Path
+    title: str
+    split: Split = Split.ALL
+    title_in_source: str | None = None
+    cache_dir: Path | None = None
+
+    # Allow additional dataset configuration fields
+    model_config = ConfigDict(extra="allow")
 
 
 class Dataset(TorchDataset, ABC):

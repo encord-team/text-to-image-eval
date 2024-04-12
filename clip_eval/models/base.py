@@ -4,10 +4,24 @@ from pathlib import Path
 from typing import Any
 
 import torch
+from pydantic import BaseModel, ConfigDict
 from torch.utils.data import DataLoader
 
 from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
 from clip_eval.constants import CACHE_PATH
+
+
+class ModelDefinitionSpec(BaseModel):
+    model_type: str
+    module_path: Path
+    title: str
+    device: str | None = None
+    title_in_source: str | None = None
+    cache_dir: Path | None = None
+
+    # Allow additional model configuration fields
+    # Also, silence spurious Pydantic UserWarning: Field "model_type" has conflict with protected namespace "model_"
+    model_config = ConfigDict(protected_namespaces=(), extra="allow")
 
 
 class Model(ABC):

@@ -7,7 +7,7 @@ from natsort import natsorted, ns
 from clip_eval.constants import SOURCES_PATH
 from clip_eval.dataset.utils import load_class_from_path
 
-from .base import Model
+from .base import Model, ModelDefinitionSpec
 
 
 class ModelProvider:
@@ -30,31 +30,21 @@ class ModelProvider:
 
     @classmethod
     def register_model_from_json_definition(cls, json_definition: Path) -> None:
-        model_params: dict = json.loads(json_definition.read_text(encoding="utf-8"))
-        module_path_str: str | None = model_params.pop("module_path", None)
-        model_type_name: str | None = model_params.pop("model_type", None)
-        if module_path_str is None or model_type_name is None:
-            raise ValueError(
-                f"Missing required fields `module_path` or `model_type` in "
-                f"the JSON definition file: {json_definition.as_posix()}"
-            )
-
-        # Handle relative module paths
-        module_path = Path(module_path_str)
-        if not module_path.is_absolute():
-            module_path = (json_definition.parent / module_path).resolve()
+        spec = ModelDefinitionSpec(**json.loads(json_definition.read_text(encoding="utf-8")))
+        if not spec.module_path.is_absolute():  # Handle relative module paths
+            spec.module_path = (json_definition.parent / spec.module_path).resolve()
 
         # Fetch the class of the model type stated in the definition
-        model_type = cls.__known_model_types.get((module_path, model_type_name))
+        model_type = cls.__known_model_types.get((spec.module_path, spec.model_type))
         if model_type is None:
-            model_type = load_class_from_path(module_path.as_posix(), model_type_name)
+            model_type = load_class_from_path(spec.module_path.as_posix(), spec.model_type)
             if not issubclass(model_type, Model):
                 raise ValueError(
                     f"Model type specified in the JSON definition file `{json_definition.as_posix()}` "
                     f"does not inherit from the base class `Model`"
                 )
-            cls.__known_model_types[(module_path, model_type_name)] = model_type
-        cls.register_model(model_type, **model_params)
+            cls.__known_model_types[(spec.module_path, spec.model_type)] = model_type
+        cls.register_model(model_type, **spec.model_dump(exclude={"module_path", "model_type"}))
 
     @classmethod
     def register_models_from_sources_dir(cls, source_dir: Path) -> None:
