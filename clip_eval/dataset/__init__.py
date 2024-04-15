@@ -1,2 +1,2 @@
 from .base import Dataset, Split
-from .provider import dataset_provider
+from .provider import DatasetProvider

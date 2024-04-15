@@ -12,7 +12,7 @@ from clip_eval.common import EmbeddingDefinition
 from clip_eval.common.data_models import SafeName
 from clip_eval.common.numpy_types import ClassArray, N2Array
 from clip_eval.constants import OUTPUT_PATH
-from clip_eval.dataset import Split, dataset_provider
+from clip_eval.dataset import DatasetProvider, Split
 
 from .reduction import REDUCTIONS, reduction_from_string
 
@@ -212,7 +212,7 @@ def build_animation(
     reduction: REDUCTIONS = "umap",
     interactive: bool = False,
 ) -> animation.FuncAnimation | None:
-    dataset = dataset_provider.get_dataset(defn_1.dataset, split)
+    dataset = DatasetProvider.get_dataset(defn_1.dataset, split)
 
     embeds = defn_1.load_embeddings(split)  # FIXME: This is expensive to get just labels
     if embeds is None:

@@ -7,8 +7,8 @@ from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
 
 from clip_eval.constants import PROJECT_PATHS
-from clip_eval.dataset import Split, dataset_provider
-from clip_eval.models import model_provider
+from clip_eval.dataset import DatasetProvider, Split
+from clip_eval.models import ModelProvider
 
 from .base import Embeddings
 from .string_utils import safe_str
@@ -61,8 +61,8 @@ class EmbeddingDefinition(BaseModel):
         return True
 
     def build_embeddings(self, split: Split) -> Embeddings:
-        model = model_provider.get_model(self.model)
-        dataset = dataset_provider.get_dataset(self.dataset, split)
+        model = ModelProvider.get_model(self.model)
+        dataset = DatasetProvider.get_dataset(self.dataset, split)
         return Embeddings.build_embedding(model, dataset)
 
     def __str__(self):

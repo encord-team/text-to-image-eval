@@ -6,8 +6,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # If the cache directory is not explicitly specified, use the `.cache` directory located in the project's root.
-CACHE_PATH = Path(os.environ.get("CLIP_CACHE_PATH", Path(__file__).parent.parent / ".cache"))
-_OUTPUT_PATH = Path(os.environ.get("OUTPUT_PATH", "output"))
+_CLIP_EVAL_ROOT_DIR = Path(__file__).parent.parent
+CACHE_PATH = Path(os.environ.get("CLIP_EVAL_CACHE_PATH", _CLIP_EVAL_ROOT_DIR / ".cache"))
+_OUTPUT_PATH = Path(os.environ.get("CLIP_EVAL_OUTPUT_PATH", _CLIP_EVAL_ROOT_DIR / "output"))
+_SOURCES_PATH = _CLIP_EVAL_ROOT_DIR / "sources"
 
 
 class PROJECT_PATHS:
@@ -25,3 +27,10 @@ class NPZ_KEYS:
 class OUTPUT_PATH:
     ANIMATIONS = _OUTPUT_PATH / "animations"
     EVALUATIONS = _OUTPUT_PATH / "evaluations"
+
+
+class SOURCES_PATH:
+    DATASET_TYPES = _SOURCES_PATH / "datasets" / "types"
+    DATASET_INSTANCE_DEFINITIONS = _SOURCES_PATH / "datasets" / "definitions"
+    MODEL_TYPES = _SOURCES_PATH / "models" / "types"
+    MODEL_INSTANCE_DEFINITIONS = _SOURCES_PATH / "models" / "definitions"

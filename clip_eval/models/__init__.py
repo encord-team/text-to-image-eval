@@ -1,2 +1,2 @@
-from .CLIP_model import CLIPModel
-from .provider import model_provider
+from .base import Model
+from .provider import ModelProvider

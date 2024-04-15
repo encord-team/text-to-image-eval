@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 from clip_eval.constants import NPZ_KEYS
 from clip_eval.dataset import Dataset
-from clip_eval.models import CLIPModel
+from clip_eval.models import Model
 
 from .numpy_types import ClassArray, EmbeddingArray
 
@@ -69,7 +69,7 @@ class Embeddings(BaseModel):
         return path
 
     @staticmethod
-    def build_embedding(model: CLIPModel, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
+    def build_embedding(model: Model, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
         dataset.set_transform(model.get_transform())
         dataloader = DataLoader(dataset, collate_fn=model.get_collate_fn(), batch_size=batch_size)
 

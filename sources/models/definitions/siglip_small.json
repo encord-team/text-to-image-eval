@@ -1,0 +1,6 @@
+{
+  "model_type": "ClosedCLIPModel",
+  "module_path": "../types/hugging_face_clip.py",
+  "title": "siglip_small",
+  "title_in_source": "google/siglip-base-patch16-224"
+}

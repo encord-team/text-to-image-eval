@@ -1,0 +1,7 @@
+{
+  "dataset_type": "HFDataset",
+  "module_path": "../types/hugging_face.py",
+  "title": "skin-cancer",
+  "title_in_source": "marmal88/skin_cancer",
+  "target_feature": "dx"
+}

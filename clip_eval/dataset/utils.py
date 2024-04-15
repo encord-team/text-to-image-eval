@@ -1,3 +1,4 @@
+import importlib.util
 import os
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor as Executor
@@ -66,6 +67,13 @@ def download_file(
             if chunk:
                 f.write(chunk)
         f.flush()
+
+
+def load_class_from_path(module_path: str, class_name: str):
+    spec = importlib.util.spec_from_file_location(module_path, module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return getattr(module, class_name)
 
 
 def simple_random_split(
