@@ -19,7 +19,7 @@ class DatasetDefinitionSpec(BaseModel):
     dataset_type: str
     module_path: Path
     title: str
-    split: Split = Split.ALL
+    split: Split | None = None
     title_in_source: str | None = None
     cache_dir: Path | None = None
 
