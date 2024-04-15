@@ -3,10 +3,11 @@ from typing import Annotated, Optional
 import matplotlib.pyplot as plt
 from typer import Option, Typer
 
-from clip_eval.common.data_models import EmbeddingDefinition, Split
+from clip_eval.dataset import Split
 from clip_eval.utils import read_all_cached_embeddings
 
 from .utils import (
+    parse_raw_embedding_definitions,
     select_existing_embedding_definitions,
     select_from_all_embedding_definitions,
 )
@@ -17,26 +18,30 @@ cli = Typer(name="clip-eval", no_args_is_help=True, rich_markup_mode="markdown")
 @cli.command(
     "build",
     help="""Build embeddings.
-If no arguments are given, you will be prompted to select a combination of dataset and model(s).
+If no arguments are given, you will be prompted to select the model and dataset combinations for generating embeddings.
 You can use [TAB] to select multiple combinations and execute them sequentially.
  """,
 )
 def build_command(
-    model_dataset: Annotated[str, Option(help="model, dataset pair delimited by model/dataset")] = "",
+    model_datasets: Annotated[
+        Optional[list[str]],
+        Option(
+            "--model-dataset",
+            help="Specify a model and dataset combination. Can be used multiple times. "
+            "(model, dataset) pairs must be presented as 'MODEL/DATASET'.",
+        ),
+    ] = None,
     include_existing: Annotated[
         bool,
-        Option(help="Show also options for which the embeddings have been computed already"),
+        Option(help="Show combinations for which the embeddings have already been computed."),
     ] = False,
     by_dataset: Annotated[
         bool,
-        Option(help="Select dataset first, then model. Will only work if `model_dataset` not specified."),
+        Option(help="Select dataset first, then model. Will only work if `model_dataset` is not specified."),
     ] = False,
 ):
-    if len(model_dataset) > 0:
-        if model_dataset.count("/") != 1:
-            raise ValueError("model dataset must contain only 1 /")
-        model, dataset = model_dataset.split("/")
-        definitions = [EmbeddingDefinition(model=model, dataset=dataset)]
+    if len(model_datasets) > 0:
+        definitions = parse_raw_embedding_definitions(model_datasets)
     else:
         definitions = select_from_all_embedding_definitions(
             include_existing=include_existing,
@@ -60,17 +65,23 @@ def build_command(
 
 @cli.command(
     "evaluate",
-    help="""Evaluate embedding performance.
-For this two work, you should have already run the `build` command for the model/dataset of interest.
+    help="""Evaluate embeddings performance.
+If no arguments are given, you will be prompted to select the model and dataset combinations to evaluate.
+Only (model, dataset) pairs whose embeddings have been built will be available for evaluation.
+You can use [TAB] to select multiple combinations and execute them sequentially.
 """,
 )
 def evaluate_embeddings(
     model_datasets: Annotated[
         Optional[list[str]],
-        Option(help="Specify specific combinations of models and datasets"),
+        Option(
+            "--model-dataset",
+            help="Specify a model and dataset combination. Can be used multiple times. "
+            "(model, dataset) pairs must be presented as 'MODEL/DATASET'.",
+        ),
     ] = None,
-    is_all: Annotated[bool, Option(help="Evaluate all models.")] = False,
-    save: Annotated[bool, Option(help="Save evaluation results to csv")] = False,
+    all_: Annotated[bool, Option("--all", "-a", help="Evaluate all models.")] = False,
+    save: Annotated[bool, Option("--save", "-s", help="Save evaluation results to a CSV file.")] = False,
 ):
     from clip_eval.evaluation import (
         I2IRetrievalEvaluator,
@@ -82,24 +93,17 @@ def evaluate_embeddings(
 
     model_datasets = model_datasets or []
 
-    if is_all:
-        defns = read_all_cached_embeddings(as_list=True)
+    if all_:
+        definitions = read_all_cached_embeddings(as_list=True)
     elif len(model_datasets) > 0:
-        # Error could be localised better
-        if not all([model_dataset.count("/") == 1 for model_dataset in model_datasets]):
-            raise ValueError("All model,dataset pairs must be presented as MODEL/DATASET")
-        model_dataset_pairs = [model_dataset.split("/") for model_dataset in model_datasets]
-        defns = [
-            EmbeddingDefinition(model=model_dataset[0], dataset=model_dataset[1])
-            for model_dataset in model_dataset_pairs
-        ]
+        definitions = parse_raw_embedding_definitions(model_datasets)
     else:
-        defns = select_existing_embedding_definitions()
+        definitions = select_existing_embedding_definitions()
 
     models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier, I2IRetrievalEvaluator]
-    performances = run_evaluation(models, defns)
+    performances = run_evaluation(models, definitions)
     if save:
-        export_evaluation_to_csv(defns, performances)
+        export_evaluation_to_csv(definitions, performances)
 
 
 @cli.command(
@@ -109,8 +113,8 @@ The interface will prompt you to choose which embeddings you want to use.
 """,
 )
 def animate_embeddings(
-    interactive: Annotated[bool, Option(help="Interactive plot instead of animation")] = False,
-    reduction: Annotated[str, Option(help="Reduction type [pca, tsne, umap (default)")] = "umap",
+    interactive: Annotated[bool, Option(help="Interactive plot instead of animation.")] = False,
+    reduction: Annotated[str, Option(help="Reduction type [pca, tsne, umap (default)].")] = "umap",
 ):
     from clip_eval.plotting.animation import build_animation, save_animation_to_file
 
@@ -125,15 +129,15 @@ def animate_embeddings(
 
 @cli.command("list", help="List models and datasets. By default, only cached pairs are listed.")
 def list_models_datasets(
-    all: Annotated[
+    all_: Annotated[
         bool,
-        Option(help="List all models and dataset that are available via the tool."),
+        Option("--all", "-a", help="List all models and datasets that are available via the tool."),
     ] = False,
 ):
     from clip_eval.dataset import DatasetProvider
     from clip_eval.models import ModelProvider
 
-    if all:
+    if all_:
         datasets = DatasetProvider.list_dataset_titles()
         models = ModelProvider.list_model_titles()
         print(f"Available datasets are: {', '.join(datasets)}")
@@ -141,7 +145,7 @@ def list_models_datasets(
         return
 
     defns = read_all_cached_embeddings(as_list=True)
-    print(f"Available model_dataset pairs: {', '.join([str(defn) for defn in defns])}")
+    print(f"Available model_datasets pairs: {', '.join([str(defn) for defn in defns])}")
 
 
 if __name__ == "__main__":

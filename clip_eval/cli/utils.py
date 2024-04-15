@@ -59,6 +59,15 @@ def _by_dataset(defs: list[EmbeddingDefinition] | dict[str, list[EmbeddingDefini
     return definitions
 
 
+def parse_raw_embedding_definitions(raw_embedding_definitions: list[str]) -> list[EmbeddingDefinition]:
+    if not all([model_dataset.count("/") == 1 for model_dataset in raw_embedding_definitions]):
+        raise ValueError("All (model, dataset) pairs must be presented as MODEL/DATASET")
+    model_dataset_pairs = [model_dataset.split("/") for model_dataset in raw_embedding_definitions]
+    return [
+        EmbeddingDefinition(model=model_dataset[0], dataset=model_dataset[1]) for model_dataset in model_dataset_pairs
+    ]
+
+
 def select_existing_embedding_definitions(
     by_dataset: bool = False,
     count: int | None = None,
