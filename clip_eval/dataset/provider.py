@@ -1,4 +1,3 @@
-import json
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -53,7 +52,7 @@ class DatasetProvider:
 
     @classmethod
     def register_dataset_from_json_definition(cls, json_definition: Path) -> None:
-        spec = DatasetDefinitionSpec(**json.loads(json_definition.read_text(encoding="utf-8")))
+        spec = DatasetDefinitionSpec.model_validate_json(json_definition.read_text(encoding="utf-8"))
         if not spec.module_path.is_absolute():  # Handle relative module paths
             spec.module_path = (json_definition.parent / spec.module_path).resolve()
 

@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 from typing import Any
 
@@ -30,7 +29,7 @@ class ModelProvider:
 
     @classmethod
     def register_model_from_json_definition(cls, json_definition: Path) -> None:
-        spec = ModelDefinitionSpec(**json.loads(json_definition.read_text(encoding="utf-8")))
+        spec = ModelDefinitionSpec.model_validate_json(json_definition.read_text(encoding="utf-8"))
         if not spec.module_path.is_absolute():  # Handle relative module paths
             spec.module_path = (json_definition.parent / spec.module_path).resolve()
 
