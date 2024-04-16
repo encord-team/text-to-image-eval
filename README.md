@@ -1,15 +1,64 @@
-## Goals are:
+# clip-eval
 
-- [x] Have a way to load classification datasets from HF. See this [colab](https://colab.research.google.com/drive/1O7PBYHKrk8SELHq40AoH8hehig-WNezS?usp=sharing)
-- [x] Have a way to load clip mod from HF. See this [colab](https://colab.research.google.com/drive/1O7PBYHKrk8SELHq40AoH8hehig-WNezS?usp=sharing)
-- [ ] Find relevant datasets for medical domain
-- [ ] Find relevant "CLIP" models for medical domain
-- [ ] Compute embeddings across datasets and models for medical and store them
-- [ ] Evaluate each model on each dataset based on the `evaluation` module in this repo
+Welcome to `clip-eval`, a repository for evaluating text-to-image models like CLIP, SigLIP, and the like.
 
-- Repeat for geospatial and sports analytics
+Evaluate machine learning models against a benchmark of datasets to assess their performance on the generated embeddings, and visualize changes in embeddings from one model to another within the same dataset.
 
-### Set up the development environment
+## Installation
+
+> `clip-eval` requires [Python 3.11](https://www.python.org/downloads/release/python-3115/) and [Poetry](https://python-poetry.org/docs/#installation).
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/encord-team/text-to-image-eval.git
+   ```
+2. Navigate to the project directory:
+   ```
+   cd text-to-image-eval
+   ```
+3. Install the required dependencies:
+   ```
+   poetry shell
+   poetry install
+   ```
+4. Add environment variables:
+   ```
+   export CLIP_EVAL_CACHE_PATH=$PWD/.cache
+   export CLIP_EVAL_OUTPUT_PATH=$PWD/output
+   export ENCORD_SSH_KEY_PATH=<path_to_the_encord_ssh_key_file>
+   ```
+
+## Usage
+
+### Embeddings generation
+
+To build embeddings, run the CLI command `clip-eval build`.
+This commands allows you to interactively select the model and dataset combinations on which to build the embeddings.
+
+Alternatively, you can choose known (model, dataset) pairs using the `--model-dataset` option. For example:
+```
+clip-eval build --model-dataset clip/plants
+```
+
+### Model evaluation
+
+To evaluate models, use the CLI command `clip-eval evaluate`.
+This command enables interactive selection of model and dataset combinations for evaluation.
+
+Alternatively, you can specify known (model, dataset) pairs using the `--model-dataset` option. For example:
+```
+clip-eval evaluate --model-dataset clip/plants
+```
+
+### Embeddings animation
+
+To create a 2D animation of the embeddings, use the CLI command `clip-eval animate`.
+This command allows to visualise the reduction of embeddings from two different models on the same dataset.
+
+The animations will be saved at the location specified by the environment variable `CLIP_EVAL_OUTPUT_PATH`.
+By default, this path corresponds to the repository directory.
+
+## Set up the development environment
 
 1. Create the virtual environment, add dev dependencies and set up pre-commit hooks.
    ```
@@ -17,24 +66,7 @@
    ```
 2. Add environment variables:
    ```
-   export CLIP_CACHE_PATH=$PWD/.cache
-   export OUTPUT_PATH=$PWD/output
+   export CLIP_EVAL_CACHE_PATH=$PWD/.cache
+   export CLIP_EVAL_OUTPUT_PATH=$PWD/output
    export ENCORD_SSH_KEY_PATH=<path_to_the_encord_ssh_key_file>
-   export ENCORD_CACHE_DIR=$PWD/.cache/encord
    ```
-
-### CLI Interface
-
-Basic CLI interface available with:
-
-```shell
-clip-eval [command]
-```
-
-### [DEPRECATED] Commands I used to run different bits of the code
-
-0. data models: `PYTHONPATH=$PWD python src/common/data_models.py`
-1. knn: `PYTHONPATH=$PWD python src/evaluation/knn.py`
-2. zero shot: `PYTHONPATH=$PWD python src/evaluation/zero_shot.py`
-3. linear probe: `PYTHONPATH=$PWD python src/evaluation/linear_probe.py`
-4. evaluation: `PYTHONPATH=$PWD python src/evaluation/evaluator.py`

@@ -76,10 +76,7 @@ def run_evaluation(
     return embeddings_performance
 
 
-def export_evaluation_to_csv(
-    embedding_definitions: list[EmbeddingDefinition],
-    embeddings_performance: list[dict[str, float]],
-) -> None:
+def export_evaluation_to_csv(embeddings_performance: dict[EmbeddingDefinition, dict[str, float]]) -> None:
     ts = datetime.now()
     results_file = OUTPUT_PATH.EVALUATIONS / f"eval_{ts.isoformat()}.csv"
     results_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
@@ -89,10 +86,11 @@ def export_evaluation_to_csv(
         writer = csv.writer(csvfile)
         writer.writerow(headers)
 
-        for def_, perf in zip(embedding_definitions, embeddings_performance, strict=True):
+        for def_, perf in embeddings_performance.items():
             def_: EmbeddingDefinition
             for classifier_title, accuracy in perf.items():
                 writer.writerow([def_.model, def_.dataset, classifier_title, accuracy])
+    print(f"Evaluation results exported to `{results_file.as_posix()}`")
 
 
 if __name__ == "__main__":
@@ -100,5 +98,5 @@ if __name__ == "__main__":
     defs = read_all_cached_embeddings(as_list=True)
     print(defs)
     performances = run_evaluation(models, defs)
-    export_evaluation_to_csv(defs, performances)
+    export_evaluation_to_csv(performances)
     print(performances)
