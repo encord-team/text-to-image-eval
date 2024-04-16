@@ -1,6 +1,5 @@
 {
   "dataset_type": "HFDataset",
-  "module_path": "../types/hugging_face.py",
   "title": "chest-xray-classification",
   "title_in_source": "trpakov/chest-xray-classification",
   "name": "full",

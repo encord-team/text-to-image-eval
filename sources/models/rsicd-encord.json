@@ -1,6 +1,5 @@
 {
   "model_type": "LocalCLIPModel",
-  "module_path": "../types/local_clip.py",
   "title": "rsicd-encord",
   "title_in_source": "ViT-B-32"
 }

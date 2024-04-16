@@ -55,6 +55,11 @@ class DatasetProvider:
         spec = DatasetDefinitionSpec.model_validate_json(json_definition.read_text(encoding="utf-8"))
         if not spec.module_path.is_absolute():  # Handle relative module paths
             spec.module_path = (json_definition.parent / spec.module_path).resolve()
+        if not spec.module_path.is_file():
+            raise FileNotFoundError(
+                f"Could not find the specified module path at `{spec.module_path.as_posix()}` "
+                f"when registering dataset `{spec.title}`"
+            )
 
         # Fetch the class of the dataset type stated in the definition
         dataset_type = cls.__known_dataset_types.get((spec.module_path, spec.dataset_type))

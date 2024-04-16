@@ -17,8 +17,8 @@ class Split(StrEnum):
 
 class DatasetDefinitionSpec(BaseModel):
     dataset_type: str
-    module_path: Path
     title: str
+    module_path: Path = Path(__file__).parent / "types" / "__init__.py"
     split: Split | None = None
     title_in_source: str | None = None
     cache_dir: Path | None = None
