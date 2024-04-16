@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from os.path import relpath
 from pathlib import Path
 from typing import Any
 
@@ -8,13 +9,17 @@ from pydantic import BaseModel, ConfigDict
 from torch.utils.data import DataLoader
 
 from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
-from clip_eval.constants import CACHE_PATH
+from clip_eval.constants import CACHE_PATH, SOURCES_PATH
+
+DEFAULT_MODEL_TYPES_LOCATION = (
+    Path(relpath(str(__file__), SOURCES_PATH.MODEL_INSTANCE_DEFINITIONS)).parent / "types" / "__init__.py"
+)
 
 
 class ModelDefinitionSpec(BaseModel):
     model_type: str
     title: str
-    module_path: Path = Path(__file__).parent / "types" / "__init__.py"
+    module_path: Path = DEFAULT_MODEL_TYPES_LOCATION
     device: str | None = None
     title_in_source: str | None = None
     cache_dir: Path | None = None

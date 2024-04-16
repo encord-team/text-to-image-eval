@@ -5,13 +5,14 @@
       "title": "Model Type",
       "type": "string"
     },
-    "module_path": {
-      "format": "path",
-      "title": "Module Path",
-      "type": "string"
-    },
     "title": {
       "title": "Title",
+      "type": "string"
+    },
+    "module_path": {
+      "default": "../../clip_eval/model/types/__init__.py",
+      "format": "path",
+      "title": "Module Path",
       "type": "string"
     },
     "device": {
@@ -54,7 +55,6 @@
   },
   "required": [
     "model_type",
-    "module_path",
     "title"
   ],
   "title": "ModelDefinitionSpec",
