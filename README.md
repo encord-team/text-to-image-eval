@@ -28,6 +28,7 @@ Evaluate machine learning models against a benchmark of datasets to assess their
    export ENCORD_SSH_KEY_PATH=<path_to_the_encord_ssh_key_file>
    ```
 
+
 ## Usage
 
 ### Embeddings generation
@@ -58,6 +59,7 @@ This command allows to visualise the reduction of embeddings from two different 
 The animations will be saved at the location specified by the environment variable `CLIP_EVAL_OUTPUT_PATH`.
 By default, this path corresponds to the repository directory.
 
+
 ## Set up the development environment
 
 1. Create the virtual environment, add dev dependencies and set up pre-commit hooks.
@@ -70,3 +72,8 @@ By default, this path corresponds to the repository directory.
    export CLIP_EVAL_OUTPUT_PATH=$PWD/output
    export ENCORD_SSH_KEY_PATH=<path_to_the_encord_ssh_key_file>
    ```
+
+
+## Contributing
+Contributions are welcome!
+Please feel free to open an issue or submit a pull request with your suggestions, bug fixes, or new features.
