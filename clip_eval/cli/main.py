@@ -103,7 +103,7 @@ def evaluate_embeddings(
     models = [ZeroShotClassifier, LinearProbeClassifier, WeightedKNNClassifier, I2IRetrievalEvaluator]
     performances = run_evaluation(models, definitions)
     if save:
-        export_evaluation_to_csv(definitions, performances)
+        export_evaluation_to_csv(performances)
 
 
 @cli.command(
