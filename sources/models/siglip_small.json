@@ -1,0 +1,5 @@
+{
+  "model_type": "ClosedCLIPModel",
+  "title": "siglip_small",
+  "title_in_source": "google/siglip-base-patch16-224"
+}

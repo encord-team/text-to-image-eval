@@ -1,0 +1,5 @@
+{
+  "model_type": "ClosedCLIPModel",
+  "title": "clip",
+  "title_in_source": "openai/clip-vit-large-patch14-336"
+}

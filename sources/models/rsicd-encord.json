@@ -1,0 +1,5 @@
+{
+  "model_type": "LocalCLIPModel",
+  "title": "rsicd-encord",
+  "title_in_source": "ViT-B-32"
+}

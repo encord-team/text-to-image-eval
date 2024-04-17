@@ -1,6 +1,0 @@
-{
-  "dataset_type": "HFDataset",
-  "module_path": "../types/hugging_face.py",
-  "title": "Alzheimer-MRI",
-  "title_in_source": "Falah/Alzheimer_MRI"
-}

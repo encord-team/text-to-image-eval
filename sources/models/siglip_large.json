@@ -1,0 +1,5 @@
+{
+  "model_type": "ClosedCLIPModel",
+  "title": "siglip_large",
+  "title_in_source": "google/siglip-large-patch16-256"
+}

@@ -1,0 +1,5 @@
+{
+  "dataset_type": "HFDataset",
+  "title": "Alzheimer-MRI",
+  "title_in_source": "Falah/Alzheimer_MRI"
+}

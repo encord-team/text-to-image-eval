@@ -1,6 +1,0 @@
-{
-  "dataset_type": "HFDataset",
-  "module_path": "../types/hugging_face.py",
-  "title": "sports-classification",
-  "title_in_source": "HES-XPLAIN/SportsImageClassification"
-}

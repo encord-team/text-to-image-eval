@@ -1,0 +1,5 @@
+{
+  "model_type": "OpenCLIPModel",
+  "title": "eva-clip",
+  "title_in_source": "BAAI/EVA-CLIP-8B-448"
+}

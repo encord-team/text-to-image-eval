@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 from clip_eval.constants import NPZ_KEYS
 from clip_eval.dataset import Dataset
-from clip_eval.models import Model
+from clip_eval.model import Model
 
 from .numpy_types import ClassArray, EmbeddingArray
 

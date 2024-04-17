@@ -135,7 +135,7 @@ def list_models_datasets(
     ] = False,
 ):
     from clip_eval.dataset import DatasetProvider
-    from clip_eval.models import ModelProvider
+    from clip_eval.model import ModelProvider
 
     if all_:
         datasets = DatasetProvider.list_dataset_titles()

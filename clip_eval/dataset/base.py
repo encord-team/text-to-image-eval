@@ -1,11 +1,16 @@
 from abc import ABC, abstractmethod
 from enum import StrEnum, auto
+from os.path import relpath
 from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 from torch.utils.data import Dataset as TorchDataset
 
-from clip_eval.constants import CACHE_PATH
+from clip_eval.constants import CACHE_PATH, SOURCES_PATH
+
+DEFAULT_DATASET_TYPES_LOCATION = (
+    Path(relpath(str(__file__), SOURCES_PATH.DATASET_INSTANCE_DEFINITIONS)).parent / "types" / "__init__.py"
+)
 
 
 class Split(StrEnum):
@@ -17,8 +22,8 @@ class Split(StrEnum):
 
 class DatasetDefinitionSpec(BaseModel):
     dataset_type: str
-    module_path: Path
     title: str
+    module_path: Path = DEFAULT_DATASET_TYPES_LOCATION
     split: Split | None = None
     title_in_source: str | None = None
     cache_dir: Path | None = None

@@ -1,6 +1,0 @@
-{
-  "model_type": "ClosedCLIPModel",
-  "module_path": "../types/hugging_face_clip.py",
-  "title": "pubmed",
-  "title_in_source": "flaviagiammarino/pubmed-clip-vit-base-patch32"
-}

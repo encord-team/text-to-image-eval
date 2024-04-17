@@ -1,7 +1,0 @@
-{
-  "dataset_type": "EncordDataset",
-  "module_path": "../types/encord_ds.py",
-  "title": "rsicd",
-  "project_hash": "46ba913e-1428-48ef-be7f-2553e69bc1e6",
-  "classification_hash": "4f6cf0c8"
-}

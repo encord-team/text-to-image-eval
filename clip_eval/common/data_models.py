@@ -8,7 +8,7 @@ from pydantic.functional_validators import AfterValidator
 
 from clip_eval.constants import PROJECT_PATHS
 from clip_eval.dataset import DatasetProvider, Split
-from clip_eval.models import ModelProvider
+from clip_eval.model import ModelProvider
 
 from .base import Embeddings
 from .string_utils import safe_str
