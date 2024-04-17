@@ -1,0 +1,5 @@
+{
+  "model_type": "ClosedCLIPModel",
+  "title": "rsicd",
+  "title_in_source": "flax-community/clip-rsicd"
+}

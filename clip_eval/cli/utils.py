@@ -7,7 +7,7 @@ from natsort import natsorted, ns
 
 from clip_eval.common.data_models import EmbeddingDefinition
 from clip_eval.dataset import DatasetProvider
-from clip_eval.models import ModelProvider
+from clip_eval.model import ModelProvider
 from clip_eval.utils import read_all_cached_embeddings
 
 

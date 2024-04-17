@@ -1,7 +1,0 @@
-{
-  "model_type": "OpenCLIPModel",
-  "module_path": "../types/open_clip.py",
-  "title": "vit-b-32-laion2b",
-  "title_in_source": "ViT-B-32",
-  "pretrained": "laion2b_e16"
-}

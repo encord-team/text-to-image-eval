@@ -1,6 +1,0 @@
-{
-  "dataset_type": "HFDataset",
-  "module_path": "../types/hugging_face.py",
-  "title": "geo-landmarks",
-  "title_in_source": "Qdrant/google-landmark-geo"
-}

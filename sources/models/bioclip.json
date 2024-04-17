@@ -1,0 +1,5 @@
+{
+  "model_type": "OpenCLIPModel",
+  "title": "bioclip",
+  "title_in_source": "hf-hub:imageomics/bioclip"
+}

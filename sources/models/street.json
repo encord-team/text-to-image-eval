@@ -1,0 +1,5 @@
+{
+  "model_type": "ClosedCLIPModel",
+  "title": "street",
+  "title_in_source": "geolocal/StreetCLIP"
+}

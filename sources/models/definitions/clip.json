@@ -1,6 +1,0 @@
-{
-  "model_type": "ClosedCLIPModel",
-  "module_path": "../types/hugging_face_clip.py",
-  "title": "clip",
-  "title_in_source": "openai/clip-vit-large-patch14-336"
-}

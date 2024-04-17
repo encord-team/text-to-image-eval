@@ -1,6 +1,0 @@
-{
-  "model_type": "ClosedCLIPModel",
-  "module_path": "../types/hugging_face_clip.py",
-  "title": "tinyclip",
-  "title_in_source": "wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M"
-}

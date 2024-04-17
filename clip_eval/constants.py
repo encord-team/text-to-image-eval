@@ -30,7 +30,5 @@ class OUTPUT_PATH:
 
 
 class SOURCES_PATH:
-    DATASET_TYPES = _SOURCES_PATH / "datasets" / "types"
-    DATASET_INSTANCE_DEFINITIONS = _SOURCES_PATH / "datasets" / "definitions"
-    MODEL_TYPES = _SOURCES_PATH / "models" / "types"
-    MODEL_INSTANCE_DEFINITIONS = _SOURCES_PATH / "models" / "definitions"
+    DATASET_INSTANCE_DEFINITIONS = _SOURCES_PATH / "datasets"
+    MODEL_INSTANCE_DEFINITIONS = _SOURCES_PATH / "models"

@@ -1,0 +1,73 @@
+{
+  "$defs": {
+    "Split": {
+      "enum": [
+        "train",
+        "validation",
+        "test",
+        "all"
+      ],
+      "title": "Split",
+      "type": "string"
+    }
+  },
+  "additionalProperties": true,
+  "properties": {
+    "dataset_type": {
+      "title": "Dataset Type",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "module_path": {
+      "default": "../../clip_eval/dataset/types/__init__.py",
+      "format": "path",
+      "title": "Module Path",
+      "type": "string"
+    },
+    "split": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Split"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "title_in_source": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title In Source"
+    },
+    "cache_dir": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cache Dir"
+    }
+  },
+  "required": [
+    "dataset_type",
+    "title"
+  ],
+  "title": "DatasetDefinitionSpec",
+  "type": "object"
+}
