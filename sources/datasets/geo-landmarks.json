@@ -1,5 +1,0 @@
-{
-  "dataset_type": "HFDataset",
-  "title": "geo-landmarks",
-  "title_in_source": "Qdrant/google-landmark-geo"
-}
