@@ -31,7 +31,7 @@ Evaluate machine learning models against a benchmark of datasets to assess their
 
 ## CLI Usage
 
-### Embeddings generation
+### Embeddings Generation
 
 To build embeddings, run the CLI command `clip-eval build`.
 This commands allows you to interactively select the model and dataset combinations on which to build the embeddings.
@@ -41,7 +41,7 @@ Alternatively, you can choose known (model, dataset) pairs using the `--model-da
 clip-eval build --model-dataset clip/plants
 ```
 
-### Model evaluation
+### Model Evaluation
 
 To evaluate models, use the CLI command `clip-eval evaluate`.
 This command enables interactive selection of model and dataset combinations for evaluation.
@@ -51,7 +51,7 @@ Alternatively, you can specify known (model, dataset) pairs using the `--model-d
 clip-eval evaluate --model-dataset clip/plants
 ```
 
-### Embeddings animation
+### Embeddings Animation
 
 To create 2D animations of the embeddings, use the CLI command `clip-eval animate`.
 This command allows to visualise the reduction of embeddings from two models on the same dataset.
@@ -122,13 +122,13 @@ ds = DatasetProvider.get_dataset("plants", split=Split.ALL)
 print(len(ds))  # Returns: 219
 ```
 
-### Remove a dataset
+### Remove a Dataset
 
 To permanently remove a dataset, simply delete the corresponding JSON file stores in the `sources/datasets` folder.
 This action removes the dataset from the list of available datasets in the CLI, disabling the option to create any further embedding using its data.
 However, all embeddings previously built on that dataset will remain intact and available for other tasks such as evaluation and animation.
 
-## Set up the development environment
+## Set Up the Development Environment
 
 1. Create the virtual environment, add dev dependencies and set up pre-commit hooks.
    ```
