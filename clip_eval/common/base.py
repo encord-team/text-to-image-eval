@@ -2,11 +2,8 @@ from pathlib import Path
 
 import numpy as np
 from pydantic import BaseModel, model_validator
-from torch.utils.data import DataLoader
 
 from clip_eval.constants import NPZ_KEYS
-from clip_eval.dataset import Dataset
-from clip_eval.model import Model
 
 from .numpy_types import ClassArray, EmbeddingArray
 
@@ -67,15 +64,6 @@ class Embeddings(BaseModel):
             **to_store,
         )
         return path
-
-    @staticmethod
-    def build_embedding(model: Model, dataset: Dataset, batch_size: int = 50) -> "Embeddings":
-        dataset.set_transform(model.get_transform())
-        dataloader = DataLoader(dataset, collate_fn=model.get_collate_fn(), batch_size=batch_size)
-
-        image_embeddings, class_embeddings, labels = model.build_embedding(dataloader)
-        embeddings = Embeddings(images=image_embeddings, classes=class_embeddings, labels=labels)
-        return embeddings
 
     class Config:
         arbitrary_types_allowed = True
