@@ -2,13 +2,11 @@ import logging
 from pathlib import Path
 from typing import Annotated, Any
 
-import numpy as np
 from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
 
 from clip_eval.constants import PROJECT_PATHS
-from clip_eval.dataset import DatasetProvider, Split
-from clip_eval.model import ModelProvider
+from clip_eval.dataset import Split
 
 from .base import Embeddings
 from .string_utils import safe_str
@@ -60,11 +58,6 @@ class EmbeddingDefinition(BaseModel):
         embeddings.to_file(self.embedding_path(split))
         return True
 
-    def build_embeddings(self, split: Split) -> Embeddings:
-        model = ModelProvider.get_model(self.model)
-        dataset = DatasetProvider.get_dataset(self.dataset, split)
-        return Embeddings.build_embedding(model, dataset)
-
     def __str__(self):
         return self.model + "_" + self.dataset
 
@@ -73,42 +66,3 @@ class EmbeddingDefinition(BaseModel):
 
     def __hash__(self):
         return hash((self.model, self.dataset))
-
-
-if __name__ == "__main__":
-    def_ = EmbeddingDefinition(
-        model="weird_this  with  / stuff \\whatever",
-        dataset="hello there dataset",
-    )
-    def_.embedding_path(Split.TRAIN).parent.mkdir(exist_ok=True, parents=True)
-
-    images = np.random.randn(100, 20).astype(np.float32)
-    labels = np.random.randint(0, 10, size=(100,))
-    classes = np.random.randn(10, 20).astype(np.float32)
-    emb = Embeddings(images=images, labels=labels, classes=classes)
-    # emb.to_file(def_.embedding_path(Split.TRAIN))
-    def_.save_embeddings(emb, split=Split.TRAIN, overwrite=True)
-    new_emb = def_.load_embeddings(Split.TRAIN)
-
-    assert new_emb is not None
-    assert np.allclose(new_emb.images, images)
-    assert np.allclose(new_emb.labels, labels)
-
-    from pydantic import ValidationError
-
-    try:
-        Embeddings(
-            images=np.random.randn(100, 20).astype(np.float32),
-            labels=np.random.randint(0, 10, size=(100,)),
-            classes=np.random.randn(10, 30).astype(np.float32),
-        )
-        raise AssertionError()
-    except ValidationError:
-        pass
-
-    def_ = EmbeddingDefinition(
-        model="clip",
-        dataset="LungCancer4Types",
-    )
-    embeddings = def_.build_embeddings(Split.VALIDATION)
-    def_.save_embeddings(embeddings, split=Split.VALIDATION, overwrite=True)

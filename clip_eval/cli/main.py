@@ -3,6 +3,7 @@ from typing import Annotated, Optional
 import matplotlib.pyplot as plt
 from typer import Option, Typer
 
+from clip_eval.compute import compute_embeddings_from_definition
 from clip_eval.dataset import Split
 from clip_eval.utils import read_all_cached_embeddings
 
@@ -52,7 +53,7 @@ def build_command(
     for embd_defn in definitions:
         for split in splits:
             try:
-                embeddings = embd_defn.build_embeddings(split)
+                embeddings = compute_embeddings_from_definition(embd_defn, split)
                 embd_defn.save_embeddings(embeddings=embeddings, split=split, overwrite=True)
                 print(f"Embeddings saved successfully to file at `{embd_defn.embedding_path(split)}`")
             except Exception as e:
