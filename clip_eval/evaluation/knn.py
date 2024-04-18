@@ -4,10 +4,10 @@ from typing import Any
 import numpy as np
 from autofaiss import build_index
 
-from clip_eval.common.data_models import Embeddings
-from clip_eval.common.numpy_types import ClassArray, ProbabilityArray
-from clip_eval.evaluation.base import ClassificationModel
-from clip_eval.evaluation.utils import softmax
+from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
+
+from .base import ClassificationModel
+from .utils import softmax
 
 logger = logging.getLogger("multiclips")
 

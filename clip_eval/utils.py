@@ -1,7 +1,7 @@
 from itertools import chain
 from typing import Literal, overload
 
-from clip_eval.common.data_models import EmbeddingDefinition
+from clip_eval.common import EmbeddingDefinition
 from clip_eval.constants import PROJECT_PATHS
 
 
