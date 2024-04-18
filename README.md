@@ -96,7 +96,7 @@ The `dataset_type` indicates the name of the class that represents the source, w
 
 For Hugging Face datasets, the `title_in_source` field should store the title of the dataset as it appears on the Hugging Face website.
 
-For datasets sourced from Encord, other set of fields are required. These include `project_hash`, which contains the hash of the project, and `classification_hash`, which contains the hash of the radio-button (multiclass) classification used in the labels.  
+For datasets sourced from Encord, other set of fields are required. These include `project_hash`, which contains the hash of the project, and `classification_hash`, which contains the hash of the radio-button (multiclass) classification used in the labels.
 
 ### Add a Dataset Source
 
@@ -111,7 +111,7 @@ Expanding the dataset sources involves two key steps:
 
 ### Programmatically Add a Dataset
 
-Alternatively, you can programmatically add a dataset, which will be available only for the current session, using the `register_dataset()` method of the `clip_eval.dataset.DatasetProvider` class. 
+Alternatively, you can programmatically add a dataset, which will be available only for the current session, using the `register_dataset()` method of the `clip_eval.dataset.DatasetProvider` class.
 
 Here is an example of how to register a dataset from Hugging Face using Python code:
 ```python
@@ -187,7 +187,7 @@ Expanding the model sources involves two key steps:
 
 ### Programmatically Add a Model
 
-Alternatively, you can programmatically add a model, which will be available only for the current session, using the `register_model()` method of the `clip_eval.model.ModelProvider` class. 
+Alternatively, you can programmatically add a model, which will be available only for the current session, using the `register_model()` method of the `clip_eval.model.ModelProvider` class.
 
 Here is an example of how to register a model from Hugging Face using Python code:
 ```python
@@ -222,7 +222,7 @@ However, all embeddings previously built with that model will remain intact and 
 
 ## Contributing
 
-Contributions are welcome!  
+Contributions are welcome!
 Please feel free to open an issue or submit a pull request with your suggestions, bug fixes, or new features.
 
 ### Adding Dataset Sources
@@ -230,17 +230,17 @@ Please feel free to open an issue or submit a pull request with your suggestions
 To contribute by adding dataset sources, follow these steps:
 1. Store the file containing the new dataset class implementation in the `clip_eval/dataset/types` folder.
    Don't forget to add a reference to the class in the `__init__.py` file in the same folder.
-   This ensures that the new dataset type is accessible by default for all dataset definitions, eliminating the need to explicitly state the `module_path` field for datasets from such source. 
+   This ensures that the new dataset type is accessible by default for all dataset definitions, eliminating the need to explicitly state the `module_path` field for datasets from such source.
 2. Open a pull request with the necessary changes. Make sure to include tests validating that data retrieval, processing and usage are working as expected.
 3. Document the addition of the dataset source, providing details on its structure, usage, and any specific considerations or instructions for integration.
-   This ensures that users have clear guidance on how to leverage the new dataset source effectively.   
+   This ensures that users have clear guidance on how to leverage the new dataset source effectively.
 
 ### Adding Model Sources
 
 To contribute by adding model sources, follow these steps:
 1. Store the file containing the new model class implementation in the `clip_eval/model/types` folder.
    Don't forget to add a reference to the class in the `__init__.py` file in the same folder.
-   This ensures that the new model type is accessible by default for all model definitions, eliminating the need to explicitly state the `module_path` field for models from such source. 
+   This ensures that the new model type is accessible by default for all model definitions, eliminating the need to explicitly state the `module_path` field for models from such source.
 2. Open a pull request with the necessary changes. Make sure to include tests validating that model loading, processing and embedding generation are working as expected.
 3. Document the addition of the model source, providing details on its structure, usage, and any specific considerations or instructions for integration.
-   This ensures that users have clear guidance on how to leverage the new model source effectively.   
+   This ensures that users have clear guidance on how to leverage the new model source effectively.
