@@ -6,9 +6,8 @@ from pydantic import BaseModel
 from pydantic.functional_validators import AfterValidator
 
 from clip_eval.constants import PROJECT_PATHS
-from clip_eval.dataset import Split
 
-from .base import Embeddings
+from .base import Embeddings, Split
 from .string_utils import safe_str
 
 SafeName = Annotated[str, AfterValidator(safe_str)]

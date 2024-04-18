@@ -1,3 +1,4 @@
+from enum import StrEnum, auto
 from pathlib import Path
 
 import numpy as np
@@ -67,3 +68,10 @@ class Embeddings(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
+
+
+class Split(StrEnum):
+    TRAIN = auto()
+    VALIDATION = auto()
+    TEST = auto()
+    ALL = auto()

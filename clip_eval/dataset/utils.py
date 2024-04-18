@@ -10,7 +10,7 @@ import numpy as np
 import requests
 from tqdm.auto import tqdm
 
-from .base import Split
+from clip_eval.common import Split
 
 T = TypeVar("T")
 G = TypeVar("G")

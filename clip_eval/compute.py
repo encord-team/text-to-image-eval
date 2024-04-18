@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader
 
-from clip_eval.common import EmbeddingDefinition, Embeddings
-from clip_eval.dataset import Dataset, DatasetProvider, Split
+from clip_eval.common import EmbeddingDefinition, Embeddings, Split
+from clip_eval.dataset import Dataset, DatasetProvider
 from clip_eval.model import Model, ModelProvider
 
 
