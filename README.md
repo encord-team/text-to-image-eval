@@ -97,6 +97,17 @@ For Hugging Face datasets, the `title_in_source` field should store the title of
 
 For datasets sourced from Encord, other set of fields are required. These include `project_hash`, which contains the hash of the project, and `classification_hash`, which contains the hash of the radio-button (multiclass) classification used in the labels.  
 
+### Add a Dataset Source
+
+Expanding the dataset sources involves two key steps:
+1. Create a dataset class that inherits from `clip_eval.dataset.Dataset` and specifies the input requirements for extracting data from the new source.
+   This class should encapsulate the necessary logic for fetching and processing dataset elements.
+2. Generate a dataset definition in JSON format and save it in the `sources/datasets` folder, following the guidelines outlined in the previous section.
+   Ensure that the definition includes essential fields such as `dataset_type`, `title`, and `module_path`, which points to the file containing the dataset class implementation.
+
+> It's recommended to store the file containing the dataset class implementation in the `clip_eval/dataset/types` folder and add a reference to the class in the `__init__.py` file in the same folder.
+> This ensures that the new dataset type is accessible by default for all dataset definitions, eliminating the need to explicitly state the `module_path` field for datasets from such source.
+
 ### Programmatically Add a Dataset
 
 Alternatively, you can programmatically add a dataset, which will be available only for the current session, using the `register_dataset()` method of the `clip_eval.dataset.DatasetProvider` class. 
@@ -132,5 +143,16 @@ However, all embeddings previously built on that dataset will remain intact and 
 
 
 ## Contributing
-Contributions are welcome!
+
+Contributions are welcome!  
 Please feel free to open an issue or submit a pull request with your suggestions, bug fixes, or new features.
+
+### Adding Dataset Sources
+
+To contribute by adding dataset sources, follow these steps:
+1. Store the file containing the new dataset class implementation in the `clip_eval/dataset/types` folder.
+   Don't forget to add a reference to the class in the `__init__.py` file in the same folder.
+   This ensures that the new dataset type is accessible by default for all dataset definitions, eliminating the need to explicitly state the `module_path` field for datasets from such source. 
+2. Open a pull request with the necessary changes. Make sure to include tests validating that data retrieval, processing and usage are working as expected.
+3. Document the addition of the dataset source, providing details on its structure, usage, and any specific considerations or instructions for integration.
+   This ensures that users have clear guidance on how to leverage the new dataset source effectively.   
