@@ -8,7 +8,7 @@
   <a href="https://encord.com"><img src="https://storage.googleapis.com/docs-media.encord.com/static/img/icons/encord_logo.png" alt="Encord Logo"/></a>
 </h1>
 
-<div style="display: flex; justify-content: space-between;">
+<div align="center" style="display: flex; justify-content: space-between;">
   <div style="flex: 1; padding: 10px;">
     <a href="https://github.com/encord-team/text-to-image-eval/actions?query=workflow%3ATests" target="_blank" style="text-decoration:none">
       <img src="https://github.com/encord-team/text-to-image-eval/actions/workflows/tests.yml/badge.svg?branch=main" alt="Tests">
