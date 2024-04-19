@@ -1,10 +1,10 @@
-<p style="text-align: center;">
+<p align="center">
 <a href="https://encord.com/" target="_blank">Website</a> |
 <a href="https://encord.com/blog/" target="_blank">Blog</a> |
 <a href="https://join.slack.com/t/encordactive/shared_invite/zt-1hc2vqur9-Fzj1EEAHoqu91sZ0CX0A7Q" target="_blank">Join our Community</a>
 </p>
 
-<h1 style="text-align: center;">
+<h1 align="center">
   <a href="https://encord.com"><img src="https://storage.googleapis.com/docs-media.encord.com/static/img/icons/encord_logo.png" alt="Encord Logo"/></a>
 </h1>
 
