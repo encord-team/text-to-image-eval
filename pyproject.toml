@@ -12,7 +12,6 @@ packages = [{include = "clip_eval", from = "."}]
 
 [tool.poetry.dependencies]
 autofaiss = "^2.17.0"
-av = "^11.0.0"
 datasets = "^2.17.0"
 encord = "^0.1.108"
 pillow = "^10.2.0"
@@ -28,8 +27,6 @@ matplotlib = "^3.8.2"
 typer = "^0.9.0"
 inquirerpy = "^0.3.4"
 tabulate = "^0.9.0"
-sentencepiece = "^0.2.0"
-protobuf = "^4.25.3"
 open-clip-torch = "^2.24.0"
 natsort = "^8.4.0"
 
