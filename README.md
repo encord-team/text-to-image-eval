@@ -1,11 +1,5 @@
-<p align="center">
-<a href="https://encord.com/" target="_blank">Website</a> |
-<a href="https://encord.com/blog/" target="_blank">Blog</a> |
-<a href="https://join.slack.com/t/encordactive/shared_invite/zt-1hc2vqur9-Fzj1EEAHoqu91sZ0CX0A7Q" target="_blank">Join our Community</a>
-</p>
-
 <h1 align="center">
-    <img src="https://raw.githubusercontent.com/encord-team/text-to-image-eval/refactor/rename-tool/images/tti-eval-banner.png" alt="tti-eval logo banner">
+    <img src="https://github.com/encord-team/text-to-image-eval/blob/refactor/rename-tool/images/tti-eval-banner.png?raw=true" alt="tti-eval logo banner">
 </h1>
 
 <div align="center" style="display: flex; justify-content: space-between;">
@@ -21,11 +15,22 @@
   </div>
 </div>
 
-# tti-eval
-
 Welcome to `tti-eval`, a repository for benchmarking text-to-image models **on your own data**!
 
 > Evaluate your (or HF) text-to-image embedding models like [CLIP][openai/clip-vit-large-patch14-336] from OpenAI against your (or HF) datasets to estimate how well the model will perform on your classification dataset.
+
+## TLDR;;;
+
+With this library, you can take an embedding model intended for jointly embedding images and tex (like [CLIP][openai/clip-vit-large-patch14-336]) and compute metrics for how well such model performs on classifying your custom dataset.
+What you will do is
+
+0. [Install](#installation) `ttl-eval`
+1. [Compute embeddings](#embeddings-generation) of a dataset with a model
+2. Do an [evaluation](#model-evaluation) of the model against the dataset
+
+You can easily benchmark different models and datasets against each other. Here is an example:
+
+<img width="600" src="https://github.com/encord-team/text-to-image-eval/blob/refactor/rename-tool/images/eval-usage.svg?raw=true">
 
 ## Installation
 
