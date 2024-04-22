@@ -3,9 +3,10 @@ from typing import Literal
 
 import numpy as np
 import umap
-from clip_eval.common import EmbeddingArray, EmbeddingDefinition, ReductionArray, Split
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+
+from tti_eval.common import EmbeddingArray, EmbeddingDefinition, ReductionArray, Split
 
 
 class Reducer:

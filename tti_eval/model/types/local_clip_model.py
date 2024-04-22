@@ -1,4 +1,4 @@
-from clip_eval.model.types.open_clip_model import OpenCLIPModel
+from tti_eval.model.types.open_clip_model import OpenCLIPModel
 
 
 class LocalCLIPModel(OpenCLIPModel):

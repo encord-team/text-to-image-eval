@@ -1,10 +1,11 @@
 from typing import Annotated, Optional
 
 import matplotlib.pyplot as plt
-from clip_eval.common import Split
-from clip_eval.compute import compute_embeddings_from_definition
-from clip_eval.utils import read_all_cached_embeddings
 from typer import Option, Typer
+
+from tti_eval.common import Split
+from tti_eval.compute import compute_embeddings_from_definition
+from tti_eval.utils import read_all_cached_embeddings
 
 from .utils import (
     parse_raw_embedding_definitions,
@@ -12,7 +13,7 @@ from .utils import (
     select_from_all_embedding_definitions,
 )
 
-cli = Typer(name="clip-eval", no_args_is_help=True, rich_markup_mode="markdown")
+cli = Typer(name="tti-eval", no_args_is_help=True, rich_markup_mode="markdown")
 
 
 @cli.command(
@@ -83,13 +84,13 @@ def evaluate_embeddings(
     all_: Annotated[bool, Option("--all", "-a", help="Evaluate all models.")] = False,
     save: Annotated[bool, Option("--save", "-s", help="Save evaluation results to a CSV file.")] = False,
 ):
-    from clip_eval.evaluation import (
+    from tti_eval.evaluation import (
         I2IRetrievalEvaluator,
         LinearProbeClassifier,
         WeightedKNNClassifier,
         ZeroShotClassifier,
     )
-    from clip_eval.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
+    from tti_eval.evaluation.evaluator import export_evaluation_to_csv, run_evaluation
 
     model_datasets = model_datasets or []
 
@@ -116,7 +117,7 @@ def animate_embeddings(
     interactive: Annotated[bool, Option(help="Interactive plot instead of animation.")] = False,
     reduction: Annotated[str, Option(help="Reduction type [pca, tsne, umap (default)].")] = "umap",
 ):
-    from clip_eval.plotting.animation import build_animation, save_animation_to_file
+    from tti_eval.plotting.animation import build_animation, save_animation_to_file
 
     defs = select_existing_embedding_definitions(by_dataset=True, count=2)
     res = build_animation(defs[0], defs[1], interactive=interactive, reduction=reduction)
@@ -134,8 +135,8 @@ def list_models_datasets(
         Option("--all", "-a", help="List all models and datasets that are available via the tool."),
     ] = False,
 ):
-    from clip_eval.dataset import DatasetProvider
-    from clip_eval.model import ModelProvider
+    from tti_eval.dataset import DatasetProvider
+    from tti_eval.model import ModelProvider
 
     if all_:
         datasets = DatasetProvider.list_dataset_titles()

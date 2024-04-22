@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
+from tti_eval.common import ClassArray, Embeddings, ProbabilityArray
 
 from .utils import normalize
 

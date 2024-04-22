@@ -1,7 +1,8 @@
 import numpy as np
-from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
-from clip_eval.evaluation.base import ClassificationModel
-from clip_eval.evaluation.utils import softmax
+
+from tti_eval.common import ClassArray, Embeddings, ProbabilityArray
+from tti_eval.evaluation.base import ClassificationModel
+from tti_eval.evaluation.utils import softmax
 
 
 class ZeroShotClassifier(ClassificationModel):

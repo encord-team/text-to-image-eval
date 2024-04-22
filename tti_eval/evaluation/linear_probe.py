@@ -2,9 +2,10 @@ import logging
 from typing import Any
 
 import numpy as np
-from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
-from clip_eval.evaluation.base import ClassificationModel
 from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
+
+from tti_eval.common import ClassArray, Embeddings, ProbabilityArray
+from tti_eval.evaluation.base import ClassificationModel
 
 logger = logging.getLogger("multiclips")
 

@@ -3,7 +3,8 @@ from typing import Any
 
 import numpy as np
 from autofaiss import build_index
-from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
+
+from tti_eval.common import ClassArray, Embeddings, ProbabilityArray
 
 from .base import ClassificationModel
 from .utils import softmax

@@ -1,9 +1,10 @@
 from pathlib import Path
 from typing import Any
 
-from clip_eval.constants import SOURCES_PATH
-from clip_eval.dataset.utils import load_class_from_path
 from natsort import natsorted, ns
+
+from tti_eval.constants import SOURCES_PATH
+from tti_eval.dataset.utils import load_class_from_path
 
 from .base import Model, ModelDefinitionSpec
 

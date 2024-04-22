@@ -10,7 +10,7 @@
       "type": "string"
     },
     "module_path": {
-      "default": "../../clip_eval/model/types/__init__.py",
+      "default": "../../tti_eval/model/types/__init__.py",
       "format": "path",
       "title": "Module Path",
       "type": "string"

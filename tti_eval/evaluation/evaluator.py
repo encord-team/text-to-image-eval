@@ -1,18 +1,19 @@
 import csv
 from datetime import datetime
 
-from clip_eval.common import EmbeddingDefinition, Split
-from clip_eval.constants import OUTPUT_PATH
-from clip_eval.evaluation import (
+from natsort import natsorted, ns
+from tabulate import tabulate
+
+from tti_eval.common import EmbeddingDefinition, Split
+from tti_eval.constants import OUTPUT_PATH
+from tti_eval.evaluation import (
     EvaluationModel,
     I2IRetrievalEvaluator,
     LinearProbeClassifier,
     WeightedKNNClassifier,
     ZeroShotClassifier,
 )
-from clip_eval.utils import read_all_cached_embeddings
-from natsort import natsorted, ns
-from tabulate import tabulate
+from tti_eval.utils import read_all_cached_embeddings
 
 
 def print_evaluation_results(

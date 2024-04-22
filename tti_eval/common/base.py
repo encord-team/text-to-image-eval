@@ -4,9 +4,10 @@ from pathlib import Path
 from typing import Annotated, Any
 
 import numpy as np
-from clip_eval.constants import NPZ_KEYS, PROJECT_PATHS
 from pydantic import BaseModel, model_validator
 from pydantic.functional_validators import AfterValidator
+
+from tti_eval.constants import NPZ_KEYS, PROJECT_PATHS
 
 from .numpy_types import ClassArray, EmbeddingArray
 from .string_utils import safe_str

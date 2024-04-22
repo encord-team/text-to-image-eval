@@ -4,11 +4,12 @@ from typing import Any
 import numpy as np
 import open_clip
 import torch
-from clip_eval.common import ClassArray, EmbeddingArray
-from clip_eval.dataset import Dataset
-from clip_eval.model import Model
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+
+from tti_eval.common import ClassArray, EmbeddingArray
+from tti_eval.dataset import Dataset
+from tti_eval.model import Model
 
 
 class OpenCLIPModel(Model):

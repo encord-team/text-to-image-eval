@@ -1,7 +1,8 @@
-from clip_eval.common import EmbeddingDefinition, Embeddings, Split
-from clip_eval.dataset import Dataset, DatasetProvider
-from clip_eval.model import Model, ModelProvider
 from torch.utils.data import DataLoader
+
+from tti_eval.common import EmbeddingDefinition, Embeddings, Split
+from tti_eval.dataset import Dataset, DatasetProvider
+from tti_eval.model import Model, ModelProvider
 
 
 def compute_embeddings(model: Model, dataset: Dataset, batch_size: int = 50) -> Embeddings:

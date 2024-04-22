@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.typing as npt
-from clip_eval.common.numpy_types import DType
+
+from tti_eval.common.numpy_types import DType
 
 
 def normalize(x: npt.NDArray[DType]) -> npt.NDArray[DType]:

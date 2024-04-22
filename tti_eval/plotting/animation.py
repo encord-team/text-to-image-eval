@@ -5,13 +5,14 @@ from typing import Literal, overload
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
-from clip_eval.common import EmbeddingDefinition
-from clip_eval.common.base import SafeName
-from clip_eval.common.numpy_types import ClassArray, N2Array
-from clip_eval.constants import OUTPUT_PATH
-from clip_eval.dataset import DatasetProvider, Split
 from matplotlib.widgets import Slider
 from PIL import Image
+
+from tti_eval.common import EmbeddingDefinition
+from tti_eval.common.base import SafeName
+from tti_eval.common.numpy_types import ClassArray, N2Array
+from tti_eval.constants import OUTPUT_PATH
+from tti_eval.dataset import DatasetProvider, Split
 
 from .reduction import REDUCTIONS, reduction_from_string
 

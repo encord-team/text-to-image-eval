@@ -33,15 +33,15 @@
   </div>
 </div>
 
-# clip-eval
+# tti-eval
 
-Welcome to `clip-eval`, a repository for benchmarking text-to-image models **on your own data**!
+Welcome to `tti-eval`, a repository for benchmarking text-to-image models **on your own data**!
 
 > Evaluate your (or HF) text-to-image embedding models like [CLIP][openai/clip-vit-large-patch14-336] from OpenAI against your (or HF) datasets to estimate how well the model will perform on your classification dataset.
 
 ## Installation
 
-> `clip-eval` requires [Python 3.11](https://www.python.org/downloads/release/python-3115/) and [Poetry](https://python-poetry.org/docs/#installation).
+> `tti-eval` requires [Python 3.11](https://www.python.org/downloads/release/python-3115/) and [Poetry](https://python-poetry.org/docs/#installation).
 
 1. Clone the repository:
    ```
@@ -58,8 +58,8 @@ Welcome to `clip-eval`, a repository for benchmarking text-to-image models **on 
    ```
 4. Add environment variables:
    ```
-   export CLIP_EVAL_CACHE_PATH=$PWD/.cache
-   export CLIP_EVAL_OUTPUT_PATH=$PWD/output
+   export TTI_EVAL_CACHE_PATH=$PWD/.cache
+   export TTI_EVAL_OUTPUT_PATH=$PWD/output
    export ENCORD_SSH_KEY_PATH=<path_to_the_encord_ssh_key_file>
    ```
 
@@ -67,32 +67,32 @@ Welcome to `clip-eval`, a repository for benchmarking text-to-image models **on 
 
 ### Embeddings Generation
 
-To build embeddings, run the CLI command `clip-eval build`.
+To build embeddings, run the CLI command `tti-eval build`.
 This commands allows you to interactively select the model and dataset combinations on which to build the embeddings.
 
 Alternatively, you can choose known (model, dataset) pairs using the `--model-dataset` option. For example:
 
 ```
-clip-eval build --model-dataset clip/plants
+tti-eval build --model-dataset clip/plants
 ```
 
 ### Model Evaluation
 
-To evaluate models, use the CLI command `clip-eval evaluate`.
+To evaluate models, use the CLI command `tti-eval evaluate`.
 This command enables interactive selection of model and dataset combinations for evaluation.
 
 Alternatively, you can specify known (model, dataset) pairs using the `--model-dataset` option. For example:
 
 ```
-clip-eval evaluate --model-dataset clip/plants
+tti-eval evaluate --model-dataset clip/plants
 ```
 
 ### Embeddings Animation
 
-To create 2D animations of the embeddings, use the CLI command `clip-eval animate`.
+To create 2D animations of the embeddings, use the CLI command `tti-eval animate`.
 This command allows to visualise the reduction of embeddings from two models on the same dataset.
 
-The animations will be saved at the location specified by the environment variable `CLIP_EVAL_OUTPUT_PATH`.
+The animations will be saved at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
 By default, this path corresponds to the repository directory.
 
 ## Datasets
@@ -114,10 +114,10 @@ This repository contains classification datasets sourced from [Hugging Face](htt
 ### Add a Dataset from a Known Source
 
 To register a dataset from a known source, you can include the dataset definition as a JSON file in the `sources/datasets` folder.
-The definition will be validated against the schema defined by the `clip_eval.dataset.base.DatasetDefinitionSpec` Pydantic class to ensure that it adheres to the required structure.
+The definition will be validated against the schema defined by the `tti_eval.dataset.base.DatasetDefinitionSpec` Pydantic class to ensure that it adheres to the required structure.
 You can find the explicit schema in `sources/dataset-definition-schema.json`.
 
-Check out the declarations of known sources at `clip_eval.dataset.types` and refer to the existing dataset definitions in the `sources/datasets` folder for guidance.
+Check out the declarations of known sources at `tti_eval.dataset.types` and refer to the existing dataset definitions in the `sources/datasets` folder for guidance.
 Below is an example of a dataset definition for the [plants](https://huggingface.co/datasets/sampath017/plants) dataset sourced from Hugging Face:
 
 ```json
@@ -139,23 +139,23 @@ For datasets sourced from Encord, other set of fields are required. These includ
 
 Expanding the dataset sources involves two key steps:
 
-1. Create a dataset class that inherits from `clip_eval.dataset.Dataset` and specifies the input requirements for extracting data from the new source.
+1. Create a dataset class that inherits from `tti_eval.dataset.Dataset` and specifies the input requirements for extracting data from the new source.
    This class should encapsulate the necessary logic for fetching and processing dataset elements.
 2. Generate a dataset definition in JSON format and save it in the `sources/datasets` folder, following the guidelines outlined in the previous section.
    Ensure that the definition includes essential fields such as `dataset_type`, `title`, and `module_path`, which points to the file containing the dataset class implementation.
 
-> It's recommended to store the file containing the dataset class implementation in the `clip_eval/dataset/types` folder and add a reference to the class in the `__init__.py` file in the same folder.
+> It's recommended to store the file containing the dataset class implementation in the `tti_eval/dataset/types` folder and add a reference to the class in the `__init__.py` file in the same folder.
 > This ensures that the new dataset type is accessible by default for all dataset definitions, eliminating the need to explicitly state the `module_path` field for datasets from such source.
 
 ### Programmatically Add a Dataset
 
-Alternatively, you can programmatically add a dataset, which will be available only for the current session, using the `register_dataset()` method of the `clip_eval.dataset.DatasetProvider` class.
+Alternatively, you can programmatically add a dataset, which will be available only for the current session, using the `register_dataset()` method of the `tti_eval.dataset.DatasetProvider` class.
 
 Here is an example of how to register a dataset from Hugging Face using Python code:
 
 ```python
-from clip_eval.dataset import DatasetProvider, Split
-from clip_eval.dataset.types import HFDataset
+from tti_eval.dataset import DatasetProvider, Split
+from tti_eval.dataset.types import HFDataset
 
 DatasetProvider.register_dataset(HFDataset, "plants", title_in_source="sampath017/plants")
 ds = DatasetProvider.get_dataset("plants", split=Split.ALL)
@@ -202,10 +202,10 @@ _TODO_: Some more prose about what's the difference between implementations.
 ### Add a Model from a Known Source
 
 To register a model from a known source, you can include the model definition as a JSON file in the `sources/models` folder.
-The definition will be validated against the schema defined by the `clip_eval.model.base.ModelDefinitionSpec` Pydantic class to ensure that it adheres to the required structure.
+The definition will be validated against the schema defined by the `tti_eval.model.base.ModelDefinitionSpec` Pydantic class to ensure that it adheres to the required structure.
 You can find the explicit schema in `sources/model-definition-schema.json`.
 
-Check out the declarations of known sources at `clip_eval.model.types` and refer to the existing model definitions in the `sources/models` folder for guidance.
+Check out the declarations of known sources at `tti_eval.model.types` and refer to the existing model definitions in the `sources/models` folder for guidance.
 Below is an example of a model definition for the [clip](https://huggingface.co/openai/clip-vit-large-patch14-336) model sourced from Hugging Face:
 
 ```json
@@ -227,23 +227,23 @@ Additionally, on models sourced from OpenCLIP the optional `pretrained` field ma
 
 Expanding the model sources involves two key steps:
 
-1. Create a model class that inherits from `clip_eval.model.Model` and specifies the input requirements for loading models from the new source.
+1. Create a model class that inherits from `tti_eval.model.Model` and specifies the input requirements for loading models from the new source.
    This class should encapsulate the necessary logic for processing model elements and generating embeddings.
 2. Generate a model definition in JSON format and save it in the `sources/models` folder, following the guidelines outlined in the previous section.
    Ensure that the definition includes essential fields such as `model_type`, `title`, and `module_path`, which points to the file containing the model class implementation.
 
-> It's recommended to store the file containing the model class implementation in the `clip_eval/model/types` folder and add a reference to the class in the `__init__.py` file in the same folder.
+> It's recommended to store the file containing the model class implementation in the `tti_eval/model/types` folder and add a reference to the class in the `__init__.py` file in the same folder.
 > This ensures that the new model type is accessible by default for all model definitions, eliminating the need to explicitly state the `module_path` field for models from such source.
 
 ### Programmatically Add a Model
 
-Alternatively, you can programmatically add a model, which will be available only for the current session, using the `register_model()` method of the `clip_eval.model.ModelProvider` class.
+Alternatively, you can programmatically add a model, which will be available only for the current session, using the `register_model()` method of the `tti_eval.model.ModelProvider` class.
 
 Here is an example of how to register a model from Hugging Face using Python code:
 
 ```python
-from clip_eval.model import ModelProvider
-from clip_eval.model.types import ClosedCLIPModel
+from tti_eval.model import ModelProvider
+from tti_eval.model.types import ClosedCLIPModel
 
 ModelProvider.register_model(ClosedCLIPModel, "clip", title_in_source="openai/clip-vit-large-patch14-336")
 model = ModelProvider.get_model("clip")
@@ -264,8 +264,8 @@ However, all embeddings previously built with that model will remain intact and 
    ```
 2. Add environment variables:
    ```
-   export CLIP_EVAL_CACHE_PATH=$PWD/.cache
-   export CLIP_EVAL_OUTPUT_PATH=$PWD/output
+   export TTI_EVAL_CACHE_PATH=$PWD/.cache
+   export TTI_EVAL_OUTPUT_PATH=$PWD/output
    export ENCORD_SSH_KEY_PATH=<path_to_the_encord_ssh_key_file>
    ```
 
@@ -278,7 +278,7 @@ Please feel free to open an issue or submit a pull request with your suggestions
 
 To contribute by adding dataset sources, follow these steps:
 
-1. Store the file containing the new dataset class implementation in the `clip_eval/dataset/types` folder.
+1. Store the file containing the new dataset class implementation in the `tti_eval/dataset/types` folder.
    Don't forget to add a reference to the class in the `__init__.py` file in the same folder.
    This ensures that the new dataset type is accessible by default for all dataset definitions, eliminating the need to explicitly state the `module_path` field for datasets from such source.
 2. Open a pull request with the necessary changes. Make sure to include tests validating that data retrieval, processing and usage are working as expected.
@@ -289,7 +289,7 @@ To contribute by adding dataset sources, follow these steps:
 
 To contribute by adding model sources, follow these steps:
 
-1. Store the file containing the new model class implementation in the `clip_eval/model/types` folder.
+1. Store the file containing the new model class implementation in the `tti_eval/model/types` folder.
    Don't forget to add a reference to the class in the `__init__.py` file in the same folder.
    This ensures that the new model type is accessible by default for all model definitions, eliminating the need to explicitly state the `module_path` field for models from such source.
 2. Open a pull request with the necessary changes. Make sure to include tests validating that model loading, processing and embedding generation are working as expected.
@@ -315,8 +315,8 @@ To contribute by adding model sources, follow these steps:
 [geolocal/StreetCLIP]: https://huggingface.co/geolocal/StreetCLIP
 [wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M]: https://huggingface.co/wkcn/TinyCLIP-ViT-40M-32-Text-19M-LAION400M
 [laion/CLIP-ViT-B-32-laion2B-s34B-b79K]: https://huggingface.co/laion/CLIP-ViT-B-32-laion2B-s34B-b79K
-[open-model-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/clip_eval/model/types/open_clip_model.py
-[hf-model-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/clip_eval/model/types/hugging_face_clip.py
-[local-model-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/clip_eval/model/types/local_clip_model.py
-[hf-dataset-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/clip_eval/dataset/types/hugging_face.py
-[encord-dataset-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/clip_eval/dataset/types/encord_ds.py
+[open-model-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/tti_eval/model/types/open_clip_model.py
+[hf-model-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/tti_eval/model/types/hugging_face_clip.py
+[local-model-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/tti_eval/model/types/local_clip_model.py
+[hf-dataset-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/tti_eval/dataset/types/hugging_face.py
+[encord-dataset-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/tti_eval/dataset/types/encord_ds.py

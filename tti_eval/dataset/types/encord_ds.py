@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from clip_eval.dataset import Dataset, Split
-from clip_eval.dataset.utils import collect_async, download_file, simple_random_split
 from encord import EncordUserClient, Project
 from encord.common.constants import DATETIME_STRING_FORMAT
 from encord.objects import Classification, LabelRowV2
@@ -13,6 +11,9 @@ from encord.objects.common import PropertyType
 from encord.orm.dataset import DataType, Image, Video
 from PIL import Image as PILImage
 from tqdm.auto import tqdm
+
+from tti_eval.dataset import Dataset, Split
+from tti_eval.dataset.utils import collect_async, download_file, simple_random_split
 
 
 class EncordDataset(Dataset):
