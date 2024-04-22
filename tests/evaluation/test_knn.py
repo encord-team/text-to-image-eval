@@ -1,8 +1,8 @@
 import numpy as np
 
-from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
-from clip_eval.evaluation.knn import WeightedKNNClassifier
-from clip_eval.evaluation.utils import normalize, softmax
+from tti_eval.common import ClassArray, Embeddings, ProbabilityArray
+from tti_eval.evaluation.knn import WeightedKNNClassifier
+from tti_eval.evaluation.utils import normalize, softmax
 
 
 def slow_knn_predict(

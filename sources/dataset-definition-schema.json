@@ -22,7 +22,7 @@
       "type": "string"
     },
     "module_path": {
-      "default": "../../clip_eval/dataset/types/__init__.py",
+      "default": "../../tti_eval/dataset/types/__init__.py",
       "format": "path",
       "title": "Module Path",
       "type": "string"

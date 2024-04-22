@@ -1,7 +1,7 @@
 import numpy as np
 
-from clip_eval.common import EmbeddingDefinition, Embeddings, Split
-from clip_eval.compute import compute_embeddings_from_definition
+from tti_eval.common import EmbeddingDefinition, Embeddings, Split
+from tti_eval.compute import compute_embeddings_from_definition
 
 if __name__ == "__main__":
     def_ = EmbeddingDefinition(
