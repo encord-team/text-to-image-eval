@@ -1,3 +1,38 @@
+<p align="center">
+<a href="https://encord.com/" target="_blank">Website</a> |
+<a href="https://encord.com/blog/" target="_blank">Blog</a> |
+<a href="https://join.slack.com/t/encordactive/shared_invite/zt-1hc2vqur9-Fzj1EEAHoqu91sZ0CX0A7Q" target="_blank">Join our Community</a>
+</p>
+
+<h1 align="center">
+  <a href="https://encord.com"><img src="https://storage.googleapis.com/docs-media.encord.com/static/img/icons/encord_logo.png" alt="Encord Logo"/></a>
+</h1>
+
+<div align="center" style="display: flex; justify-content: space-between;">
+  <div style="flex: 1; padding: 10px;">
+    <a href="https://github.com/encord-team/text-to-image-eval/actions?query=workflow%3ATests" target="_blank" style="text-decoration:none">
+      <img src="https://github.com/encord-team/text-to-image-eval/actions/workflows/tests.yml/badge.svg?branch=main" alt="Tests">
+    </a>
+    <a href="https://www.python.org/downloads/release/python-3119/" target="_blank" style="text-decoration:none">
+      <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python Versions">
+    </a>
+    <a target="_blank" style="text-decoration:none">
+      <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-Welcome-blue">
+    </a>
+  </div>
+  <div style="flex: 1; padding: 10px;">
+    <a href="https://github.com/encord-team/encord-notebooks" target="_blank" style="text-decoration:none">
+      <img alt="Encord Notebooks" src="https://img.shields.io/badge/Encord_Notebooks-blue?logo=github&label=&labelColor=181717">
+    </a>
+    <a href="https://join.slack.com/t/encordactive/shared_invite/zt-1hc2vqur9-Fzj1EEAHoqu91sZ0CX0A7Q" target="_blank" style="text-decoration:none">
+      <img alt="Join us on Slack" src="https://img.shields.io/badge/Join_Our_Community-4A154B?label=&logo=slack&logoColor=white">
+    </a>
+    <a href="https://twitter.com/encord_team" target="_blank" style="text-decoration:none">
+      <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/encord_team?label=%40encord_team&amp;style=social">
+    </a>
+  </div>
+</div>
+
 # clip-eval
 
 Welcome to `clip-eval`, a repository for benchmarking text-to-image models **on your own data**!
