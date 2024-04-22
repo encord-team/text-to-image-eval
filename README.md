@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img src="https://github.com/encord-team/text-to-image-eval/main/images/tti-eval-banner.png?raw=true" alt="tti-eval logo banner">
+    <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/tti-eval-banner.png" alt="tti-eval logo banner">
 </h1>
 
 <div align="center" style="display: flex; justify-content: space-between;">
@@ -31,7 +31,7 @@ What you will do is
 You can easily benchmark different models and datasets against each other. Here is an example:
 
 <div align="center">
-    <img width="600" src="https://github.com/encord-team/text-to-image-eval/main/images/eval-usage.svg?raw=true" alt="An animation showing how to use the CLI to evaluate embedding models">
+    <img width="800" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/eval-usage.svg" alt="An animation showing how to use the CLI to evaluate embedding models">
 </div>
 
 ## Installation
@@ -91,7 +91,7 @@ The animations will be saved at the location specified by the environment variab
 By default, this path corresponds to the repository directory.
 
 <div align="center">
-    <img width="800" src="https://github.com/encord-team/text-to-image-eval/main/images/embeddings.svg?raw=true">
+    <img width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
 </div>
 
 ## Datasets
