@@ -3,15 +3,14 @@ from typing import Any
 
 import numpy as np
 import torch
+from clip_eval.common import ClassArray, EmbeddingArray
+from clip_eval.dataset import Dataset
+from clip_eval.model import Model
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import AutoModel as HF_AutoModel
 from transformers import AutoProcessor as HF_AutoProcessor
 from transformers import AutoTokenizer as HF_AutoTokenizer
-
-from clip_eval.common import ClassArray, EmbeddingArray
-from clip_eval.dataset import Dataset
-from clip_eval.model import Model
 
 
 class ClosedCLIPModel(Model):

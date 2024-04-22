@@ -5,11 +5,10 @@ from pathlib import Path
 from typing import Any
 
 import torch
-from pydantic import BaseModel, ConfigDict
-from torch.utils.data import DataLoader
-
 from clip_eval.common.numpy_types import ClassArray, EmbeddingArray
 from clip_eval.constants import CACHE_PATH, SOURCES_PATH
+from pydantic import BaseModel, ConfigDict
+from torch.utils.data import DataLoader
 
 DEFAULT_MODEL_TYPES_LOCATION = (
     Path(relpath(str(__file__), SOURCES_PATH.MODEL_INSTANCE_DEFINITIONS)).parent / "types" / "__init__.py"

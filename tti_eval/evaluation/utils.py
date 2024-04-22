@@ -1,6 +1,5 @@
 import numpy as np
 import numpy.typing as npt
-
 from clip_eval.common.numpy_types import DType
 
 

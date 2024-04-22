@@ -8,9 +8,8 @@ from typing import Any, TypeVar
 
 import numpy as np
 import requests
-from tqdm.auto import tqdm
-
 from clip_eval.common import Split
+from tqdm.auto import tqdm
 
 T = TypeVar("T")
 G = TypeVar("G")

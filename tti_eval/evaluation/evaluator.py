@@ -1,9 +1,6 @@
 import csv
 from datetime import datetime
 
-from natsort import natsorted, ns
-from tabulate import tabulate
-
 from clip_eval.common import EmbeddingDefinition, Split
 from clip_eval.constants import OUTPUT_PATH
 from clip_eval.evaluation import (
@@ -14,6 +11,8 @@ from clip_eval.evaluation import (
     ZeroShotClassifier,
 )
 from clip_eval.utils import read_all_cached_embeddings
+from natsort import natsorted, ns
+from tabulate import tabulate
 
 
 def print_evaluation_results(

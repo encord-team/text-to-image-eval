@@ -3,7 +3,6 @@ from typing import Any
 
 import numpy as np
 from autofaiss import build_index
-
 from clip_eval.common import Embeddings
 
 from .base import EvaluationModel

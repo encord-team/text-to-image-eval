@@ -2,11 +2,10 @@ from abc import ABC, abstractmethod
 from os.path import relpath
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict
-from torch.utils.data import Dataset as TorchDataset
-
 from clip_eval.common import Split
 from clip_eval.constants import CACHE_PATH, SOURCES_PATH
+from pydantic import BaseModel, ConfigDict
+from torch.utils.data import Dataset as TorchDataset
 
 DEFAULT_DATASET_TYPES_LOCATION = (
     Path(relpath(str(__file__), SOURCES_PATH.DATASET_INSTANCE_DEFINITIONS)).parent / "types" / "__init__.py"

@@ -1,5 +1,4 @@
 import numpy as np
-
 from clip_eval.common import ClassArray, Embeddings, ProbabilityArray
 from clip_eval.evaluation.base import ClassificationModel
 from clip_eval.evaluation.utils import softmax

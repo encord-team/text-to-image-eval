@@ -1,10 +1,9 @@
 from pathlib import Path
 from typing import Any
 
-from natsort import natsorted, ns
-
 from clip_eval.constants import SOURCES_PATH
 from clip_eval.dataset.utils import load_class_from_path
+from natsort import natsorted, ns
 
 from .base import Model, ModelDefinitionSpec
 

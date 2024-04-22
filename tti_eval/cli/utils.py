@@ -1,14 +1,13 @@
 from itertools import product
 from typing import Literal, overload
 
-from InquirerPy import inquirer as inq
-from InquirerPy.base.control import Choice
-from natsort import natsorted, ns
-
 from clip_eval.common import EmbeddingDefinition
 from clip_eval.dataset import DatasetProvider
 from clip_eval.model import ModelProvider
 from clip_eval.utils import read_all_cached_embeddings
+from InquirerPy import inquirer as inq
+from InquirerPy.base.control import Choice
+from natsort import natsorted, ns
 
 
 @overload

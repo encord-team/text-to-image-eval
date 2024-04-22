@@ -2,9 +2,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-from natsort import natsorted, ns
-
 from clip_eval.constants import CACHE_PATH, SOURCES_PATH
+from natsort import natsorted, ns
 
 from .base import Dataset, DatasetDefinitionSpec, Split
 from .utils import load_class_from_path
