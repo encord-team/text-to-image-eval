@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img src="https://github.com/encord-team/text-to-image-eval/blob/refactor/rename-tool/images/tti-eval-banner.png?raw=true" alt="tti-eval logo banner">
+    <img src="https://github.com/encord-team/text-to-image-eval/main/images/tti-eval-banner.png?raw=true" alt="tti-eval logo banner">
 </h1>
 
 <div align="center" style="display: flex; justify-content: space-between;">
@@ -30,7 +30,9 @@ What you will do is
 
 You can easily benchmark different models and datasets against each other. Here is an example:
 
-<img width="600" src="https://github.com/encord-team/text-to-image-eval/blob/refactor/rename-tool/images/eval-usage.svg?raw=true">
+<div align="center">
+    <img width="600" src="https://github.com/encord-team/text-to-image-eval/main/images/eval-usage.svg?raw=true" alt="An animation showing how to use the CLI to evaluate embedding models">
+</div>
 
 ## Installation
 
@@ -87,6 +89,10 @@ This command allows to visualise the reduction of embeddings from two models on 
 
 The animations will be saved at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
 By default, this path corresponds to the repository directory.
+
+<div align="center">
+    <img width="800" src="https://github.com/encord-team/text-to-image-eval/main/images/embeddings.svg?raw=true">
+</div>
 
 ## Datasets
 
