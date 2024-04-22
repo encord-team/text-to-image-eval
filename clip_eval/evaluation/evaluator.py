@@ -4,7 +4,7 @@ from datetime import datetime
 from natsort import natsorted, ns
 from tabulate import tabulate
 
-from clip_eval.common.data_models import EmbeddingDefinition, Split
+from clip_eval.common import EmbeddingDefinition, Split
 from clip_eval.constants import OUTPUT_PATH
 from clip_eval.evaluation import (
     EvaluationModel,

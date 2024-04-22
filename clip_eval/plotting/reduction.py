@@ -6,8 +6,7 @@ import umap
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
-from clip_eval.common import EmbeddingArray, EmbeddingDefinition, ReductionArray
-from clip_eval.dataset import Split
+from clip_eval.common import EmbeddingArray, EmbeddingDefinition, ReductionArray, Split
 
 
 class Reducer:
