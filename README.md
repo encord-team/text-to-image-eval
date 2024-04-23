@@ -375,6 +375,10 @@ To contribute by adding model sources, follow these steps:
 3. Document the addition of the model source, providing details on its structure, usage, and any specific considerations or instructions for integration.
    This ensures that users have clear guidance on how to leverage the new model source effectively.
 
+## Known Issues
+
+1. `autofaiss`: The project depends on the [autofaiss][autofaiss] library which can give some trouble on windows. Please reach out or raise an issue with as many system and version details as possible if you encounter it.
+
 [Falah/Alzheimer_MRI]: https://huggingface.co/datasets/Falah/Alzheimer_MRI
 [trpakov/chest-xray-classification]: https://huggingface.co/datasets/trpakov/chest-xray-classification
 [Kabil007/LungCancer4Types]: https://huggingface.co/datasets/Kabil007/LungCancer4Types
@@ -399,3 +403,4 @@ To contribute by adding model sources, follow these steps:
 [local-model-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/tti_eval/model/types/local_clip_model.py
 [hf-dataset-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/tti_eval/dataset/types/hugging_face.py
 [encord-dataset-impl]: https://github.com/encord-team/text-to-image-eval/blob/main/tti_eval/dataset/types/encord_ds.py
+[autofaiss]: https://pypi.org/project/autofaiss/
