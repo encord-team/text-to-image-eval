@@ -94,6 +94,86 @@ By default, this path corresponds to the repository directory.
     <img width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
 </div>
 
+## Some Example Results
+
+One example of where this `tti-eval` is useful is to test different open-source models against different open-source datasets within a specific domain.
+Below, we focused on the medical domain. We evaluate nine different models of which three of them are domain specific.
+The models are evaluated against four different medical datasets. Note, Further down this page, you will find links to all models and datasets.
+
+<div align="center">
+    <img width="800" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/medical-linear-probe-accuracy.png" alt="An animation showing how to use the CLI to evaluate embedding models">
+    <div style="width: 650px; margin: 0 auto;">
+        <p><strong>Figure 1:</strong> Linear probe accuracy across four different medical datasets. General purpose models are colored green while models trained for the medical domain are colored red.
+    </div>
+</div>
+
+<details closed>
+<summary>The raw numbers from the experiment</summary>
+
+### Weighted KNN Accuracy
+
+| Model/Dataset    | Alzheimer-MRI | LungCancer4Types | chest-xray-classification | skin-cancer |
+| :--------------- | :-----------: | :--------------: | :-----------------------: | :---------: |
+| apple            |    0.6777     |      0.6633      |          0.9687           |   0.7985    |
+| bioclip          |    0.8952     |      0.7800      |          0.9771           |   0.7961    |
+| clip             |    0.6986     |      0.6867      |          0.9727           |   0.7891    |
+| plip             |    0.8021     |      0.6767      |          0.9599           |   0.7860    |
+| pubmed           |    0.8503     |      0.5767      |          0.9725           |   0.7637    |
+| siglip_large     |    0.6908     |      0.6533      |          0.9695           |   0.7947    |
+| siglip_small     |    0.6992     |      0.6267      |          0.9646           |   0.7780    |
+| tinyclip         |    0.7389     |      0.5900      |          0.9673           |   0.7589    |
+| vit-b-32-laion2b |    0.7559     |      0.5967      |          0.9654           |   0.7738    |
+
+### Zero-shot Accuracy
+
+| Model/Dataset    | Alzheimer-MRI | LungCancer4Types | chest-xray-classification | skin-cancer |
+| :--------------- | :-----------: | :--------------: | :-----------------------: | :---------: |
+| apple            |    0.4460     |      0.2367      |          0.7381           |   0.3594    |
+| bioclip          |    0.3092     |      0.2200      |          0.7356           |   0.0431    |
+| clip             |    0.4857     |      0.2267      |          0.7381           |   0.1955    |
+| plip             |    0.0104     |      0.2267      |          0.3873           |   0.0797    |
+| pubmed           |    0.3099     |      0.2867      |          0.7501           |   0.1127    |
+| siglip_large     |    0.4876     |      0.3000      |          0.5950           |   0.0421    |
+| siglip_small     |    0.4102     |      0.0767      |          0.7381           |   0.1541    |
+| tinyclip         |    0.2526     |      0.2533      |          0.7313           |   0.1113    |
+| vit-b-32-laion2b |    0.3594     |      0.1533      |          0.7378           |   0.1228    |
+
+---
+
+### Image-to-image Retrieval
+
+| Model/Dataset    | Alzheimer-MRI | LungCancer4Types | chest-xray-classification | skin-cancer |
+| :--------------- | :-----------: | :--------------: | :-----------------------: | :---------: |
+| apple            |    0.4281     |      0.2786      |          0.8835           |   0.6437    |
+| bioclip          |    0.4535     |      0.3496      |          0.8786           |   0.6278    |
+| clip             |    0.4247     |      0.2812      |          0.8602           |   0.6347    |
+| plip             |    0.4406     |      0.3174      |          0.8372           |   0.6289    |
+| pubmed           |    0.4445     |      0.3022      |          0.8621           |   0.6228    |
+| siglip_large     |    0.4232     |      0.2743      |          0.8797           |   0.6466    |
+| siglip_small     |    0.4303     |      0.2613      |          0.8660           |   0.6348    |
+| tinyclip         |    0.4361     |      0.2833      |          0.8379           |   0.6098    |
+| vit-b-32-laion2b |    0.4378     |      0.2934      |          0.8551           |   0.6189    |
+
+---
+
+### Linear Probe Accuracy
+
+| Model/Dataset    | Alzheimer-MRI | LungCancer4Types | chest-xray-classification | skin-cancer |
+| :--------------- | :-----------: | :--------------: | :-----------------------: | :---------: |
+| apple            |    0.5482     |      0.5433      |          0.9362           |   0.7662    |
+| bioclip          |    0.6139     |      0.6600      |          0.9433           |   0.7933    |
+| clip             |    0.5547     |      0.5700      |          0.9362           |   0.7704    |
+| plip             |    0.5469     |      0.5267      |          0.9261           |   0.7630    |
+| pubmed           |    0.5482     |      0.5400      |          0.9278           |   0.7269    |
+| siglip_large     |    0.5286     |      0.5200      |          0.9496           |   0.7697    |
+| siglip_small     |    0.5449     |      0.4967      |          0.9327           |   0.7606    |
+| tinyclip         |    0.5651     |      0.5733      |          0.9280           |   0.7484    |
+| vit-b-32-laion2b |    0.5684     |      0.5933      |          0.9302           |   0.7578    |
+
+---
+
+</details>
+
 ## Datasets
 
 This repository contains classification datasets sourced from [Hugging Face](https://huggingface.co/datasets) and [Encord](https://app.encord.com/projects).
