@@ -19,9 +19,9 @@ Welcome to `tti-eval`, a repository for benchmarking text-to-image models **on y
 
 > Evaluate your (or HF) text-to-image embedding models like [CLIP][openai/clip-vit-large-patch14-336] from OpenAI against your (or HF) datasets to estimate how well the model will perform on your classification dataset.
 
-## TLDR;;;
+## TLDR
 
-With this library, you can take an embedding model intended for jointly embedding images and tex (like [CLIP][openai/clip-vit-large-patch14-336]) and compute metrics for how well such model performs on classifying your custom dataset.
+With this library, you can take an embedding model intended for jointly embedding images and text (like [CLIP][openai/clip-vit-large-patch14-336]) and compute metrics for how well such model performs on classifying your custom dataset.
 What you will do is
 
 0. [Install](#installation) `ttl-eval`
