@@ -35,7 +35,9 @@ class Reducer:
             return reduction
 
         elif not embedding_def.embedding_path(split).is_file():
-            raise ValueError(f"{embedding_def} does not have embeddings stored ({embedding_def.embedding_path(split)})")
+            raise ValueError(
+                f"{repr(embedding_def)} does not have embeddings stored ({embedding_def.embedding_path(split)})"
+            )
 
         image_embeddings: EmbeddingArray = np.load(embedding_def.embedding_path(split))["image_embeddings"]
         reduction = cls.reduce(image_embeddings)

@@ -63,12 +63,12 @@ You can easily benchmark different models and datasets against each other. Here 
 ### Embeddings Generation
 
 To build embeddings, run the CLI command `tti-eval build`.
-This commands allows you to interactively select the model and dataset combinations on which to build the embeddings.
+This command allows to interactively select the model and dataset combinations on which to build the embeddings.
 
 Alternatively, you can choose known (model, dataset) pairs using the `--model-dataset` option. For example:
 
 ```
-tti-eval build --model-dataset clip/plants
+tti-eval build --model-dataset clip/Alzheimer-MRI --model-dataset bioclip/Alzheimer-MRI
 ```
 
 ### Model Evaluation
@@ -79,7 +79,7 @@ This command enables interactive selection of model and dataset combinations for
 Alternatively, you can specify known (model, dataset) pairs using the `--model-dataset` option. For example:
 
 ```
-tti-eval evaluate --model-dataset clip/plants
+tti-eval evaluate --model-dataset clip/Alzheimer-MRI --model-dataset bioclip/Alzheimer-MRI
 ```
 
 ### Embeddings Animation
@@ -87,8 +87,16 @@ tti-eval evaluate --model-dataset clip/plants
 To create 2D animations of the embeddings, use the CLI command `tti-eval animate`.
 This command allows to visualise the reduction of embeddings from two models on the same dataset.
 
+You have the option to interactively select two models and a dataset for visualization.
+Alternatively, you can specify the models and dataset as arguments. For example:
+
+```
+tti-eval animate clip bioclip Alzheimer-MRI
+```
+
 The animations will be saved at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
 By default, this path corresponds to the repository directory.
+To interactively explore the animation in a temporary session, use the `--interactive` flag.
 
 <div align="center">
     <img width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
@@ -377,7 +385,7 @@ To contribute by adding model sources, follow these steps:
 
 ## Known Issues
 
-1. `autofaiss`: The project depends on the [autofaiss][autofaiss] library which can give some trouble on windows. Please reach out or raise an issue with as many system and version details as possible if you encounter it.
+1. `autofaiss`: The project depends on the [autofaiss][autofaiss] library which can give some trouble on Windows. Please reach out or raise an issue with as many system and version details as possible if you encounter it.
 
 [Falah/Alzheimer_MRI]: https://huggingface.co/datasets/Falah/Alzheimer_MRI
 [trpakov/chest-xray-classification]: https://huggingface.co/datasets/trpakov/chest-xray-classification

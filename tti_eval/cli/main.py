@@ -1,7 +1,8 @@
 from typing import Annotated, Optional
 
 import matplotlib.pyplot as plt
-from typer import Option, Typer
+import typer
+from typer import Argument, Option, Typer
 
 from tti_eval.common import Split
 from tti_eval.compute import compute_embeddings_from_definition
@@ -114,18 +115,33 @@ The interface will prompt you to choose which embeddings you want to use.
 """,
 )
 def animate_embeddings(
+    from_model: Annotated[Optional[str], Argument(help="Title of the model in the left side of the animation.")] = None,
+    to_model: Annotated[Optional[str], Argument(help="Title of the model in the right side of the animation.")] = None,
+    dataset: Annotated[Optional[str], Argument(help="Title of the dataset where the embeddings were computed.")] = None,
     interactive: Annotated[bool, Option(help="Interactive plot instead of animation.")] = False,
     reduction: Annotated[str, Option(help="Reduction type [pca, tsne, umap (default)].")] = "umap",
 ):
-    from tti_eval.plotting.animation import build_animation, save_animation_to_file
+    from tti_eval.plotting.animation import EmbeddingDefinition, build_animation, save_animation_to_file
 
-    defs = select_existing_embedding_definitions(by_dataset=True, count=2)
-    res = build_animation(defs[0], defs[1], interactive=interactive, reduction=reduction)
+    all_none_input_args = from_model is None and to_model is None and dataset is None
+    all_str_input_args = from_model is not None and to_model is not None and dataset is not None
 
+    if not all_str_input_args and not all_none_input_args:
+        typer.echo("Some arguments were provided. Please either provide all arguments or ignore them entirely.")
+        raise typer.Abort()
+
+    if all_none_input_args:
+        defs = select_existing_embedding_definitions(by_dataset=True, count=2)
+        from_def, to_def = defs[0], defs[1]
+    else:
+        from_def = EmbeddingDefinition(model=from_model, dataset=dataset)
+        to_def = EmbeddingDefinition(model=to_model, dataset=dataset)
+
+    res = build_animation(from_def, to_def, interactive=interactive, reduction=reduction)
     if res is None:
         plt.show()
     else:
-        save_animation_to_file(res, *defs)
+        save_animation_to_file(res, from_def, to_def)
 
 
 @cli.command("list", help="List models and datasets. By default, only cached pairs are listed.")
