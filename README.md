@@ -68,7 +68,7 @@ This command allows to interactively select the model and dataset combinations o
 Alternatively, you can choose known (model, dataset) pairs using the `--model-dataset` option. For example:
 
 ```
-tti-eval build --model-dataset clip/plants
+tti-eval build --model-dataset clip/Alzheimer-MRI --model-dataset bioclip/Alzheimer-MRI
 ```
 
 ### Model Evaluation
@@ -79,7 +79,7 @@ This command enables interactive selection of model and dataset combinations for
 Alternatively, you can specify known (model, dataset) pairs using the `--model-dataset` option. For example:
 
 ```
-tti-eval evaluate --model-dataset clip/plants
+tti-eval evaluate --model-dataset clip/Alzheimer-MRI --model-dataset bioclip/Alzheimer-MRI
 ```
 
 ### Embeddings Animation
@@ -96,6 +96,7 @@ tti-eval animate clip bioclip Alzheimer-MRI
 
 The animations will be saved at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
 By default, this path corresponds to the repository directory.
+To interactively explore the animation in a temporary session, use the `--interactive` flag.
 
 <div align="center">
     <img width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
