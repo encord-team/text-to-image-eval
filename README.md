@@ -96,7 +96,7 @@ tti-eval animate clip bioclip Alzheimer-MRI
 ```
 
 The animations will be saved at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
-By default, this path corresponds to the repository directory.
+By default, this path corresponds to the `output` folder in the repository directory.
 To interactively explore the animation in a temporary session, use the `--interactive` flag.
 
 <div align="center">
