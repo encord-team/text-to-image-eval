@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/tti-eval-banner.png" alt="tti-eval logo banner">
+    <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/tti-eval-banner-short.png" alt="tti-eval logo banner">
 </h1>
 
 <div align="center" style="display: flex; justify-content: space-between;">
