@@ -1,7 +1,3 @@
-<h1 align="center">
-    <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/tti-eval-banner-short.png" alt="tti-eval logo banner">
-</h1>
-
 <div align="center" style="display: flex; justify-content: space-between;">
   <div style="flex: 1; padding: 10px;">
     <a href="https://github.com/encord-team/text-to-image-eval/actions?query=workflow%3ATests" target="_blank" style="text-decoration:none"><img src="https://github.com/encord-team/text-to-image-eval/actions/workflows/tests.yml/badge.svg?branch=main"></a>
@@ -15,6 +11,10 @@
     <a href="https://twitter.com/encord_team" target="_blank" style="text-decoration:none"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/encord_team?label=%40encord_team&amp;style=social"></a>
   </div>
 </div>
+
+<h1 align="center">
+    <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/tti-eval-banner-short.png" alt="tti-eval logo banner">
+</h1>
 
 Welcome to `tti-eval`, a repository for benchmarking text-to-image models **on your own data**!
 
