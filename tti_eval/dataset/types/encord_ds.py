@@ -130,6 +130,7 @@ class EncordDataset(Dataset):
             split_to_lr_hashes = json.loads(splits_file.read_text(encoding="utf-8"))
         else:
             split_to_lr_hashes = simple_project_split(self._project)
+            splits_file.parent.mkdir(parents=True, exist_ok=True)
             splits_file.write_text(json.dumps(split_to_lr_hashes), encoding="utf-8")
         self._label_rows = self._project.list_label_rows_v2(label_hashes=split_to_lr_hashes[self.split])
 
