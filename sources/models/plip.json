@@ -1,5 +1,5 @@
 {
-  "model_type": "ClosedCLIPModel",
+  "model_type": "HFModel",
   "title": "plip",
   "title_in_source": "vinid/plip"
 }

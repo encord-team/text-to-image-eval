@@ -14,7 +14,7 @@ from tti_eval.dataset import Dataset
 from tti_eval.model import Model
 
 
-class ClosedCLIPModel(Model):
+class HFModel(Model):
     def __init__(
         self,
         title: str,

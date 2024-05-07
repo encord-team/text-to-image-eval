@@ -1,5 +1,5 @@
 {
-  "model_type": "ClosedCLIPModel",
+  "model_type": "HFModel",
   "title": "fashion",
   "title_in_source": "patrickjohncyh/fashion-clip"
 }

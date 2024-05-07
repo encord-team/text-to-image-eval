@@ -1,5 +1,5 @@
 {
-  "model_type": "ClosedCLIPModel",
+  "model_type": "HFModel",
   "title": "rsicd",
   "title_in_source": "flax-community/clip-rsicd"
 }
