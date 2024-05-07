@@ -1,12 +1,9 @@
-<h1 align="center">
-    <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/tti-eval-banner.png" alt="tti-eval logo banner">
-</h1>
-
 <div align="center" style="display: flex; justify-content: space-between;">
   <div style="flex: 1; padding: 10px;">
     <a href="https://github.com/encord-team/text-to-image-eval/actions?query=workflow%3ATests" target="_blank" style="text-decoration:none"><img src="https://github.com/encord-team/text-to-image-eval/actions/workflows/tests.yml/badge.svg?branch=main"></a>
     <a href="https://www.python.org/downloads/release/python-3119/" target="_blank" style="text-decoration:none"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python Versions"></a>
     <a target="_blank" style="text-decoration:none"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-Welcome-blue"></a>
+    <img alt="License" src="https://img.shields.io/github/license/encord-team/text-to-image-eval">
   </div>
   <div style="flex: 1; padding: 10px;">
     <a href="https://github.com/encord-team/encord-notebooks" target="_blank" style="text-decoration:none"><img alt="Encord Notebooks" src="https://img.shields.io/badge/Encord_Notebooks-blue?logo=github&label=&labelColor=181717"></a>
@@ -14,6 +11,10 @@
     <a href="https://twitter.com/encord_team" target="_blank" style="text-decoration:none"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/encord_team?label=%40encord_team&amp;style=social"></a>
   </div>
 </div>
+
+<h1 align="center">
+    <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/tti-eval-banner-short.png" alt="tti-eval logo banner">
+</h1>
 
 Welcome to `tti-eval`, a repository for benchmarking text-to-image models **on your own data**!
 
@@ -24,7 +25,7 @@ Welcome to `tti-eval`, a repository for benchmarking text-to-image models **on y
 With this library, you can take an embedding model intended for jointly embedding images and text (like [CLIP][openai/clip-vit-large-patch14-336]) and compute metrics for how well such model performs on classifying your custom dataset.
 What you will do is
 
-0. [Install](#installation) `ttl-eval`
+0. [Install](#installation) `tti-eval`
 1. [Compute embeddings](#embeddings-generation) of a dataset with a model
 2. Do an [evaluation](#model-evaluation) of the model against the dataset
 
@@ -95,7 +96,7 @@ tti-eval animate clip bioclip Alzheimer-MRI
 ```
 
 The animations will be saved at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
-By default, this path corresponds to the repository directory.
+By default, this path corresponds to the `output` folder in the repository directory.
 To interactively explore the animation in a temporary session, use the `--interactive` flag.
 
 <div align="center">
