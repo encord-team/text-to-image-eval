@@ -58,7 +58,7 @@ def build_command(
                 embd_defn.save_embeddings(embeddings=embeddings, split=split, overwrite=True)
                 print(f"Embeddings saved successfully to file at `{embd_defn.embedding_path(split)}`")
             except Exception as e:
-                print(f"Failed to build embeddings for this bastard: {embd_defn}")
+                print(f"Failed to build embeddings for {embd_defn} on the specified split {split}")
                 print(e)
                 import traceback
 

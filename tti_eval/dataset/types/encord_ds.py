@@ -108,8 +108,8 @@ class EncordDataset(Dataset):
         ssh_key_path = ssh_key_path or os.getenv("ENCORD_SSH_KEY_PATH")
         if ssh_key_path is None:
             raise ValueError(
-                "The `ssh_key_path` parameter and the `ENCORD_SSH_KEY_PATH` environment variable are both missing."
-                "Please set one of them to proceed"
+                "The `ssh_key_path` parameter and the `ENCORD_SSH_KEY_PATH` environment variable are both missing. "
+                "Please set one of them to proceed."
             )
         client = EncordUserClient.create_with_ssh_private_key(ssh_private_key_path=ssh_key_path)
         self._project = client.get_project(project_hash)
