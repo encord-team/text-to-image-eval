@@ -298,7 +298,7 @@ Below is an example of a model definition for the [clip](https://huggingface.co/
 
 ```json
 {
-  "model_type": "ClosedCLIPModel",
+  "model_type": "HFModel",
   "title": "clip",
   "title_in_source": "openai/clip-vit-large-patch14-336"
 }
@@ -331,9 +331,9 @@ Here is an example of how to register a model from Hugging Face using Python cod
 
 ```python
 from tti_eval.model import ModelProvider
-from tti_eval.model.types import ClosedCLIPModel
+from tti_eval.model.types import HFModel
 
-ModelProvider.register_model(ClosedCLIPModel, "clip", title_in_source="openai/clip-vit-large-patch14-336")
+ModelProvider.register_model(HFModel, "clip", title_in_source="openai/clip-vit-large-patch14-336")
 model = ModelProvider.get_model("clip")
 print(model.title, model.title_in_source)  # Returns: clip openai/clip-vit-large-patch14-336
 ```

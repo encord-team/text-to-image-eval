@@ -1,5 +1,5 @@
 {
-  "model_type": "ClosedCLIPModel",
+  "model_type": "HFModel",
   "title": "clip",
   "title_in_source": "openai/clip-vit-large-patch14-336"
 }

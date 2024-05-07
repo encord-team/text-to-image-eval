@@ -1,5 +1,5 @@
 {
-  "model_type": "ClosedCLIPModel",
+  "model_type": "HFModel",
   "title": "siglip_small",
   "title_in_source": "google/siglip-base-patch16-224"
 }

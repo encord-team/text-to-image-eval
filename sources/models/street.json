@@ -1,5 +1,5 @@
 {
-  "model_type": "ClosedCLIPModel",
+  "model_type": "HFModel",
   "title": "street",
   "title_in_source": "geolocal/StreetCLIP"
 }
