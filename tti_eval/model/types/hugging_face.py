@@ -66,7 +66,10 @@ class HFModel(Model):
             class_features = self.model.get_text_features(**inputs)
             normalized_class_features = class_features / class_features.norm(p=2, dim=-1, keepdim=True)
             class_embeddings = normalized_class_features.numpy(force=True)
-            for batch in tqdm(dataloader, desc=f"Embedding dataset with {self.title}"):
+            for batch in tqdm(
+                dataloader,
+                desc=f"Embedding ({_dataset.split}) {_dataset.title} dataset with {self.title}",
+            ):
                 image_features = self.model.get_image_features(pixel_values=batch["pixel_values"].to(self.device))
                 normalized_image_features = (image_features / image_features.norm(p=2, dim=-1, keepdim=True)).squeeze()
                 all_image_embeddings.append(normalized_image_features)

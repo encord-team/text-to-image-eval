@@ -122,7 +122,7 @@ The models are evaluated against four different medical datasets. Note, Further 
 ### Weighted KNN Accuracy
 
 | Model/Dataset    | Alzheimer-MRI | LungCancer4Types | chest-xray-classification | skin-cancer |
-| :--------------- | :-----------: | :--------------: | :-----------------------: | :---------: |
+|:-----------------|:-------------:|:----------------:|:-------------------------:|:-----------:|
 | apple            |    0.6777     |      0.6633      |          0.9687           |   0.7985    |
 | bioclip          |    0.8952     |      0.7800      |          0.9771           |   0.7961    |
 | clip             |    0.6986     |      0.6867      |          0.9727           |   0.7891    |
@@ -136,7 +136,7 @@ The models are evaluated against four different medical datasets. Note, Further 
 ### Zero-shot Accuracy
 
 | Model/Dataset    | Alzheimer-MRI | LungCancer4Types | chest-xray-classification | skin-cancer |
-| :--------------- | :-----------: | :--------------: | :-----------------------: | :---------: |
+|:-----------------|:-------------:|:----------------:|:-------------------------:|:-----------:|
 | apple            |    0.4460     |      0.2367      |          0.7381           |   0.3594    |
 | bioclip          |    0.3092     |      0.2200      |          0.7356           |   0.0431    |
 | clip             |    0.4857     |      0.2267      |          0.7381           |   0.1955    |
@@ -152,7 +152,7 @@ The models are evaluated against four different medical datasets. Note, Further 
 ### Image-to-image Retrieval
 
 | Model/Dataset    | Alzheimer-MRI | LungCancer4Types | chest-xray-classification | skin-cancer |
-| :--------------- | :-----------: | :--------------: | :-----------------------: | :---------: |
+|:-----------------|:-------------:|:----------------:|:-------------------------:|:-----------:|
 | apple            |    0.4281     |      0.2786      |          0.8835           |   0.6437    |
 | bioclip          |    0.4535     |      0.3496      |          0.8786           |   0.6278    |
 | clip             |    0.4247     |      0.2812      |          0.8602           |   0.6347    |
@@ -168,7 +168,7 @@ The models are evaluated against four different medical datasets. Note, Further 
 ### Linear Probe Accuracy
 
 | Model/Dataset    | Alzheimer-MRI | LungCancer4Types | chest-xray-classification | skin-cancer |
-| :--------------- | :-----------: | :--------------: | :-----------------------: | :---------: |
+|:-----------------|:-------------:|:----------------:|:-------------------------:|:-----------:|
 | apple            |    0.5482     |      0.5433      |          0.9362           |   0.7662    |
 | bioclip          |    0.6139     |      0.6600      |          0.9433           |   0.7933    |
 | clip             |    0.5547     |      0.5700      |          0.9362           |   0.7704    |
@@ -190,7 +190,7 @@ This repository contains classification datasets sourced from [Hugging Face](htt
 > ⚠️ Currently, only image and image groups datasets are supported, with potential for future expansion to include video datasets.
 
 | Dataset Title             | Implementation                  | HF Dataset                                                                           |
-| :------------------------ | :------------------------------ | :----------------------------------------------------------------------------------- |
+|:--------------------------|:--------------------------------|:-------------------------------------------------------------------------------------|
 | Alzheimer-MRI             | [Hugging Face][hf-dataset-impl] | [Falah/Alzheimer_MRI][Falah/Alzheimer_MRI]                                           |
 | chest-xray-classification | [Hugging Face][hf-dataset-impl] | [trpakov/chest-xray-classification][trpakov/chest-xray-classification]               |
 | LungCancer4Types          | [Hugging Face][hf-dataset-impl] | [Kabil007/LungCancer4Types][Kabil007/LungCancer4Types]                               |
@@ -265,8 +265,7 @@ _TODO_: Some more prose about what's the difference between implementations.
 ### Hugging Face Models
 
 | Model Title      | Implementation                | HF Model                                                                                       |
-| :--------------- | :---------------------------- | :--------------------------------------------------------------------------------------------- |
-| apple            | [OpenCLIP][open-model-impl]   | [apple/DFN5B-CLIP-ViT-H-14][apple/DFN5B-CLIP-ViT-H-14]                                         |
+|:-----------------|:------------------------------|:-----------------------------------------------------------------------------------------------|
 | apple            | [OpenCLIP][open-model-impl]   | [apple/DFN5B-CLIP-ViT-H-14][apple/DFN5B-CLIP-ViT-H-14]                                         |
 | bioclip          | [OpenCLIP][open-model-impl]   | [imageomics/bioclip][imageomics/bioclip]                                                       |
 | eva-clip         | [OpenCLIP][open-model-impl]   | [BAAI/EVA-CLIP-8B-448][BAAI/EVA-CLIP-8B-448]                                                   |
@@ -284,7 +283,7 @@ _TODO_: Some more prose about what's the difference between implementations.
 ### Locally Trained Models
 
 | Model Title  | Implementation                    | Weights |
-| :----------- | :-------------------------------- | :------ |
+|:-------------|:----------------------------------|:--------|
 | rsicd-encord | [LocalOpenCLIP][local-model-impl] | -       |
 
 ### Add a Model from a Known Source
