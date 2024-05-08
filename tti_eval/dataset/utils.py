@@ -95,16 +95,25 @@ def simple_random_split(
     :raises ValueError: If the sum of `train_split` and `validation_split` is greater than 1,
         or if `train_split` or `validation_split` are less than 0.
     """
+    if dataset_size < 3:
+        raise ValueError(f"Expected a dataset with size at least 3, got {dataset_size}")
+
     if train_split < 0 or validation_split < 0:
         raise ValueError(f"Expected positive splits, got ({train_split=}, {validation_split=})")
-    if train_split + validation_split > 1:
+    if train_split + validation_split >= 1:
         raise ValueError(
             f"Expected `train_split` and `validation_split` sum between 0 and 1, got {train_split + validation_split}"
         )
     rng = np.random.default_rng(seed)
     selection = rng.permutation(dataset_size)
-    train_size = int(dataset_size * train_split)
-    validation_size = int(dataset_size * validation_split)
+    train_size = max(1, int(dataset_size * train_split))
+    validation_size = max(1, int(dataset_size * validation_split))
+    # Ensure that the TEST split has at least an element
+    if train_size + validation_size == dataset_size:
+        if train_size > 1:
+            train_size -= 1
+        if validation_size > 1:
+            validation_size -= 1
     return {
         Split.TRAIN: selection[:train_size],
         Split.VALIDATION: selection[train_size : train_size + validation_size],
