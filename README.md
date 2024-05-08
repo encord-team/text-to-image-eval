@@ -267,7 +267,6 @@ _TODO_: Some more prose about what's the difference between implementations.
 | Model Title      | Implementation                | HF Model                                                                                       |
 | :--------------- | :---------------------------- | :--------------------------------------------------------------------------------------------- |
 | apple            | [OpenCLIP][open-model-impl]   | [apple/DFN5B-CLIP-ViT-H-14][apple/DFN5B-CLIP-ViT-H-14]                                         |
-| apple            | [OpenCLIP][open-model-impl]   | [apple/DFN5B-CLIP-ViT-H-14][apple/DFN5B-CLIP-ViT-H-14]                                         |
 | bioclip          | [OpenCLIP][open-model-impl]   | [imageomics/bioclip][imageomics/bioclip]                                                       |
 | eva-clip         | [OpenCLIP][open-model-impl]   | [BAAI/EVA-CLIP-8B-448][BAAI/EVA-CLIP-8B-448]                                                   |
 | vit-b-32-laion2b | [OpenCLIP][local-model-impl]  | [laion/CLIP-ViT-B-32-laion2B-s34B-b79K][laion/CLIP-ViT-B-32-laion2B-s34B-b79K]                 |
