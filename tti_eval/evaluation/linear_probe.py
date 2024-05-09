@@ -11,6 +11,10 @@ logger = logging.getLogger("multiclips")
 
 
 class LinearProbeClassifier(ClassificationModel):
+    @classmethod
+    def title(cls) -> str:
+        return "linear_probe"
+
     def __init__(
         self,
         train_embeddings: Embeddings,
@@ -28,7 +32,7 @@ class LinearProbeClassifier(ClassificationModel):
         :param log_reg_params: Parameters for the Logistic Regression model.
         :param use_cross_validation: Flag that indicated whether to use cross-validation when training the model.
         """
-        super().__init__(train_embeddings, validation_embeddings, num_classes, title="linear_probe")
+        super().__init__(train_embeddings, validation_embeddings, num_classes)
 
         params = log_reg_params or {}
         self.classifier: LogisticRegressionCV | LogisticRegression

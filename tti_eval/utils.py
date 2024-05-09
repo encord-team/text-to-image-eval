@@ -1,8 +1,19 @@
+from functools import partialmethod
 from itertools import chain
 from typing import Literal, overload
 
+from tqdm import tqdm
+
 from tti_eval.common import EmbeddingDefinition
 from tti_eval.constants import PROJECT_PATHS
+
+
+def disable_tqdm():
+    tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
+
+
+def enable_tqdm():
+    tqdm.__init__ = partialmethod(tqdm.__init__, disable=False)
 
 
 @overload

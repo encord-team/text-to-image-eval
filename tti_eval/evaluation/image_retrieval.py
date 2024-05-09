@@ -5,6 +5,7 @@ import numpy as np
 from autofaiss import build_index
 
 from tti_eval.common import Embeddings
+from tti_eval.utils import disable_tqdm, enable_tqdm
 
 from .base import EvaluationModel
 
@@ -12,6 +13,10 @@ logger = logging.getLogger("multiclips")
 
 
 class I2IRetrievalEvaluator(EvaluationModel):
+    @classmethod
+    def title(cls) -> str:
+        return "I2IR"
+
     def __init__(
         self,
         train_embeddings: Embeddings,
@@ -33,14 +38,16 @@ class I2IRetrievalEvaluator(EvaluationModel):
 
         :raises ValueError: If the build of the faiss index for similarity search fails.
         """
-        super().__init__(train_embeddings, validation_embeddings, num_classes, title="I2IR")
+        super().__init__(train_embeddings, validation_embeddings, num_classes)
         self.k = min(k, len(validation_embeddings.images))
 
         class_ids, counts = np.unique(self._val_embeddings.labels, return_counts=True)
         self._class_counts = np.zeros(self.num_classes, dtype=np.int32)
         self._class_counts[class_ids] = counts
 
+        disable_tqdm()  # Disable tqdm progress bar when building the index
         index, self.index_infos = build_index(self._val_embeddings.images, save_on_disk=False, verbose=logging.ERROR)
+        enable_tqdm()
         if index is None:
             raise ValueError("Failed to build an index for knn search")
         self._index = index

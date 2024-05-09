@@ -6,18 +6,7 @@ from tti_eval.common import ClassArray, Embeddings, ProbabilityArray
 from .utils import normalize
 
 
-class EvaluationModelTitleInterface:
-    # Enforce the evaluation models' title while removing its explicit mention in the `EvaluationModel` init.
-    # This way, when `EvaluationModel` is used as a type hint, there won't be a warning about unfilled title.
-    def __init__(self, title: str, **kwargs) -> None:
-        self._title = title
-
-    @property
-    def title(self) -> str:
-        return self._title
-
-
-class EvaluationModel(EvaluationModelTitleInterface, ABC):
+class EvaluationModel(ABC):
     def __init__(
         self,
         train_embeddings: Embeddings,
@@ -93,6 +82,11 @@ class EvaluationModel(EvaluationModelTitleInterface, ABC):
 
     @abstractmethod
     def evaluate(self) -> float:
+        ...
+
+    @classmethod
+    @abstractmethod
+    def title(cls) -> str:
         ...
 
 
