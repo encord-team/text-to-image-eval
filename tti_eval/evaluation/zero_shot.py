@@ -6,6 +6,10 @@ from tti_eval.evaluation.utils import softmax
 
 
 class ZeroShotClassifier(ClassificationModel):
+    @classmethod
+    def title(cls) -> str:
+        return "zero_shot"
+
     def __init__(
         self,
         train_embeddings: Embeddings,
@@ -19,7 +23,7 @@ class ZeroShotClassifier(ClassificationModel):
         :param validation_embeddings: Embeddings and their labels used for evaluating the search space.
         :param num_classes: Number of classes. If not specified, it will be inferred from the train labels.
         """
-        super().__init__(train_embeddings, validation_embeddings, num_classes, title="zero_shot")
+        super().__init__(train_embeddings, validation_embeddings, num_classes)
         if self._train_embeddings.classes is None:
             raise ValueError("Expected class embeddings in `train_embeddings`, got `None`")
 

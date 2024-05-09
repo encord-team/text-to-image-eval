@@ -13,6 +13,10 @@ logger = logging.getLogger("multiclips")
 
 
 class WeightedKNNClassifier(ClassificationModel):
+    @classmethod
+    def title(cls) -> str:
+        return "wKNN"
+
     def __init__(
         self,
         train_embeddings: Embeddings,
@@ -36,7 +40,7 @@ class WeightedKNNClassifier(ClassificationModel):
 
         :raises ValueError: If the build of the faiss index for KNN fails.
         """
-        super().__init__(train_embeddings, validation_embeddings, num_classes, title="wKNN")
+        super().__init__(train_embeddings, validation_embeddings, num_classes)
         self.k = k
 
         index, self.index_infos = build_index(

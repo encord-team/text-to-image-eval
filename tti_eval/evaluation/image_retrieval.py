@@ -12,6 +12,10 @@ logger = logging.getLogger("multiclips")
 
 
 class I2IRetrievalEvaluator(EvaluationModel):
+    @classmethod
+    def title(cls) -> str:
+        return "I2IR"
+
     def __init__(
         self,
         train_embeddings: Embeddings,
@@ -33,7 +37,7 @@ class I2IRetrievalEvaluator(EvaluationModel):
 
         :raises ValueError: If the build of the faiss index for similarity search fails.
         """
-        super().__init__(train_embeddings, validation_embeddings, num_classes, title="I2IR")
+        super().__init__(train_embeddings, validation_embeddings, num_classes)
         self.k = min(k, len(validation_embeddings.images))
 
         class_ids, counts = np.unique(self._val_embeddings.labels, return_counts=True)
