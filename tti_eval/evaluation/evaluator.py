@@ -3,6 +3,7 @@ from datetime import datetime
 
 from natsort import natsorted, ns
 from tabulate import tabulate
+from tqdm.auto import tqdm
 
 from tti_eval.common import EmbeddingDefinition, Split
 from tti_eval.constants import OUTPUT_PATH
@@ -49,7 +50,7 @@ def run_evaluation(
     embeddings_performance: dict[EmbeddingDefinition, dict[str, float]] = {}
     used_evaluators: set[str] = set()
 
-    for def_ in embedding_definitions:
+    for def_ in tqdm(embedding_definitions, desc="Evaluating embedding definitions", leave=False):
         train_embeddings = def_.load_embeddings(Split.TRAIN)
         validation_embeddings = def_.load_embeddings(Split.VALIDATION)
 
