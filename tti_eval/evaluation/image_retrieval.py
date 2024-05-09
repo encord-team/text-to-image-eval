@@ -5,6 +5,7 @@ import numpy as np
 from autofaiss import build_index
 
 from tti_eval.common import Embeddings
+from tti_eval.utils import disable_tqdm, enable_tqdm
 
 from .base import EvaluationModel
 
@@ -44,7 +45,9 @@ class I2IRetrievalEvaluator(EvaluationModel):
         self._class_counts = np.zeros(self.num_classes, dtype=np.int32)
         self._class_counts[class_ids] = counts
 
+        disable_tqdm()  # Disable tqdm progress bar when building the index
         index, self.index_infos = build_index(self._val_embeddings.images, save_on_disk=False, verbose=logging.ERROR)
+        enable_tqdm()
         if index is None:
             raise ValueError("Failed to build an index for knn search")
         self._index = index

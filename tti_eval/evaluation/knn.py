@@ -5,6 +5,7 @@ import numpy as np
 from autofaiss import build_index
 
 from tti_eval.common import ClassArray, Embeddings, ProbabilityArray
+from tti_eval.utils import disable_tqdm, enable_tqdm
 
 from .base import ClassificationModel
 from .utils import softmax
@@ -42,13 +43,11 @@ class WeightedKNNClassifier(ClassificationModel):
         """
         super().__init__(train_embeddings, validation_embeddings, num_classes)
         self.k = k
-
+        disable_tqdm()  # Disable tqdm progress bar when building the index
         index, self.index_infos = build_index(
-            train_embeddings.images,
-            metric_type="l2",
-            save_on_disk=False,
-            verbose=logging.ERROR,
+            train_embeddings.images, metric_type="l2", save_on_disk=False, verbose=logging.ERROR
         )
+        enable_tqdm()
         if index is None:
             raise ValueError("Failed to build an index for knn search")
         self._index = index
