@@ -50,7 +50,7 @@ def run_evaluation(
     embeddings_performance: dict[EmbeddingDefinition, dict[str, float]] = {}
     used_evaluators: set[str] = set()
 
-    for def_ in tqdm(embedding_definitions, desc="Evaluating embedding definitions", leave=False):
+    for def_ in tqdm(embedding_definitions, desc="Evaluating models", leave=False):
         train_embeddings = def_.load_embeddings(Split.TRAIN)
         validation_embeddings = def_.load_embeddings(Split.VALIDATION)
 
