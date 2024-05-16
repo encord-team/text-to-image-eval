@@ -1,9 +1,10 @@
 <div align="center" style="display: flex; justify-content: space-between;">
   <div style="flex: 1; padding: 10px;">
-    <a href="https://github.com/encord-team/text-to-image-eval/actions?query=workflow%3ATests" target="_blank" style="text-decoration:none"><img src="https://github.com/encord-team/text-to-image-eval/actions/workflows/tests.yml/badge.svg?branch=main"></a>
+    <a href="https://colab.research.google.com/github/encord-team/text-to-image-eval/blob/main/notebooks/tti_eval_CLI_Quickstart.ipynb" target="_blank" style="text-decoration:none"><img alt="CLI Quickstart In Colab" src="https://img.shields.io/badge/Try_It_In_Colab-blue?logo=googlecolab&labelColor=555"></a>
     <a href="https://www.python.org/downloads/release/python-3119/" target="_blank" style="text-decoration:none"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python Versions"></a>
-    <a target="_blank" style="text-decoration:none"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-Welcome-blue"></a>
     <img alt="License" src="https://img.shields.io/github/license/encord-team/text-to-image-eval">
+    <a href="https://github.com/encord-team/text-to-image-eval/actions?query=workflow%3ATests" target="_blank" style="text-decoration:none"><img src="https://github.com/encord-team/text-to-image-eval/actions/workflows/tests.yml/badge.svg?branch=main"></a>
+    <a target="_blank" style="text-decoration:none"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-Welcome-blue"></a>
   </div>
   <div style="flex: 1; padding: 10px;">
     <a href="https://github.com/encord-team/encord-notebooks" target="_blank" style="text-decoration:none"><img alt="Encord Notebooks" src="https://img.shields.io/badge/Encord_Notebooks-blue?logo=github&label=&labelColor=181717"></a>
@@ -59,7 +60,11 @@ You can easily benchmark different models and datasets against each other. Here 
    export ENCORD_SSH_KEY_PATH=<path_to_the_encord_ssh_key_file>
    ```
 
-## CLI Usage
+## CLI Quickstart
+
+<a href="https://colab.research.google.com/github/encord-team/text-to-image-eval/blob/main/notebooks/tti_eval_CLI_Quickstart.ipynb" target="_blank" style="text-decoration:none">
+  <img alt="CLI Quickstart In Colab" src="https://img.shields.io/badge/Try_It_In_Colab-blue?logo=googlecolab&labelColor=555">
+</a>
 
 ### Embeddings Generation
 
@@ -102,6 +107,13 @@ To interactively explore the animation in a temporary session, use the `--intera
 <div align="center">
     <img width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
 </div>
+
+> ℹ️ You can also carry out these operations using Python. Explore our Python Quickstart guide for more details.
+>
+> <a href="https://colab.research.google.com/github/encord-team/text-to-image-eval/blob/main/notebooks/tti_eval_Python_Quickstart.ipynb" target="_blank" style="text-decoration:none">
+>  <img alt="Python Quickstart In Colab" src="https://img.shields.io/badge/Python_Quickstart_In_Colab-blue?logo=googlecolab&labelColor=555">
+> </a>
+
 
 ## Some Example Results
 
@@ -185,6 +197,10 @@ The models are evaluated against four different medical datasets. Note, Further 
 
 ## Datasets
 
+<a href="https://colab.research.google.com/github/encord-team/text-to-image-eval/blob/main/notebooks/tti_eval_Bring_Your_Own_Dataset_From_Encord_Quickstart.ipynb" target="_blank" style="text-decoration:none">
+  <img alt="Datasets Quickstart In Colab" src="https://img.shields.io/badge/Quickstart_In_Colab-blue?logo=googlecolab&labelColor=555">
+</a>
+
 This repository contains classification datasets sourced from [Hugging Face](https://huggingface.co/datasets) and [Encord](https://app.encord.com/projects).
 
 > ⚠️ Currently, only image and image groups datasets are supported, with potential for future expansion to include video datasets.
@@ -257,6 +273,10 @@ This action removes the dataset from the list of available datasets in the CLI, 
 However, all embeddings previously built on that dataset will remain intact and available for other tasks such as evaluation and animation.
 
 ## Models
+
+<a href="https://colab.research.google.com/github/encord-team/text-to-image-eval/blob/main/notebooks/tti_eval_Bring_Your_Own_Model_From_Hugging_Face_Quickstart.ipynb" target="_blank" style="text-decoration:none">
+  <img alt="Models Quickstart In Colab" src="https://img.shields.io/badge/Quickstart_In_Colab-blue?logo=googlecolab&labelColor=555">
+</a>
 
 This repository contains models sourced from [Hugging Face](https://huggingface.co/models), [OpenCLIP](https://github.com/mlfoundations/open_clip) and local implementations based on OpenCLIP models.
 
