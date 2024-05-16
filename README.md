@@ -1,5 +1,6 @@
 <div align="center" style="display: flex; justify-content: space-between;">
   <div style="flex: 1; padding: 10px;">
+    <a href="https://colab.research.google.com/github/encord-team/text-to-image-eval/blob/main/notebooks/tti_eval_CLI_Quickstart.ipynb" target="_blank" style="text-decoration:none"><img alt="CLI Quickstart In Colab" src="https://img.shields.io/badge/Try_It_In_Colab-blue?logo=googlecolab&labelColor=555"></a>
     <a href="https://github.com/encord-team/text-to-image-eval/actions?query=workflow%3ATests" target="_blank" style="text-decoration:none"><img src="https://github.com/encord-team/text-to-image-eval/actions/workflows/tests.yml/badge.svg?branch=main"></a>
     <a href="https://www.python.org/downloads/release/python-3119/" target="_blank" style="text-decoration:none"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python Versions"></a>
     <a target="_blank" style="text-decoration:none"><img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-Welcome-blue"></a>
