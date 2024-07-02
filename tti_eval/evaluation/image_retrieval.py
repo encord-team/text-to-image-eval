@@ -2,10 +2,10 @@ import logging
 from typing import Any
 
 import numpy as np
-from autofaiss import build_index
+from faiss import IndexFlatL2
 
 from tti_eval.common import Embeddings
-from tti_eval.utils import disable_tqdm, enable_tqdm
+from tti_eval.utils import disable_tqdm
 
 from .base import EvaluationModel
 
@@ -46,13 +46,9 @@ class I2IRetrievalEvaluator(EvaluationModel):
         self._class_counts[class_ids] = counts
 
         disable_tqdm()  # Disable tqdm progress bar when building the index
-        index, self.index_infos = build_index(self._val_embeddings.images, save_on_disk=False, verbose=logging.ERROR)
-        enable_tqdm()
-        if index is None:
-            raise ValueError("Failed to build an index for knn search")
-        self._index = index
-
-        logger.info("knn classifier index_infos", extra=self.index_infos)
+        d = self._val_embeddings.images.shape[-1]
+        self._index = IndexFlatL2(d)
+        self._index.add(self._val_embeddings.images)
 
     def evaluate(self) -> float:
         _, nearest_indices = self._index.search(self._train_embeddings.images, self.k)  # type: ignore
@@ -60,14 +56,19 @@ class I2IRetrievalEvaluator(EvaluationModel):
 
         # To compute retrieval accuracy, we ensure that a maximum of Q elements per sample are retrieved,
         # where Q represents the size of the respective class in the validation embeddings
-        top_nearest_per_class = np.where(self._class_counts < self.k, self._class_counts, self.k)
+        top_nearest_per_class = np.where(
+            self._class_counts < self.k, self._class_counts, self.k
+        )
         top_nearest_per_sample = top_nearest_per_class[self._train_embeddings.labels]
 
         # Add a placeholder value for indices outside the retrieval scope
         nearest_classes[np.arange(self.k) >= top_nearest_per_sample[:, np.newaxis]] = -1
 
         # Count the number of neighbours that match the class of the sample and compute the mean accuracy
-        matches_per_sample = np.sum(nearest_classes == np.array(self._train_embeddings.labels)[:, np.newaxis], axis=1)
+        matches_per_sample = np.sum(
+            nearest_classes == np.array(self._train_embeddings.labels)[:, np.newaxis],
+            axis=1,
+        )
         accuracies = np.divide(
             matches_per_sample,
             top_nearest_per_sample,
