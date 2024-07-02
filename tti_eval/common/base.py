@@ -1,5 +1,5 @@
 import logging
-from enum import StrEnum, auto
+from enum import Enum
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -16,11 +16,11 @@ SafeName = Annotated[str, AfterValidator(safe_str)]
 logger = logging.getLogger("multiclips")
 
 
-class Split(StrEnum):
-    TRAIN = auto()
-    VALIDATION = auto()
-    TEST = auto()
-    ALL = auto()
+class Split(str, Enum):
+    TRAIN = "train"
+    VALIDATION = "validation"
+    TEST = "test"
+    ALL = "all"
 
 
 class Embeddings(BaseModel):
@@ -89,7 +89,7 @@ class EmbeddingDefinition(BaseModel):
     dataset: SafeName
 
     def _get_embedding_path(self, split: Split, suffix: str) -> Path:
-        return Path(self.dataset) / f"{self.model}_{split}{suffix}"
+        return Path(self.dataset) / f"{self.model}_{split.value}{suffix}"
 
     def embedding_path(self, split: Split) -> Path:
         return PROJECT_PATHS.EMBEDDINGS / self._get_embedding_path(split, ".npz")
