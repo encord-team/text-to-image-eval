@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Literal, overload
 
@@ -247,7 +247,7 @@ def save_animation_to_file(
     def2: EmbeddingDefinition,
     split: Split = Split.VALIDATION,
 ):
-    date_code = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
+    date_code = datetime.now().strftime("%Y%m%d-%H%M%S")
     file_name = f"transition_{def1.dataset}_{def1.model}_{def2.model}_{split}_{date_code}.gif"
     animation_file = OUTPUT_PATH.ANIMATIONS / file_name
     animation_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure that parent folder exists
