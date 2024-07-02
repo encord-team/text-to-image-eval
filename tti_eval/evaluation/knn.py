@@ -2,10 +2,10 @@ import logging
 from typing import Any
 
 import numpy as np
-from autofaiss import build_index
+from faiss import IndexFlatL2
 
 from tti_eval.common import ClassArray, Embeddings, ProbabilityArray
-from tti_eval.utils import disable_tqdm, enable_tqdm
+from tti_eval.utils import disable_tqdm
 
 from .base import ClassificationModel
 from .utils import softmax
@@ -44,15 +44,9 @@ class WeightedKNNClassifier(ClassificationModel):
         super().__init__(train_embeddings, validation_embeddings, num_classes)
         self.k = k
         disable_tqdm()  # Disable tqdm progress bar when building the index
-        index, self.index_infos = build_index(
-            train_embeddings.images, metric_type="l2", save_on_disk=False, verbose=logging.ERROR
-        )
-        enable_tqdm()
-        if index is None:
-            raise ValueError("Failed to build an index for knn search")
-        self._index = index
-
-        logger.info("knn classifier index_infos", extra=self.index_infos)
+        d = train_embeddings.images.shape[-1]
+        self._index = IndexFlatL2(d)
+        self._index.add(train_embeddings.images)
 
     @staticmethod
     def get_default_params() -> dict[str, Any]:
@@ -65,7 +59,9 @@ class WeightedKNNClassifier(ClassificationModel):
         # Calculate class votes from the distances (avoiding division by zero)
         # Note: Values stored in `dists` are the squared 2-norm values of the respective distance vectors
         max_value = np.finfo(np.float32).max
-        scores = np.divide(1, dists, out=np.full_like(dists, max_value), where=dists != 0)
+        scores = np.divide(
+            1, dists, out=np.full_like(dists, max_value), where=dists != 0
+        )
         # NOTE: if self.k and self.num_classes are both large, this might become a big one.
         # We can shape of a factor self.k if we count differently here.
         n = len(self._val_embeddings.images)
