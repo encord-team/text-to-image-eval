@@ -1,11 +1,12 @@
 import json
 import multiprocessing
 import os
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import partial
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from encord import EncordUserClient, Project
 from encord.common.constants import DATETIME_STRING_FORMAT
