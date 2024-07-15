@@ -56,9 +56,7 @@ class I2IRetrievalEvaluator(EvaluationModel):
 
         # To compute retrieval accuracy, we ensure that a maximum of Q elements per sample are retrieved,
         # where Q represents the size of the respective class in the validation embeddings
-        top_nearest_per_class = np.where(
-            self._class_counts < self.k, self._class_counts, self.k
-        )
+        top_nearest_per_class = np.where(self._class_counts < self.k, self._class_counts, self.k)
         top_nearest_per_sample = top_nearest_per_class[self._train_embeddings.labels]
 
         # Add a placeholder value for indices outside the retrieval scope

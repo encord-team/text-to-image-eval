@@ -59,9 +59,7 @@ class WeightedKNNClassifier(ClassificationModel):
         # Calculate class votes from the distances (avoiding division by zero)
         # Note: Values stored in `dists` are the squared 2-norm values of the respective distance vectors
         max_value = np.finfo(np.float32).max
-        scores = np.divide(
-            1, dists, out=np.full_like(dists, max_value), where=dists != 0
-        )
+        scores = np.divide(1, dists, out=np.full_like(dists, max_value), where=dists != 0)
         # NOTE: if self.k and self.num_classes are both large, this might become a big one.
         # We can shape of a factor self.k if we count differently here.
         n = len(self._val_embeddings.images)

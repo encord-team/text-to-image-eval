@@ -1,6 +1,10 @@
 import json
+import multiprocessing
 import os
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -30,7 +34,13 @@ class EncordDataset(Dataset):
         ssh_key_path: str | None = None,
         **kwargs,
     ):
-        super().__init__(title, split=split, title_in_source=title_in_source, transform=transform, cache_dir=cache_dir)
+        super().__init__(
+            title,
+            split=split,
+            title_in_source=title_in_source,
+            transform=transform,
+            cache_dir=cache_dir,
+        )
         self._setup(project_hash, classification_hash, ssh_key_path, **kwargs)
 
     def __getitem__(self, idx):
@@ -191,6 +201,37 @@ def _download_label_row_image_data(data_dir: Path, project: Project, label_row: 
     )
 
 
+def _download_label_row(
+    label_row: LabelRowV2,
+    project: Project,
+    data_dir: Path,
+    overwrite_annotations: bool,
+    label_rows_info: dict[str, Any],
+    update_pbar: Callable[[], Any],
+):
+    if label_row.data_type not in {DataType.IMAGE, DataType.IMG_GROUP}:
+        return
+    save_annotations = False
+    # Trigger the images download if the label hash is not found or is None (never downloaded).
+    if label_row.label_hash not in label_rows_info.keys():
+        _download_label_row_image_data(data_dir, project, label_row)
+        save_annotations = True
+    # Overwrite annotations only if `last_edited_at` values differ between the existing and new annotations.
+    elif (
+        overwrite_annotations
+        and label_row.last_edited_at.strftime(DATETIME_STRING_FORMAT)
+        != label_rows_info[label_row.label_hash]["last_edited_at"]
+    ):
+        label_row.initialise_labels()
+        save_annotations = True
+
+    if save_annotations:
+        annotations_file = get_label_row_annotations_file(data_dir, project.project_hash, label_row.label_hash)
+        annotations_file.write_text(json.dumps(label_row.to_encord_dict()), encoding="utf-8")
+        label_rows_info[label_row.label_hash] = {"last_edited_at": label_row.last_edited_at}
+    update_pbar()
+
+
 def _download_label_rows(
     project: Project,
     data_dir: Path,
@@ -202,27 +243,18 @@ def _download_label_rows(
     if tqdm_desc is None:
         tqdm_desc = f"Downloading data from Encord project `{project.title}`"
 
-    for label_row in tqdm(label_rows, desc=tqdm_desc):
-        if label_row.data_type not in {DataType.IMAGE, DataType.IMG_GROUP}:
-            continue
-        save_annotations = False
-        # Trigger the images download if the label hash is not found or is None (never downloaded).
-        if label_row.label_hash not in label_rows_info.keys():
-            _download_label_row_image_data(data_dir, project, label_row)
-            save_annotations = True
-        # Overwrite annotations only if `last_edited_at` values differ between the existing and new annotations.
-        elif (
-            overwrite_annotations
-            and label_row.last_edited_at.strftime(DATETIME_STRING_FORMAT)
-            != label_rows_info[label_row.label_hash]["last_edited_at"]
-        ):
-            label_row.initialise_labels()
-            save_annotations = True
+    pbar = tqdm(total=len(label_rows), desc=tqdm_desc)
+    _do_download = partial(
+        _download_label_row,
+        project=project,
+        data_dir=data_dir,
+        overwrite_annotations=overwrite_annotations,
+        label_rows_info=label_rows_info,
+        update_pbar=lambda: pbar.update(1),
+    )
 
-        if save_annotations:
-            annotations_file = get_label_row_annotations_file(data_dir, project.project_hash, label_row.label_hash)
-            annotations_file.write_text(json.dumps(label_row.to_encord_dict()), encoding="utf-8")
-            label_rows_info[label_row.label_hash] = {"last_edited_at": label_row.last_edited_at}
+    with ThreadPoolExecutor(min(multiprocessing.cpu_count(), 24)) as exe:
+        exe.map(_do_download, label_rows)
 
 
 def download_data_from_project(
@@ -293,7 +325,11 @@ def get_frame_file(data_dir: Path, project_hash: str, label_row: LabelRowV2, fra
 
 
 def get_frame_file_raw(
-    data_dir: Path, project_hash: str, label_row_hash: str, frame_hash: str, frame_title: str
+    data_dir: Path,
+    project_hash: str,
+    label_row_hash: str,
+    frame_hash: str,
+    frame_title: str,
 ) -> Path:
     return get_label_row_dir(data_dir, project_hash, label_row_hash) / get_frame_name(frame_hash, frame_title)
 
