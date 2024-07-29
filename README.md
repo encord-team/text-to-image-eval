@@ -1,9 +1,3 @@
-<h1 align="center">
-    <a href="https://encord.com/webinar/tti-eval-webinar/">
-        <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/fint-tune-text-to-image.jpg" alt="tti-eval logo banner">
-    </a>
-</h1>
-
 <div align="center" style="display: flex; justify-content: space-between;">
   <div style="flex: 1; padding: 10px;">
     <a href="https://colab.research.google.com/github/encord-team/text-to-image-eval/blob/main/notebooks/tti_eval_CLI_Quickstart.ipynb" target="_blank" style="text-decoration:none"><img alt="CLI Quickstart In Colab" src="https://img.shields.io/badge/Try_It_In_Colab-blue?logo=googlecolab&labelColor=555"></a>
@@ -115,7 +109,7 @@ By default, animations are stored in the `output/animations` folder within the r
 To interactively explore the animation in a temporary session, use the `--interactive` flag.
 
 <div align="center">
-    <img width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
+    <img alt="Transition between embedding plots" width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
 </div>
 
 > ℹ️ You can also carry out these operations using Python. Explore our Python Quickstart guide for more details.
