@@ -1,9 +1,3 @@
-<h1 align="center">
-    <a href="https://encord.com/webinar/tti-eval-webinar/">
-        <img src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/fint-tune-text-to-image.jpg" alt="tti-eval logo banner">
-    </a>
-</h1>
-
 <div align="center" style="display: flex; justify-content: space-between;">
   <div style="flex: 1; padding: 10px;">
     <a href="https://colab.research.google.com/github/encord-team/text-to-image-eval/blob/main/notebooks/tti_eval_CLI_Quickstart.ipynb" target="_blank" style="text-decoration:none"><img alt="CLI Quickstart In Colab" src="https://img.shields.io/badge/Try_It_In_Colab-blue?logo=googlecolab&labelColor=555"></a>
@@ -94,6 +88,10 @@ Alternatively, you can specify known (model, dataset) pairs using the `--model-d
 tti-eval evaluate --model-dataset clip/Alzheimer-MRI --model-dataset bioclip/Alzheimer-MRI
 ```
 
+The evaluation results can be exported to a CSV file using the `--save` option.
+They will be saved on a folder at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
+By default, exported evaluation results are stored to the `output/evaluations` folder within the repository.
+
 ### Embeddings Animation
 
 To create 2D animations of the embeddings, use the CLI command `tti-eval animate`.
@@ -106,12 +104,12 @@ Alternatively, you can specify the models and dataset as arguments. For example:
 tti-eval animate clip bioclip Alzheimer-MRI
 ```
 
-The animations will be saved at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
-By default, this path corresponds to the `output` folder in the repository directory.
+The animations will be saved on a folder at the location specified by the environment variable `TTI_EVAL_OUTPUT_PATH`.
+By default, animations are stored in the `output/animations` folder within the repository.
 To interactively explore the animation in a temporary session, use the `--interactive` flag.
 
 <div align="center">
-    <img width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
+    <img alt="Transition between embedding plots" width="600" src="https://storage.googleapis.com/docs-media.encord.com/static/img/text-to-image-eval/embeddings.gif">
 </div>
 
 > ℹ️ You can also carry out these operations using Python. Explore our Python Quickstart guide for more details.
